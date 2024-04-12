@@ -1,0 +1,220 @@
+:root {
+    --primary-dark: #38d1f8;
+    --primary-light: #bae7f3;
+    --neutral: #48c1e1;
+    --hover: #949191;   /* po najechaniu na zmienna */
+    --white: #FFFFFF;
+
+    --radius-large: 64px;
+    --radius-medium: 10px;
+    --radius-small: 5px;
+
+    --font-small: 14px;
+
+    --title-font: "Italiana", sans-serif;
+    --transition: all 0.3s ease-in-out; /* efekt po najechaniu*/
+}
+
+html{
+    scroll-behavior: smooth;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-size: var(--font-small);
+    color: #000;
+}
+
+
+body{
+    background-color: #38d1f8;
+    font-family: "Roboto Flex", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+    font-variation-settings:
+            "slnt" 0,
+            "wdth" 100,
+            "GRAD" 0,
+            "XOPQ" 96,
+            "XTRA" 468,
+            "YOPQ" 79,
+            "YTAS" 750,
+            "YTDE" -203,
+            "YTFI" 738,
+            "YTLC" 514,
+            "YTUC" 712;
+}
+
+.header {
+    background-color: #FFFFFF;
+    width: 100%;
+    margin-top: 15px;
+    height: 100px;
+    /**/
+    display: flex; /* Ustawia elementy w nagłówku na elastyczne */
+    align-items: center; /* Wyśrodkowanie w pionie */
+}
+
+.logoImage {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.title {
+    margin-left: 15px;
+    width: 65%;
+    display: flex;
+    flex-direction: column; /* Ustawienie elementów w pionie */
+    justify-content: center; /* Wyśrodkowanie elementów w pionie */
+    align-items: flex-start; /* Wyśrodkowanie elementów w poziomie */
+    font-weight: bold; /* Pogrubienie tekstu */
+}
+
+.title > * {
+    margin: 5px 0; /* Dodajemy odstęp między elementami */
+}
+
+.title > *:not(:last-child) {
+    border-bottom: 1px solid black; /* Dodajemy kreskę oddzielającą */
+    margin-right: 5px;
+}
+
+button {
+    display: flex;
+    width: 160px;
+    height: 45px;
+    padding: 14px 20px;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--radius-medium);
+    background: #000;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s; /* Efekt przejścia podczas zmiany tła */
+}
+
+.headerButton {
+    margin-left: 25px;
+}
+
+button:hover {
+    background-color: var(--hover); /* Tło po najechaniu myszą */
+}
+
+.freeBorder {
+    background-color: var(--primary-light);
+    width: 170px;
+    height: 40px;
+    margin-right: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    padding: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.topicHeader {
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.topicList {
+    padding: 0; /* Usunięcie wewnętrznego marginesu listy */
+    margin: 0 40px; /* Dodanie marginesów z prawej i lewej strony 40px */
+}
+
+.borderItem {
+    background-color: #bae7f3;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 1fr 2fr 4fr 1fr 1fr 1fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+}
+
+.topicItem {
+    background-color: #fff;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 1fr 2fr 4fr 1fr 1fr 1fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+}
+
+.loginHeader {
+    background-color: var(--primary-light);
+    width: 400px;
+    height: 60px;
+    margin: 20px auto;
+    padding: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Wyśrodkowanie zawartości na osi poziomej */
+    text-align: center; /* Wyśrodkowanie tekstu */
+}
+
+input {
+    width: 250px;
+    height: 35px;
+    padding: 14px 20px;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--radius-medium);
+    border: none;
+}
+
+.loginSection {
+    background-color: var(--neutral);
+    width: 400px;
+    height: 300px;
+    margin: 20px auto;
+    padding: 10px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Wyśrodkowanie zawartości na osi poziomej */
+}
+
+.loginSection input {
+    margin-bottom: 20px; /* Zwiększenie odstępu między inputami */
+}
+
+.errorMessage {
+    margin: 0px auto;
+    background-color: rgba(227, 39, 39, 0.97); /* Czerwone tło z przezroczystością */
+    width: 400px;
+    height: 60px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.errorMessage p {
+    margin-bottom: 10px; /* Odstęp między paragrafami */
+}
