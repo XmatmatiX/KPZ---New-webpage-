@@ -3,6 +3,7 @@
     --primary-light: #bae7f3;
     --neutral: #48c1e1;
     --hover: #949191;   /* po najechaniu na zmienna */
+    --hover2: #e5e5e5;
     --white: #FFFFFF;
 
     --radius-large: 64px;
@@ -32,7 +33,7 @@ body{
     background-color: #38d1f8;
     font-family: "Roboto Flex", sans-serif;
     font-optical-sizing: auto;
-    font-weight: 300;
+    font-weight: bold;
     font-style: normal;
     font-variation-settings:
             "slnt" 0,
@@ -70,11 +71,10 @@ body{
     flex-direction: column; /* Ustawienie elementów w pionie */
     justify-content: center; /* Wyśrodkowanie elementów w pionie */
     align-items: flex-start; /* Wyśrodkowanie elementów w poziomie */
-    font-weight: bold; /* Pogrubienie tekstu */
 }
 
 .title > * {
-    margin: 5px 0; /* Dodajemy odstęp między elementami */
+    margin: 5px 0; /* odstęp między elementami */
 }
 
 .title > *:not(:last-child) {
@@ -99,7 +99,8 @@ button {
 }
 
 .headerButton {
-    margin-left: 25px;
+    margin-left: auto;
+    margin-right: 30px;
 }
 
 button:hover {
@@ -115,9 +116,9 @@ button:hover {
     margin-bottom: 20px;
     margin-left: auto;
     padding: 10px;
-    font-weight: bold;
     display: flex;
     align-items: center;
+    font-weight: normal;
 }
 
 input[type="checkbox"] {
@@ -126,16 +127,20 @@ input[type="checkbox"] {
     margin-right: 10px;
 }
 
+.searchInput {
+    width: 400px;
+}
+
 .topicHeader {
     margin-left: 40px;
     margin-right: 40px;
     margin-bottom: 20px;
-    font-weight: bold;
 }
 
 .topicList {
     padding: 0; /* Usunięcie wewnętrznego marginesu listy */
     margin: 0 40px; /* Dodanie marginesów z prawej i lewej strony 40px */
+    font-weight: normal;
 }
 
 .borderItem {
@@ -166,7 +171,6 @@ input[type="checkbox"] {
     height: 60px;
     margin: 20px auto;
     padding: 10px;
-    font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center; /* Wyśrodkowanie zawartości na osi poziomej */
@@ -189,7 +193,6 @@ input {
     height: 300px;
     margin: 20px auto;
     padding: 10px;
-    font-weight: bold;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -209,7 +212,6 @@ input {
     border: 1px solid #ccc;
     border-radius: 5px;
     text-align: center;
-    font-weight: bold;
     display: none;
     align-items: center;
     justify-content: center;
@@ -218,3 +220,99 @@ input {
 .errorMessage p {
     margin-bottom: 10px; /* Odstęp między paragrafami */
 }
+
+.grid{
+    display: grid;
+    grid-template-columns: repeat(12,1fr);  /*1 fr - fraction = podziel ekran na 12 czesci*/
+    column-gap: 24px;
+    width: 100%;
+    height: 100vh;  /*cała wysokość okna*/
+}
+
+.menu{
+    grid-column: 1/3;   /*rozciagniecie miedzy 1 i 3 krawedzia*/
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+    background-color: #FFF;
+    padding-top: 30px;
+    padding-left: 20px;
+}
+/* Button strony, na ktorej sie znajdujemy*/
+.pageButton {
+    background-color: var(--hover2);
+    border-radius: 0px;
+    width:100%;
+    color: #000;
+    font-weight: normal;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.pageButton:hover {
+    background-color: var(--hover2);
+}
+
+/*Button pozostalych stron*/
+.menuButton {
+    background-color: #fff;
+    border-radius: 0px;
+    width:100%;
+    color: #000;
+    font-weight: normal;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.menuButton:hover {
+    background-color: var(--hover2);
+}
+
+.page {
+    grid-column: 3/13;
+}
+
+h1 {
+    font-size: 30px;
+}
+
+article {
+    margin: 30px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-weight: normal;
+}
+
+.headerAdmin {
+    height: 40px;
+    margin-right: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 30px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    font-weight: normal;
+}
+
+.searchButton {
+    margin-left: 10px;
+    height: 35px;
+    width: 100px;
+}
+
+.freeBorder2 {
+    background-color: var(--primary-light);
+    width: 170px;
+    height: 40px;
+    margin-right: 0px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    font-weight: normal;
+}
+

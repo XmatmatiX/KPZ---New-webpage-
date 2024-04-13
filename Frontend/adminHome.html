@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Roboto+Flex:opsz,wght@8..144,300&display=swap" rel="stylesheet">
+
+    <title>KPZ</title>
+</head>
+<body>
+
+<section class="header">
+    <img src="logo.png" class="logoImage" alt="There should be a logo here">
+    <div class="title">
+        <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
+        <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
+    </div>
+<!--    <button class="headerButton">Przeglądaj tematy</button>-->
+    <button id="logout" class="headerButton">Wyloguj się</button>
+</section>
+
+<section class="grid">
+    <div class="menu">
+        <p>Przeglądaj</p>
+        <button id="homeAdmin" class="pageButton"><img src="home.png" alt="There should be home photo"> Strona główna </button>
+        <button id="groupsWithoutTopic" class="menuButton"><img src="home.png" alt="There should be home photo"> Grupy bez tematu </button>
+        <button id="studentsWithoutGroup" class="menuButton"><img src="loupe.png" alt="There should be home photo"> Studenci bez grup </button>
+        <button id="searchStudent" class="menuButton"><img src="loupe.png" alt="There should be home photo"> Wyszukaj studenta </button>
+        <button id="groups" class="menuButton"><img src="radio.png" alt="There should be home photo"> Grupy </button>
+        <button id="addTopic" class="menuButton"><img src="radio.png" alt="There should be home photo"> Dodaj temat </button>
+        <button id="addGroup" class="menuButton"><img src="radio.png" alt="There should be home photo"> Dodaj grupę </button>
+        <button id="notifications" class="menuButton"><img src="radio.png" alt="There should be home photo"> Powiadomienia </button>
+        <button id="settings" class="menuButton"><img src="radio.png" alt="There should be home photo"> Ustawienia </button>
+    </div>
+    <div class="page">
+
+        <section class="headerAdmin">
+            <input id="search" class="searchInput" placeholder="Wyszukaj firmę">
+            <button class="searchButton">Szukaj</button>
+
+            <div class="freeBorder2">
+                <input type="checkbox" id="freeCheckbox">
+                <label for="freeCheckbox">Wolne</label>
+            </div>
+        </section>
+
+        <section class="topicList">
+            <div class="borderItem">
+                <p>Logo</p>
+                <p>Firma</p>
+                <p>Nazwa tematu</p>
+                <p>id_tematu</p>
+                <p>Liczba członków</p>
+                <p>Status</p>
+            </div>
+
+            <!-- LISTA TEMATÓW PROJEKTOWYCH (poniżej przykładowy - do usuniecia) -->
+
+            <div class="topicItem">
+                <p>Logo</p>
+                <p>Politechnika Wrocławska</p>
+                <p>System do zarządzania tematami projektów zespołowych</p>
+                <p>kpz1</p>
+                <p>5</p>
+                <p>Zajęty</p>
+            </div>
+        </section>
+
+    </div>
+</section>
+
+<script src="script.js"></script>
+
+</body>
+</html>
