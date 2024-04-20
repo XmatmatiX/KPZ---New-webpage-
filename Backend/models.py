@@ -1,12 +1,13 @@
-from sqlalchemy import  Column, Integer, String, Boolean, Text, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, Text, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+
 class Project(Base):
     __tablename__ = 'Project'
-    ProjectID = Column(Integer, primary_key=True)
+    ProjectID = Column(Integer, primary_key=True,  autoincrement=True)
     CompanyName = Column(String(50), nullable=False)
     ProjectTitle = Column(String(255), nullable=False)
     Email = Column(String(50), nullable=False)
@@ -21,19 +22,20 @@ class Project(Base):
     Remarks = Column(Text)
     CooperationType = Column(Text)
 
+
 class ProjectReservation(Base):
     __tablename__ = 'ProjectReservation'
-    ProjectReservationID = Column(Integer, primary_key=True)
+    ProjectReservationID = Column(Integer, primary_key=True,  autoincrement=True)
     ProjectID = Column(Integer, ForeignKey('Project.ProjectID'), nullable=False)
     GroupID = Column(Integer, ForeignKey('Group.GroupID'), nullable=False)
     IsConfirmed = Column(Boolean)
     Status = Column(String(25), nullable=False)
     ConfirmationPath = Column(String(255))
 
+
 class Group(Base):
     __tablename__ = 'Group'
-    GroupID = Column(Integer, primary_key=True)
-    Leader = Column(Integer, ForeignKey('User.UserID')) #zmiana
+    GroupID = Column(Integer, primary_key=True,  autoincrement=True)
     GuardianID = Column(Integer, ForeignKey('Guardian.GuardianID'))
     Name = Column(String(50))
     InviteCode = Column(String(10), nullable=False)
@@ -41,9 +43,10 @@ class Group(Base):
 
     guardian = relationship("Guardian")
 
+
 class User(Base):
     __tablename__ = 'User'
-    UserID = Column(Integer, primary_key=True)
+    UserID = Column(Integer, primary_key=True,  autoincrement=True)
     GroupID = Column(Integer, ForeignKey('Group.GroupID'))
     Name = Column(String(25), nullable=False)
     Surname = Column(String(50), nullable=False)
@@ -51,19 +54,19 @@ class User(Base):
     Password = Column(String(255), nullable=False)
     roleName = Column(String(25), nullable=False)
 
+
 class Guardian(Base):
     __tablename__ = 'Guardian'
-    GuardianID = Column(Integer, primary_key=True)
+    GuardianID = Column(Integer, primary_key=True,  autoincrement=True)
     Name = Column(String(25), nullable=False)
     Surname = Column(String(50), nullable=False)
     Email = Column(String(50), nullable=False)
 
+
 class ActionHistory(Base):
     __tablename__ = 'ActionHistory'
-    HistoryID = Column(Integer, primary_key=True)
+    HistoryID = Column(Integer, primary_key=True,  autoincrement=True)
     ReservationID = Column(Integer, ForeignKey('ProjectReservation.ProjectReservationID'), nullable=False)
     DataTime = Column(DateTime, nullable=False)
     Content = Column(Text, nullable=False)
     Displayed = Column(Boolean, nullable=False)
-
-

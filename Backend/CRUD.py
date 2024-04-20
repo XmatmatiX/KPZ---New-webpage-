@@ -11,12 +11,15 @@ Wyszukiwanie:
 projektu po id, po nazwie firmy
 rezerwacji po id rezerwacji, po grupie, liderze
 studenta po nazwisku
+actionHistory po id rezerwacji
 
 Tworzenie:
 actionHistory,
-ProjectReservation
+ProjectReservation, 
+uzytkownika (2 wersje), 
+guardian, 
+project
 
-W klasie grupa trzeba dodać lidera?
 """
 
 """
@@ -41,10 +44,49 @@ def create_action_history(db: Session, reservation_id: int, content_history: str
     return db_action_history
 
 
+def create_user(db: Session, name: str, surname: str, email: str, password: str):
+    db_user = models.User(Name=name, Surname=surname,
+                          Email=email, Password=password)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+"""
+Create user, ale w wersji jak w crudzie zaki z zeszlego semetru
+"""
+def create_user2(db: Session, user: schemas.UserCreate):
+    db_user = models.User(Name=user.Name, Surname=user.Surname, Email=user.Email, Password=user.Password)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+
+
+def create_guardian(db: Session, name: str, surname: str, email: str):
+    db_guardian = models.Guardian(Name=name, Surname=surname,
+                                  Email=email)
+    db.add(db_guardian)
+    db.commit()
+    db.refresh(db_guardian)
+    return db_guardian
+
+
+def create_project(db: Session, company_name: str, project_title: str, email: str, phone_number,
+                   project_description: str, logo_path: str, technologies: str, min_group_size: int, max_group_size: int,
+                   group_number: int, english_group: bool, remarks, cooperation_type: str):
+    db_project = models.Project(CompanyName=company_name, ProjectTitle=project_title, Description=project_description,
+                                Email=email, PhoneNumber=phone_number, LogoPath=logo_path, Technologies=technologies,
+                                MinGroupSize=min_group_size, MaxGroupSize=max_group_size, GroupNumber=group_number,
+                                EnglishGroup=english_group, Remarks=remarks, CooperationType=cooperation_type
+                                )
+    db.add(db_project)
+    db.commit()
+    db.refresh(db_project)
+    return db_project
+
 """
 Read
 """
-
 
 def get_project_by_id(db: Session, project_id: int):
     return db.query(models.Project).filter(models.Project.ProjectID == project_id).first()
@@ -69,19 +111,16 @@ def get_project_reservation_by_group(db: Session, group_id: int):
     return db.query(models.ProjectReservation).filter(
         models.ProjectReservation.GroupID == group_id).first()
 
+def get_action_history(db:Session, reservation_id:int):
+    return db.query(models.ActionHistory).filter(models.ActionHistory.ReservationID==reservation_id).all()
 
-def get_project_reservation_by_leader(db: Session, leader_id: int):
-    group = db.query(models.Group).filter(models.Group.Leader == leader_id).first()
-    return get_project_reservation_by_group(db, group)
+
 
 
 """
 Update
 """
 
-def update_user_in_group(db:Session, db_user:models.User, group_id: int):
-    db_user.GroupID = group_id
-    db_user.sqlmodel_update()
 
 """
 Delete

@@ -60,7 +60,6 @@ class ProjectReservation(ProjectReservationBase):
 
 class GroupBase(BaseModel):
     GuardianID: Optional[int]
-    Leader: int #dodatek
     Name: Optional[str]
     InviteCode: str
     Size: Optional[int]
