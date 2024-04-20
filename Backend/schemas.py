@@ -1,6 +1,9 @@
 from pydantic import BaseModel
 from typing import Optional
-from enum import Enum
+
+
+#from enum import Enum
+
 
 class ProjectBase(BaseModel):
     CompanyName: str
@@ -17,14 +20,17 @@ class ProjectBase(BaseModel):
     Remarks: str = None
     CooperationType: str = None
 
+
 class ProjectCreate(ProjectBase):
     pass
+
 
 class Project(ProjectBase):
     ProjectID: int
 
     class Config:
         orm_mode = True
+
 
 class ProjectReservationBase(BaseModel):
     ProjectID: int
@@ -33,15 +39,17 @@ class ProjectReservationBase(BaseModel):
     Status: str
     ConfirmationPath: Optional[str]
 
+
 class ProjectReservationCreate(ProjectReservationBase):
     pass
+
 
 class ProjectReservation(ProjectReservationBase):
     ProjectReservationID: int
 
-
     class Config:
         orm_mode = True
+
 
 """class ProjectStatus(Enum):
     available="AVAILABLE"
@@ -49,20 +57,25 @@ class ProjectReservation(ProjectReservationBase):
     taken="TAKEN"
 """
 
+
 class GroupBase(BaseModel):
     GuardianID: Optional[int]
+    Leader: int #dodatek
     Name: Optional[str]
     InviteCode: str
     Size: Optional[int]
 
+
 class GroupCreate(GroupBase):
     pass
+
 
 class Group(GroupBase):
     GroupID: int
 
     class Config:
         orm_mode = True
+
 
 class UserBase(BaseModel):
     Name: str
@@ -71,8 +84,10 @@ class UserBase(BaseModel):
     Password: str
     roleName: str
 
+
 class UserCreate(UserBase):
     pass
+
 
 class User(UserBase):
     UserID: int
@@ -80,6 +95,7 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
 
 """class UserRole(Enum):
     student="STUDENT"
@@ -93,8 +109,10 @@ class GuardianBase(BaseModel):
     Surname: str
     Email: str
 
+
 class GuardianCreate(GuardianBase):
     pass
+
 
 class Guardian(GuardianBase):
     GuardianID: int
@@ -102,14 +120,17 @@ class Guardian(GuardianBase):
     class Config:
         orm_mode = True
 
+
 class ActionHistoryBase(BaseModel):
     ReservationID: int
     DataTime: str
     Content: str
     Displayed: bool
 
+
 class ActionHistoryCreate(ActionHistoryBase):
     pass
+
 
 class ActionHistory(ActionHistoryBase):
     HistoryID: int

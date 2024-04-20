@@ -33,6 +33,7 @@ class ProjectReservation(Base):
 class Group(Base):
     __tablename__ = 'Group'
     GroupID = Column(Integer, primary_key=True)
+    Leader = Column(Integer, ForeignKey('User.UserID')) #zmiana
     GuardianID = Column(Integer, ForeignKey('Guardian.GuardianID'))
     Name = Column(String(50))
     InviteCode = Column(String(10), nullable=False)
