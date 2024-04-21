@@ -75,8 +75,8 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 
 # funkcja odpowiadajaca za logowanie uzytkownika
-def authenticate_user(db: Session, name: str, password: str):
-    user = CRUD.get_user(db, name)
+def authenticate_user(db: Session, email: str, password: str):
+    user = CRUD.get_user(db, email)
     if not user:
         return False
     if not verify_password(password, user.password):
@@ -139,31 +139,31 @@ def register(user: schemas.UserCreate, session: Session = Depends(get_db)):
 """
 @app.post("/login/")
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db:Session = Depends(get_db)):
-    user = authenticate_user(db, form_data.username, form_data.password)
+    user = authenticate_user(db, form_data.email, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # Pobieranie roli użytkownika na podstawie roleName
-    user_role = user.roleName
+    # Pobieranie roli użytkownika na podstawie rolename
+    user_role = user.rolename
 
     # Mapowanie roli użytkownika na odpowiednie zakresy (scopes)
     if user_role == RoleEnum.student.value:
-        scopes = ["user"]
+        scopes = ["student"]
     elif user_role == RoleEnum.leader.value:
-        scopes = ["user", "leader"]
+        scopes = ["leader"]
     elif user_role == RoleEnum.admin.value:
-        scopes = ["user", "admin"]
+        scopes = ["admin"]
     else:
         # Domyślny zakres, gdy rola nie pasuje do żadnej zdefiniowanej w enumie
         scopes = ["user"]
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username, "scopes": scopes}, expires_delta=access_token_expires
+        data={"sub": user.email, "scopes": scopes}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
 

@@ -21,7 +21,7 @@ def test_get_user_CRUD():
     db = SessionLocal()
 
     # Wywołanie funkcji get_user2
-    user = CRUD.get_user(db, test_name)
+    user = CRUD.get_user_by_name(db, test_name)
 
     # Sprawdzenie, czy użytkownik o podanym imieniu został poprawnie pobrany
     assert user is not None
@@ -48,4 +48,24 @@ def test_create_user_CRUD():
     assert created_user.name == user_data.name
     assert created_user.surname == user_data.surname
     assert created_user.email == user_data.email
-    assert created_user.rolename == user_data.rolename
+    assert created_user.rolename == "leader"
+
+def test_create_guardian_CRUD():
+    guardian_data = schemas.GuardianCreate(
+        name="Kasia",
+        surname="Kowalska",
+        email="test@example.com"
+    )
+
+    # Optionally, query the database to verify that the user was created
+    db = SessionLocal()
+    created_guardian = CRUD.create_guardian(db, guardian_data)
+
+    # Check that the user exists in the database
+    assert created_guardian is not None
+
+    # Check that the user data matches the expected data
+    # Sprawdzenie, czy użytkownik został poprawnie utworzony
+    assert created_guardian.name == guardian_data.name
+    assert created_guardian.surname == guardian_data.surname
+    assert created_guardian.email == guardian_data.email
