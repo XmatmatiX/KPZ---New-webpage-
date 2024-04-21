@@ -315,4 +315,53 @@ article {
     align-items: center;
     font-weight: normal;
 }
-
+/*zapisyView*/
+.content {
+    background-color: #f9f9f9; 
+    border-radius: 8px; 
+    padding: 20px; 
+    margin: 20px auto; 
+    max-width: 800px; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    display: flex;
+    justify-content: center; /* Centrowanie horyzontalne */
+    align-items: center; /* Centrowanie wertykalne */
+    flex-direction: column;
+    align-items: center; 
+  }
+  
+  .content h2 {
+    color: #333; 
+    margin-bottom: 16px; 
+  }
+  
+  .content input[type="text"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+    width: 100%;
+    box-sizing: border-box; 
+  }
+  
+  .content button {
+    padding: 10px 20px;
+    background-color: #007bff; 
+    color: white; 
+    border: none; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    margin-bottom: 10px; 
+  }
+  
+  .content button:hover {
+    background-color: #0056b3; 
+  }
+  
+  .content #confirmationMessage {
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px; 
+    width: 100%; 
+  }
+  

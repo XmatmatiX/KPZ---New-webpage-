@@ -95,3 +95,16 @@ const login=() => {
         message.style.display = "flex";
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const signupButton = document.getElementById('signupButton');
+    const confirmationMessage = document.getElementById('confirmationMessage');
+  
+    signupButton.addEventListener('click', () => {
+      const topicID = document.getElementById('topicID').value;
+      // Tutaj możesz dodać logikę wysyłania ID tematu do serwera
+      // Na razie tylko wyświetlamy komunikat
+      confirmationMessage.textContent = 'Zapisano na temat o ID: ' + topicID;
+      confirmationMessage.style.backgroundColor = '#b3ffb3'; // zielone tło dla potwierdzenia
+    });
+  });
