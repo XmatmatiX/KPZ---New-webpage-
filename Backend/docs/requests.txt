@@ -1,0 +1,70 @@
+CREATE TABLE project (
+  projectid       SERIAL NOT NULL,
+  companyname     varchar(50) NOT NULL,
+  projecttitle    varchar(255) NOT NULL,
+  email           varchar(50) NOT NULL,
+  phonenumber     varchar(15) NOT NULL,
+  description     text NOT NULL,
+  logopath        varchar(255),
+  technologies    text,
+  mingroupsize    int4 NOT NULL,
+  maxgroupsize    int4 NOT NULL,
+  groupnumber     int4 NOT NULL,
+  englishgroup    bool,
+  remarks         text,
+  cooperationtype text,
+  PRIMARY KEY (projectid));
+CREATE TABLE projectReservation (
+  projectreservationid SERIAL NOT NULL,
+  projectid            int4 NOT NULL,
+  groupv              int4 NOT NULL,
+  isconfirmed          bool,
+  status               varchar(25) NOT NULL,
+  confirmationpath     varchar(255),
+  PRIMARY KEY (projectreservationid));
+CREATE TABLE projectGroup (
+  groupid    SERIAL NOT NULL,
+  guardianid int4,
+  name       varchar(50),
+  invitecode varchar(10) NOT NULL,
+  groupsize     int4,
+  CONSTRAINT groupid
+    PRIMARY KEY (groupid));
+CREATE TABLE users (
+  userid   SERIAL NOT NULL,
+  groupid  int4,
+  name     varchar(25) NOT NULL,
+  surname  varchar(50) NOT NULL,
+  email    varchar(50) NOT NULL,
+  password varchar(64) NOT NULL,
+  rolename varchar(25) NOT NULL,
+  CONSTRAINT userid
+    PRIMARY KEY (userid));
+CREATE TABLE guardian (
+  guardianid SERIAL NOT NULL,
+  name       varchar(25) NOT NULL,
+  surname    varchar(50) NOT NULL,
+  email      varchar(50) NOT NULL,
+  CONSTRAINT guardianid
+    PRIMARY KEY (guardianid));
+CREATE TABLE actionhistory (
+  historyid     SERIAL NOT NULL,
+  reservationid int4 NOT NULL,
+  datatime      timestamp NOT NULL,
+  content       text NOT NULL,
+  displayed     bool NOT NULL,
+  CONSTRAINT historyid
+    PRIMARY KEY (historyid));
+
+ALTER TABLE project OWNER TO postgres;
+ALTER TABLE projectreservation OWNER TO postgres;
+ALTER TABLE projectgroup OWNER TO postgres;
+ALTER TABLE users OWNER TO postgres;
+ALTER TABLE guardian OWNER TO postgres;
+ALTER TABLE actionhistory OWNER TO postgres;
+
+ALTER TABLE projectreservation ADD CONSTRAINT FKProjectRes276242 FOREIGN KEY (projectid) REFERENCES project (projectid);
+ALTER TABLE users ADD CONSTRAINT FKUser82101 FOREIGN KEY (groupid) REFERENCES projectgroup (groupid);
+ALTER TABLE projectreservation ADD CONSTRAINT FKProjectRes901919 FOREIGN KEY (groupid) REFERENCES projectgroup (groupid);
+ALTER TABLE actionhistory ADD CONSTRAINT FKActionHist803780 FOREIGN KEY (reservationid) REFERENCES projectreservation (projectreservationid);
+ALTER TABLE projectgroup ADD CONSTRAINT FKGroup34297 FOREIGN KEY (guardianid) REFERENCES guardian (guardianid);

@@ -4,21 +4,24 @@ from typing import Optional
 
 #from enum import Enum
 
+# tu tworzymy moedel w pydantic, ktore sa wykorzytsywane
+# do walidacji danych przychodzacych i wychodzacych z endpointow
 
 class ProjectBase(BaseModel):
-    CompanyName: str
-    ProjectTitle: str
-    Email: str
-    PhoneNumber: str
-    Description: str
-    LogoPath: str = None
-    Technologies: str = None
-    MinGroupSize: int
-    MaxGroupSize: int
-    GroupNumber: int
-    EnglishGroup: bool
-    Remarks: str = None
-    CooperationType: str = None
+
+    companyname: str
+    projecttitle: str
+    email: str
+    phonenumber: str
+    description: str
+    logopath: str= None
+    technologies: str = None
+    mingroupsize: int
+    maxgroupsize: int
+    groupnumber: int
+    englishgroup: bool
+    remarks: str = None
+    cooperationtype: str = None
 
 
 class ProjectCreate(ProjectBase):
@@ -26,26 +29,26 @@ class ProjectCreate(ProjectBase):
 
 
 class Project(ProjectBase):
-    ProjectID: int
+    projectid: int
 
     class Config:
         orm_mode = True
 
 
 class ProjectReservationBase(BaseModel):
-    ProjectID: int
-    GroupID: int
-    IsConfirmed: Optional[bool]
-    Status: str
-    ConfirmationPath: Optional[str]
+    projectid: int
+    groupid: int
+    isconfirmed: bool
+    status: str
+    confirmationpath: Optional[str] = None
 
 
 class ProjectReservationCreate(ProjectReservationBase):
     pass
 
 
-class ProjectReservation(ProjectReservationBase):
-    ProjectReservationID: int
+class ProjectReservationReturn(ProjectReservationBase):
+    projectreservationid: int
 
     class Config:
         orm_mode = True
@@ -59,42 +62,42 @@ class ProjectReservation(ProjectReservationBase):
 
 
 class GroupBase(BaseModel):
-    GuardianID: Optional[int]
-    Name: Optional[str]
-    InviteCode: str
-    Size: Optional[int]
+    guardianid: Optional[int]
+    name: Optional[str]
+    invitecode: str
+    groupsize: Optional[int]
 
 
 class GroupCreate(GroupBase):
     pass
 
 
-class Group(GroupBase):
-    GroupID: int
+class GroupReturn(GroupBase):
+    groupid: int
 
     class Config:
         orm_mode = True
 
 
 class UserBase(BaseModel):
-    Name: str
-    Surname: str
-    Email: str
-    Password: str
-    roleName: str
+    name: str
+    surname: str
+    email: str
+    # Password: str
+    rolename: str
 
-
+# trzymamy haslo tutaj zeby np nie bylo dostepne podczas pobierania danych z bazy
 class UserCreate(UserBase):
-    pass
+    password: str
+    # pass
 
 
-class User(UserBase):
-    UserID: int
-    GroupID: Optional[int]
+class UserReturn(UserBase):
+    userid: int
+    groupid: int
 
     class Config:
         orm_mode = True
-
 
 """class UserRole(Enum):
     student="STUDENT"
@@ -104,35 +107,45 @@ class User(UserBase):
 
 
 class GuardianBase(BaseModel):
-    Name: str
-    Surname: str
-    Email: str
+    name: str
+    surname: str
+    email: str
 
 
 class GuardianCreate(GuardianBase):
     pass
 
 
-class Guardian(GuardianBase):
-    GuardianID: int
+class GuardianReturn(GuardianBase):
+    guardianid: int
 
     class Config:
         orm_mode = True
 
 
 class ActionHistoryBase(BaseModel):
-    ReservationID: int
-    DataTime: str
-    Content: str
-    Displayed: bool
+    reservationid: int
+    datatime: str
+    content: str
+    displayed: bool
 
 
 class ActionHistoryCreate(ActionHistoryBase):
     pass
 
 
-class ActionHistory(ActionHistoryBase):
-    HistoryID: int
+class ActionHistoryReturn(ActionHistoryBase):
+    historyid: int
 
     class Config:
         orm_mode = True
+
+# modele danych używane w  aplikacji
+# do reprezentowania tokenów uwierzytelniających i danych tokenów
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    name: str | None = None
+    scopes: list[str] = []

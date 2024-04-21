@@ -1,47 +1,187 @@
-from typing import Union
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from pydantic import BaseModel
-from ldap3 import Server, Connection, ALL
+from __future__ import annotations
 
-def LDAP_AUTH(domain,username,password):
-    didConnect=False
-    try:
-        # Define the server and connection settings
-        server = Server(f"ldap://{domain}", get_info=ALL)
-        conn = Connection(server, user=f"{username}@{domain}", password=password, auto_bind=True)
-        # Attempt to bind (authenticate) the user
-        conn.bind()
-        # Check if the bind was successful
-        if conn.result['result'] == 0:
-            print("Authentication successful")
-            didConnect = True
-    except:
-            print("Authentication failed")
-    finally:
-        # Don't forget to close the connection when you're done
-        try:
-            conn.unbind()
-        except:
-            ''
-    return didConnect
+from datetime import datetime, timedelta
+import random
+import time
+from enum import Enum
+
+from sqlalchemy.orm import Session
+from fastapi import Depends, FastAPI, HTTPException, status, Security
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, SecurityScopes
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from pydantic import parse_obj_as, ValidationError
+from fastapi.middleware.cors import CORSMiddleware
+
+
+import models, schemas, CRUD
+from database import SessionLocal, engine
+
+from config import ALGORITHM, SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ORIGINS
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login",scopes={"user": "Zwykly user", "arbiter": "Arbiter"})
+
+class RoleEnum(str, Enum):
+    student = "student"
+    leader = "leader"
+    admin = "admin"
 
 app = FastAPI()
 
-# Define the HTTPBasic authentication scheme
-security = HTTPBasic()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def get_password_hash(password):
+    return pwd_context.hash(password)
+
+
+def get_user(db: Session, name: str):
+    user = CRUD.get_user(db, name)
+    return user
+
+
+# funkcja odpowiadajaca za tworzenie tokenow JWT
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+# funkcja odpowiadajaca za logowanie uzytkownika
+def authenticate_user(db: Session, name: str, password: str):
+    user = CRUD.get_user(db, name)
+    if not user:
+        return False
+    if not verify_password(password, user.password):
+        return False
+    return user
+
+
+# funkcja odpowiadajaca za autoryzacje
+def get_current_user(security_scopes: SecurityScopes, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    if security_scopes.scopes:
+        authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
+    else:
+        authenticate_value = "Bearer"
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": authenticate_value},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        name: str = payload.get("sub")
+        if name is None:
+            raise credentials_exception
+        token_scopes = payload.get("scopes", [])
+        token_data = schemas.TokenData(scopes=token_scopes, name=name)
+    except (JWTError, ValidationError):
+        raise credentials_exception
+    user = get_user(db, name=token_data.name)
+    if user is None:
+        raise credentials_exception
+    for scope in security_scopes.scopes:
+        if scope not in token_data.scopes:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Not enough permissions",
+                headers={"WWW-Authenticate": authenticate_value},
+            )
+    return user
+
+
+
+# Endpoint rejestrujacy nowych uzytkownikow
+@app.post("/register/", status_code=201)
+def register(user: schemas.UserCreate, session: Session = Depends(get_db)):
+    existing_user = session.query(models.Users).filter_by(name=user.name).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+
+    user.password = get_password_hash(user.password)
+
+    CRUD.create_user(session, user)
+
+    return {"message":"user created successfully"}
+
+
+"""
+    Endpoint sluzacy do logowania. Zwraca token JWT.
+    Aby uzytkownik otrzymal stopien uprawnien "user", w bazie danych musi mu byc przypisana rola o nazwie "user".
+    Aby uzytkownik otrzymal stopien uprawnien "arbiter", w bazie danych musi mu byc przypisana rola o nazwie "arbiter".
+"""
+@app.post("/login/")
+def login(form_data: OAuth2PasswordRequestForm = Depends(), db:Session = Depends(get_db)):
+    user = authenticate_user(db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Pobieranie roli użytkownika na podstawie roleName
+    user_role = user.roleName
+
+    # Mapowanie roli użytkownika na odpowiednie zakresy (scopes)
+    if user_role == RoleEnum.student.value:
+        scopes = ["user"]
+    elif user_role == RoleEnum.leader.value:
+        scopes = ["user", "leader"]
+    elif user_role == RoleEnum.admin.value:
+        scopes = ["user", "admin"]
+    else:
+        # Domyślny zakres, gdy rola nie pasuje do żadnej zdefiniowanej w enumie
+        scopes = ["user"]
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username, "scopes": scopes}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+
+
 
 # Dependency to check LDAP authentication
-def check_ldap_auth(credentials: HTTPBasicCredentials = Depends(security)):
-    domain = "pwr.edu.pl"
-    if not LDAP_AUTH(domain, credentials.username, credentials.password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    return credentials.username
-
-# Example protected route using the dependency
-@app.get("/protected")
-async def protected_route(username: str = Depends(check_ldap_auth)):
-    return {"message": f"Hello, {username}! You have access to this protected route."}
+# def check_ldap_auth(credentials: HTTPBasicCredentials = Depends(security)):
+#     domain = "pwr.edu.pl"
+#     if not LDAP_AUTH(domain, credentials.username, credentials.password):
+#         raise HTTPException(status_code=401, detail="Invalid credentials")
+#     return credentials.username
+#
+# # Example protected route using the dependency
+# @app.get("/protected")
+# async def protected_route(username: str = Depends(check_ldap_auth)):
+#     return {"message": f"Hello, {username}! You have access to this protected route."}
 
 
 
@@ -92,9 +232,9 @@ def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+# @app.get("/items/{item_id}")
+# def read_item(item_id: int, q: Union[str, None] = None):
+#     return {"item_id": item_id, "q": q}
 
 
 # @app.put("/items/{item_id}")
