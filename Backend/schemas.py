@@ -8,7 +8,6 @@ from typing import Optional
 # do walidacji danych przychodzacych i wychodzacych z endpointow
 
 class ProjectBase(BaseModel):
-
     companyname: str
     projecttitle: str
     email: str
@@ -38,12 +37,15 @@ class Project(ProjectBase):
 class ProjectReservationBase(BaseModel):
     projectid: int
     groupid: int
-    isconfirmed: bool
-    status: str
+    isconfirmed: bool =None
+    status: str =None
     confirmationpath: Optional[str] = None
 
 
 class ProjectReservationCreate(ProjectReservationBase):
+    pass
+
+class ProjectReservationUpdate(ProjectReservationBase):
     pass
 
 
@@ -61,18 +63,18 @@ class ProjectReservationReturn(ProjectReservationBase):
 """
 
 
-class GroupBase(BaseModel):
+class ProjectGroupBase(BaseModel):
     guardianid: Optional[int]
     name: Optional[str]
     invitecode: str
     groupsize: Optional[int]
 
 
-class GroupCreate(GroupBase):
+class ProjectGroupCreate(ProjectGroupBase):
     pass
 
 
-class GroupReturn(GroupBase):
+class ProjectGroupReturn(ProjectGroupBase):
     groupid: int
 
     class Config:
