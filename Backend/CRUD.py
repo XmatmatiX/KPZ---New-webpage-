@@ -102,7 +102,9 @@ def create_project_group(db: Session, group: schemas.ProjectGroupCreate):
 Read
 """
 
-
+"""
+Tutaj jest jeden a w get by surname jest all ? Możemy dac w obu tak samo?
+"""
 def get_user_by_name(db: Session, name: str):
     db_user = db.query(models.Users).filter(models.Users.name == name).first()
     return db_user
@@ -121,10 +123,7 @@ def get_user_by_surname(db: Session, surname: str):
 
 
 def get_project_reservation_by_id(db: Session, project_reservation_id: int) -> models.ProjectReservation | None:
-    query_search = select(models.ProjectReservation).where(
-        models.ProjectReservation.projectid == project_reservation_id)
-    project_reservation = db.execute(query_search).first()
-    return project_reservation
+    return db.query(models.ProjectReservation).filter(models.ProjectReservation.projectreservationid == project_reservation_id).first()
 
 
 def get_project_reservation_by_group(db: Session, group_id: int):
@@ -142,6 +141,16 @@ def get_group_by_invite_code(db: Session, invite_code: str):
 def get_group(db:Session, groupid: int):
     return db.query(models.ProjectGroup).filter(models.ProjectGroup.groupid == groupid).first()
 
+
+def get_group_members(db:Session, groupid: int):
+    return db.query(models.Users).filter(models.Users.groupid == groupid).all()
+
+def get_group_leader(db:Session, groupid: int):
+    members = get_group_members(db, groupid)
+    for member in members:
+        if member.rolename == 'leader':
+            return member
+    return None
 
 """
 Update
@@ -165,6 +174,43 @@ def update_project_group_guardian(db: Session, group: schemas.ProjectGroupBase, 
     db.commit()
     db.refresh(group)
     return group
+
+def update_action_history_displayed(db: Session, history: schemas.ActionHistoryBase):
+    history.displayed = True
+    db.commit()
+    db.refresh(history)
+    return history
+"""
+Jesli doda sie pliki to rezerwacja ma status waiting na konfirmacje admina (?) 
+Dodanie pliku tworzy rowniez actionhistory o tym
+"""
+def update_project_reservation_files(db: Session, reservation:schemas.ProjectReservationBase, path):
+    reservation.confirmationpath = path
+    reservation.status = "waiting"
+    db.commit()
+    db.refresh(reservation)
+    action=schemas.ActionHistoryCreate(
+        reservationid=reservation.projectreservationid,
+        content='Dodano pliki',
+        datatime='13.04.2012',
+        displayed=False
+    )
+    create_action_history(db, action)
+    return reservation
+
+def update_project_reservation_isConfirmed(db: Session, reservation:schemas.ProjectReservationBase):
+    reservation.isConfirmed = True
+    reservation.status = "Confirmed"
+    db.commit()
+    db.refresh(reservation)
+    action=schemas.ActionHistoryCreate(
+        reservationid=reservation.projectreservationid,
+        content='Zatwierdzono',
+        datatime='13.04.2012',
+        displayed=False
+    )
+    create_action_history(db, action)
+    return reservation
 
 """
 Delete

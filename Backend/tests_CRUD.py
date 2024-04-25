@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import create_engine, false
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.testing import db
@@ -8,6 +10,7 @@ import time
 from fastapi.testclient import TestClient
 from database import SessionLocal
 from Backend import CRUD, models, schemas
+import numpy as np
 
 SQLALCHEMY_DATABASE_URL = "postgresql://postgres:mysecretpassword@localhost:5432/postgres"
 
@@ -72,12 +75,8 @@ def test_create_guardian_CRUD():
     assert created_guardian.email == guardian_data.email
 
 
-"""
-Coś nie tak
-"""
 
-
-def test_create_group_CRUD():
+def test_create_project_group_CRUD():
     group_data = schemas.ProjectGroupCreate(
         guardianid=2,
         name="gr",
@@ -172,9 +171,10 @@ def test_update_user_group_id():
 
 def test_get_group():
     db = SessionLocal()
-    group=CRUD.get_group(db, 1)
+    groupId=1
+    group=CRUD.get_group(db, groupId)
     assert group is not None
-    assert group.groupid == 1
+    assert group.groupid == groupId
 
 def test_update_project_group_guardian():
     db = SessionLocal()
@@ -195,3 +195,206 @@ def test_create_project_reservation():
     assert created_reservation is not None
     assert created_reservation.projectid == reservation.projectid
     assert created_reservation.groupid == reservation.groupid
+
+
+def test_create_action_history():
+    db = SessionLocal()
+    action_history = schemas.ActionHistoryCreate(
+        reservationid=1,
+        content='Dokonano rezerwacji',
+        datatime='13.04.2012',
+        displayed=False
+    )
+    createdHistory= CRUD.create_action_history(db,action_history)
+    assert createdHistory is not None
+    assert createdHistory.reservationid == action_history.reservationid
+    assert createdHistory.content == action_history.content
+
+def test_get_project_by_id():
+    id=1
+    db=SessionLocal()
+    project=CRUD.get_project_by_id(db, id)
+    assert project is not None
+    assert project.projectid == id
+
+def test_get_user_by_surname():
+    db=SessionLocal()
+    surname='User'
+    user=CRUD.get_user_by_surname(db, surname)[0]
+    assert user is not None
+    assert user.surname == surname
+
+def test_get_project_reservation_by_id():
+    db=SessionLocal()
+    resId=1
+    reservation=CRUD.get_project_reservation_by_id(db, resId)
+    assert reservation is not None
+    assert reservation.projectreservationid == resId
+
+def test_get_project_reservation_by_group():
+    db=SessionLocal()
+    group=1
+    reservation = CRUD.get_project_reservation_by_group(db, group)
+    assert reservation is not None
+    assert reservation.projectreservationid == group
+
+def test_get_action_history():
+    db=SessionLocal()
+    reservation=1
+    action_history = CRUD.get_action_history(db, reservation)
+    assert action_history is not None
+    assert len(action_history) >= 1
+    assert action_history[0].reservationid == reservation
+
+def test_update_action_history_displayed():
+    db=SessionLocal()
+    rid=1
+    history=CRUD.get_action_history(db,rid)[0]
+    updated_history=CRUD.update_action_history_displayed(db, history)
+    assert updated_history is not None
+    assert updated_history.reservationid == history.reservationid
+    assert updated_history.content == history.content
+    assert updated_history.displayed==True
+    assert updated_history.historyid == history.historyid
+    assert updated_history.datatime == history.datatime
+
+def test_update_project_reservation_files():
+    db=SessionLocal()
+    path="plik.pdf"
+    pid=1
+    reservation=CRUD.get_project_reservation_by_id(db, pid)
+    history=CRUD.get_action_history(db,pid)
+    updated_reservation=CRUD.update_project_reservation_files(db, reservation, path)
+    assert updated_reservation is not None
+    assert updated_reservation.projectid == reservation.projectid
+    assert updated_reservation.groupid == reservation.groupid
+    assert updated_reservation.confirmationpath == path
+    assert updated_reservation.projectreservationid == reservation.projectreservationid
+    assert updated_reservation.projectreservationid == pid
+
+    history2 = CRUD.get_action_history(db,pid)
+
+    assert len(history)+1 == len(history2)
+    newaction=[x for x in history2 if x not in history]
+    assert newaction is not None
+    assert newaction[0].content == 'Dodano pliki'
+    assert newaction[0].displayed == False
+    assert newaction[0].reservationid == pid
+
+def test_update_project_reservation_isConfirmed():
+    db=SessionLocal()
+    pid=1
+    reservation=CRUD.get_project_reservation_by_id(db, pid)
+    history=CRUD.get_action_history(db,pid)
+    updated_reservation=CRUD.update_project_reservation_isConfirmed(db, reservation)
+    assert updated_reservation is not None
+    assert updated_reservation.projectid == reservation.projectid
+    assert updated_reservation.groupid == reservation.groupid
+    assert updated_reservation.isConfirmed == True
+    assert updated_reservation.projectreservationid == reservation.projectreservationid
+    assert updated_reservation.projectreservationid == pid
+
+    history2 = CRUD.get_action_history(db,pid)
+
+    assert len(history)+1 == len(history2)
+    newaction=[x for x in history2 if x not in history]
+    assert newaction is not None
+    assert newaction[0].content == 'Zatwierdzono'
+    assert newaction[0].displayed == False
+    assert newaction[0].reservationid == pid
+
+def test_get_group_members():
+    db = SessionLocal()
+    user1 = schemas.UserCreate(
+        name="user1",
+        surname="User",
+        email="test@example.com",
+        password="password123",
+        rolename="sss"
+    )
+    user2 = schemas.UserCreate(
+        name="user1",
+        surname="User",
+        email="test@example.com",
+        password="password123",
+        rolename="sss"
+    )
+    user3 = schemas.UserCreate(
+        name="user1",
+        surname="User",
+        email="test@example.com",
+        password="password123",
+        rolename="sss"
+    )
+    group_data = schemas.ProjectGroupCreate(
+        guardianid=2,
+        name="gr",
+        invitecode="1e23",
+        groupsize=1
+    )
+
+    user1 = CRUD.create_user(db, user1)
+    user2 =CRUD.create_user(db, user2)
+    user3 = CRUD.create_user(db, user3)
+    user1 = CRUD.update_user_role(db, user1, 'leader')
+    user2 = CRUD.update_user_role(db, user2, 'student')
+    user3 = CRUD.update_user_role(db, user3, 'student')
+    group = CRUD.create_project_group(db, group_data)
+
+    CRUD.update_user_group_id(db, user1, group.groupid)
+    CRUD.update_user_group_id(db, user2, group.groupid)
+    CRUD.update_user_group_id(db, user3, group.groupid)
+    team = CRUD.get_group_members(db, group.groupid)
+
+    assert team is not None
+    assert len(team) == 3
+
+
+def test_get_group_leader():
+    db = SessionLocal()
+    user1 = schemas.UserCreate(
+        name="user1",
+        surname="User",
+        email="test@example.com",
+        password="password123",
+        rolename="sss"
+    )
+    user2 = schemas.UserCreate(
+        name="user1",
+        surname="User",
+        email="test@example.com",
+        password="password123",
+        rolename="sss"
+    )
+    user3 = schemas.UserCreate(
+        name="user1",
+        surname="User",
+        email="test@example.com",
+        password="password123",
+        rolename="sss"
+    )
+    group_data = schemas.ProjectGroupCreate(
+        guardianid=2,
+        name="gr",
+        invitecode="1e23",
+        groupsize=1
+    )
+
+    user1 = CRUD.create_user(db, user1)
+    user2 = CRUD.create_user(db, user2)
+    user3 = CRUD.create_user(db, user3)
+    user1 = CRUD.update_user_role(db, user1, 'leader')
+    user2 = CRUD.update_user_role(db, user2, 'student')
+    user3 = CRUD.update_user_role(db, user3, 'student')
+    group = CRUD.create_project_group(db, group_data)
+
+    CRUD.update_user_group_id(db, user1, group.groupid)
+    CRUD.update_user_group_id(db, user2, group.groupid)
+    CRUD.update_user_group_id(db, user3, group.groupid)
+
+    leader = CRUD.get_group_leader(db, group.groupid)
+    assert leader is not None
+    assert leader.name == user1.name
+    assert leader.surname == user1.surname
+    assert leader.email == user1.email
+

@@ -81,7 +81,7 @@ class Guardian(Base):
 
 
 class ActionHistory(Base):
-    __tablename__ = 'actionHistory'
+    __tablename__ = 'actionhistory'
     historyid = Column(Integer, primary_key=True, autoincrement=True)
     reservationid = Column(Integer, ForeignKey('projectreservation.projectreservationid'), nullable=False)
     datatime = Column(DateTime, nullable=False)
