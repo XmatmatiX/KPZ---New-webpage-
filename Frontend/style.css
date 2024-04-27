@@ -1,10 +1,12 @@
 :root {
-    --primary-dark: #38d1f8;
+    --primary-dark: #7cd7fa;
     --primary-light: #bae7f3;
     --neutral: #48c1e1;
     --hover: #949191;   /* po najechaniu na zmienna */
     --hover2: #e5e5e5;
     --white: #FFFFFF;
+    --back: #e4e6e7;
+    --red: #E32727F7;
 
     --radius-large: 64px;
     --radius-medium: 10px;
@@ -30,7 +32,7 @@ html{
 
 
 body{
-    background-color: #38d1f8;
+    background-color: var(--primary-dark);
     font-family: "Roboto Flex", sans-serif;
     font-optical-sizing: auto;
     font-weight: bold;
@@ -107,6 +109,21 @@ button:hover {
     background-color: var(--hover); /* Tło po najechaniu myszą */
 }
 
+.cleanButton {
+    margin: 20px auto;
+    width: 200px;
+    background-color: var(--red);
+}
+
+.cleanButton:hover {
+    background-color: #961313;
+}
+
+.addButton {
+    margin: 10px auto;
+    width: 200px;
+}
+
 .freeBorder {
     background-color: var(--primary-light);
     width: 170px;
@@ -131,6 +148,22 @@ input[type="checkbox"] {
     width: 400px;
 }
 
+.groupInput {
+    width: 700px;
+}
+
+.adminInput {
+    width: 500px;
+}
+
+.inputWithButton {
+    display: flex;
+}
+
+.inputWithButton > input {
+    margin-right: 10px;
+}
+
 .topicHeader {
     margin-left: 40px;
     margin-right: 40px;
@@ -143,26 +176,176 @@ input[type="checkbox"] {
     font-weight: normal;
 }
 
+.studentList {
+    padding: 0;
+    margin: 0 40px;
+    font-weight: normal;
+}
+
+.studentGroupList {
+    padding: 0;
+    margin-top: 10px;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 320px;
+    font-weight: normal;
+}
+
+.adminList {
+    padding: 5px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 40px;
+    margin-right: 400px;
+    font-weight: normal;
+}
+
 .borderItem {
     background-color: #bae7f3;
     margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
     padding: 10px;
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
-    grid-template-columns: 1fr 2fr 4fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 2fr 4fr 1fr 1fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+}
+
+.borderNotification {
+    background-color: #bae7f3;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 2fr 5fr 2fr 1fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+}
+
+.borderGroups {
+    background-color: #bae7f3;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 2fr 2fr 5fr 2fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+}
+
+.borderStudents2 {
+    background-color: #bae7f3;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 2fr 2fr 5fr 2fr 2fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+}
+
+.borderStudent {
+    background-color: #bae7f3;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 2fr 3fr 3fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
 }
 
 .topicItem {
+    cursor: pointer;
+    background-color: #fff;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    height: 55px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 1fr 2fr 4fr 1fr 1fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+    align-items: center;
+}
+
+.topicItem:hover {
+    background-color: var(--hover2);
+}
+
+.adminItem {
+    background-color: #fff;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    height: 55px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 3fr 3fr 2fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+    align-items: center;
+}
+
+.notificationItem {
+    cursor: pointer;
+    background-color: #fff;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    height: 55px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 2fr 5fr 2fr 1fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+    align-items: center;
+    font-weight: bold;
+    /* usuniecie pogrubienia w moemncie przeczytania powiadomienia*/
+}
+
+.notificationItem:hover {
+    background-color: var(--hover2);
+}
+
+.groupItem {
+    cursor: pointer;
     background-color: #fff;
     margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
     padding: 10px;
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
-    grid-template-columns: 1fr 2fr 4fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr 2fr 5fr 2fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
+    align-items: center;
+}
+
+.groupItem:hover {
+    background-color: var(--hover2);
+}
+
+.studentItem {
+    background-color: #fff;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    height: 55px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 2fr 2fr 5fr 2fr 2fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+    align-items: center;
+}
+
+.studentGroupItem {
+    background-color: #fff;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 2fr 3fr 3fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+    align-items: center;
 }
 
 .loginHeader {
@@ -205,7 +388,7 @@ input {
 
 .errorMessage {
     margin: 0px auto;
-    background-color: rgba(227, 39, 39, 0.97); /* Czerwone tło z przezroczystością */
+    background-color: var(--red); /* Czerwone tło z przezroczystością */
     width: 400px;
     height: 60px;
     padding: 10px;
@@ -224,7 +407,6 @@ input {
 .grid{
     display: grid;
     grid-template-columns: repeat(12,1fr);  /*1 fr - fraction = podziel ekran na 12 czesci*/
-    column-gap: 24px;
     width: 100%;
     height: 100vh;  /*cała wysokość okna*/
 }
@@ -270,14 +452,29 @@ input {
 
 .page {
     grid-column: 3/13;
+    margin-top: 20px;
 }
 
 h1 {
+    padding: 6px 24px;
     font-size: 30px;
+    background-color: var(--primary-light);
+}
+
+h2 {
+    font-size: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pp {
+    padding-right: 200px;
+    font-size: 20px;
 }
 
 article {
-    margin: 30px 10px;
+    margin: 30px 24px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -293,13 +490,44 @@ article {
     padding: 10px;
     display: flex;
     align-items: center;
-    font-weight: normal;
+}
+
+.addGroup {
+    margin-right: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 30px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.addGroup > * {
+    margin-bottom: 10px; /* Odstęp między elementami */
 }
 
 .searchButton {
     margin-left: 10px;
     height: 35px;
     width: 100px;
+}
+
+.newTopicButton {
+    margin-left: 10px;
+    height: 35px;
+    width: 170px;
+}
+
+.groupButton {
+    margin-left: 10px;
+    height: 35px;
+    width: 140px;
+}
+
+.adminButton {
+    margin-left: 80px;
+    height: 35px;
+    width: 200px;
 }
 
 .freeBorder2 {
