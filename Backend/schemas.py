@@ -13,7 +13,7 @@ class ProjectBase(BaseModel):
     email: str
     phonenumber: str
     description: str
-    logopath: str= None
+    logopath: str = None
     technologies: str = None
     mingroupsize: int
     maxgroupsize: int
@@ -37,8 +37,8 @@ class Project(ProjectBase):
 class ProjectReservationBase(BaseModel):
     projectid: int
     groupid: int
-    isconfirmed: bool =None
-    status: str =None
+    isconfirmed: bool = None
+    status: str = None
     confirmationpath: Optional[str] = None
 
 
@@ -64,10 +64,10 @@ class ProjectReservationReturn(ProjectReservationBase):
 
 
 class ProjectGroupBase(BaseModel):
-    guardianid: Optional[int]
-    name: Optional[str]
-    invitecode: str
-    groupsize: Optional[int]
+    guardianid: int = None
+    name: str = None
+    invitecode: str = None
+    groupsize: int = None
 
 
 class ProjectGroupCreate(ProjectGroupBase):
