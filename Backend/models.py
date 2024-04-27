@@ -34,7 +34,7 @@ class ProjectReservation(Base):
     __tablename__ = 'projectreservation'
     projectreservationid = Column(Integer, primary_key=True, autoincrement=True)
     projectid = Column(Integer, ForeignKey('project.projectid'), nullable=False)
-    groupid = Column(Integer, ForeignKey('projectgroup.groupid'), nullable=False)
+    groupid = Column(Integer, ForeignKey('projectgroup.groupid'), nullable=False, unique=True)
     isconfirmed = Column(Boolean)
     status = Column(String(25), nullable=False)
     confirmationpath = Column(String(255))
@@ -49,7 +49,7 @@ class ProjectGroup(Base):
     groupid = Column(Integer, primary_key=True, autoincrement=True)
     guardianid = Column(Integer, ForeignKey('guardian.guardianid'), nullable=True)
     name = Column(String(50), nullable=True)
-    invitecode = Column(String(10), nullable=False)
+    invitecode = Column(String(10), nullable=False, unique=True)
     groupsize = Column(Integer)
 
     guardian = relationship("Guardian", back_populates="projectGroup")
