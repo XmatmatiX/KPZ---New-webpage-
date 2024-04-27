@@ -1,6 +1,7 @@
 import random
 import string
 from datetime import datetime
+from typing import List, Type
 
 from sqlalchemy.orm import Session
 
@@ -145,7 +146,7 @@ def create_project_group(db: Session, group: schemas.ProjectGroupCreate):
 
 def create_project_group_short(db: Session, user: schemas.UserReturn) -> models.ProjectGroup:
     """
-    Creates a group with no parameter needed and generates its invite code as well as sets the size to 2
+    Creates a group with no parameter needed and generates its invite code as well as sets the size to 0 (1 actually)
     :param db:
     :param user: user creating group <= becomes a leader
     :return: created group
@@ -179,6 +180,18 @@ def get_user_by_id(db: Session, id: int):
     return db_user
 
 
+def get_all_users(db: Session):
+    return db.query(models.Users).all()
+
+
+def get_all_projetcs(db: Session):
+    return db.query(models.Project).all()
+
+
+def get_all_guardians(db: Session):
+    return db.query(models.Guardian).all()
+
+
 def get_project_by_id(db: Session, project_id: int):
     return db.query(models.Project).filter(models.Project.projectid == project_id).first()
 
@@ -196,7 +209,7 @@ def get_project_reservation_by_id(db: Session, project_reservation_id: int) -> m
         models.ProjectReservation.projectreservationid == project_reservation_id).first()
 
 
-def get_project_reservation_by_group(db: Session, group_id: int):
+def get_project_reservation_by_group(db: Session, group_id: int) -> models.ProjectReservation | None:
     return db.query(models.ProjectReservation).filter(
         models.ProjectReservation.groupid == group_id).first()
 
@@ -213,12 +226,13 @@ def get_group_by_invite_code(db: Session, invite_code: str):
     return db.query(models.ProjectGroup).filter(models.ProjectGroup.invitecode == invite_code).first()
 
 
-def get_group(db: Session, groupid: int):
+def get_group(db: Session, groupid: int) -> models.ProjectGroup | None:
     return db.query(models.ProjectGroup).filter(models.ProjectGroup.groupid == groupid).first()
 
 
 def get_group_members(db: Session, groupid: int) -> list[models.Users] | None:
     return db.query(models.Users).filter(models.Users.groupid == groupid).all()
+
 
 
 def get_group_leader(db: Session, groupid: int) -> models.Users | None:
@@ -231,6 +245,19 @@ def get_group_leader(db: Session, groupid: int) -> models.Users | None:
 
 def get_guardian(db: Session, id: int) -> models.Guardian | None:
     return db.query(models.Guardian).filter(models.Guardian.guardianid == id).first()
+
+
+def get_all_projects(db: Session) -> list[Type[models.Project]]:
+    return db.query(models.Project).all()
+
+
+def get_groups_assigned_to_projects(db: Session, project: models.Project) -> list[int] | None:
+    groups = []
+    reservations = db.query(models.ProjectReservation).filter(
+        models.ProjectReservation.projectid == project.projectid).all()
+    for reservation in reservations:
+        groups.append(reservation.groupid)
+    return groups
 
 
 """
@@ -396,7 +423,6 @@ def delete_group(db: Session, group: schemas.ProjectGroupReturn):
         raise exceptions.GroupWithReservation
 
 
-
 def delete_project_reservation(db: Session, reservation: schemas.ProjectReservationBase):
     """
     This deletes a reservation as well as all acton history connected to that
@@ -470,7 +496,7 @@ def generate_invite_code(size=6, chars=string.ascii_uppercase + string.digits) -
     """
     return ''.join(random.choice(chars) for _ in range(size))
 
-def has_group_reservation(db: Session, gid : int):
+
+def has_group_reservation(db: Session, gid: int):
     db_query = db.query(models.ProjectReservation).filter(models.ProjectReservation.groupid == gid).first()
     return db_query is not None
-

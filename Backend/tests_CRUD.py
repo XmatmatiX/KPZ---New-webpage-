@@ -600,3 +600,4 @@ def test_has_group_reservation():
     db = SessionLocal()
     gid=10
     assert CRUD.has_group_reservation(db, gid)
+
