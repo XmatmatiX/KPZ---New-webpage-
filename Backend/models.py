@@ -1,68 +1,91 @@
-from sqlalchemy import  Column, Integer, String, Boolean, Text, ForeignKey, DateTime
+# from enums import RoleEnum
+
+from sqlalchemy import Column, Integer, String, Boolean, Text, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+
+# definiowanie modeli danych w SQLAlchemy
+# mapujemy obiekty Python na rekordy w bazie danych
+
 class Project(Base):
-    __tablename__ = 'Project'
-    ProjectID = Column(Integer, primary_key=True)
-    CompanyName = Column(String(50), nullable=False)
-    ProjectTitle = Column(String(255), nullable=False)
-    Email = Column(String(50), nullable=False)
-    PhoneNumber = Column(String(15), nullable=False)
-    Description = Column(Text, nullable=False)
-    LogoPath = Column(String(255))
-    Technologies = Column(Text)
-    MinGroupSize = Column(Integer, nullable=False)
-    MaxGroupSize = Column(Integer, nullable=False)
-    GroupNumber = Column(Integer, nullable=False)
-    EnglishGroup = Column(Boolean)
-    Remarks = Column(Text)
-    CooperationType = Column(Text)
+    __tablename__ = 'project'
+    projectid = Column(Integer, primary_key=True, autoincrement=True)
+    companyname = Column(String(50), nullable=False)
+    projecttitle = Column(String(255), nullable=False)
+    email = Column(String(50), nullable=False)
+    phonenumber = Column(String(15), nullable=False)
+    description = Column(Text, nullable=False)
+    logopath = Column(String(255))
+    technologies = Column(Text)
+    mingroupsize = Column(Integer, nullable=False)
+    maxgroupsize = Column(Integer, nullable=False)
+    groupnumber = Column(Integer, nullable=False)
+    englishgroup = Column(Boolean)
+    remarks = Column(Text)
+    cooperationtype = Column(Text)
+
+    reservations = relationship("ProjectReservation", back_populates="project")
+
 
 class ProjectReservation(Base):
-    __tablename__ = 'ProjectReservation'
-    ProjectReservationID = Column(Integer, primary_key=True)
-    ProjectID = Column(Integer, ForeignKey('Project.ProjectID'), nullable=False)
-    GroupID = Column(Integer, ForeignKey('Group.GroupID'), nullable=False)
-    IsConfirmed = Column(Boolean)
-    Status = Column(String(25), nullable=False)
-    ConfirmationPath = Column(String(255))
+    __tablename__ = 'projectreservation'
+    projectreservationid = Column(Integer, primary_key=True, autoincrement=True)
+    projectid = Column(Integer, ForeignKey('project.projectid'), nullable=False)
+    groupid = Column(Integer, ForeignKey('projectgroup.groupid'), nullable=False, unique=True)
+    isconfirmed = Column(Boolean)
+    status = Column(String(25), nullable=False)
+    confirmationpath = Column(String(255))
 
-class Group(Base):
-    __tablename__ = 'Group'
-    GroupID = Column(Integer, primary_key=True)
-    GuardianID = Column(Integer, ForeignKey('Guardian.GuardianID'))
-    Name = Column(String(50))
-    InviteCode = Column(String(10), nullable=False)
-    Size = Column(Integer)
+    project = relationship("Project", back_populates="reservations")
+    group = relationship("ProjectGroup", back_populates="projectreservation")
+    history = relationship("ActionHistory", back_populates="reservation")
 
-    guardian = relationship("Guardian")
 
-class User(Base):
-    __tablename__ = 'User'
-    UserID = Column(Integer, primary_key=True)
-    GroupID = Column(Integer, ForeignKey('Group.GroupID'))
-    Name = Column(String(25), nullable=False)
-    Surname = Column(String(50), nullable=False)
-    Email = Column(String(50), nullable=False)
-    Password = Column(String(255), nullable=False)
-    roleName = Column(String(25), nullable=False)
+class ProjectGroup(Base):
+    __tablename__ = 'projectgroup'
+    groupid = Column(Integer, primary_key=True, autoincrement=True)
+    guardianid = Column(Integer, ForeignKey('guardian.guardianid'), nullable=True)
+    name = Column(String(50), nullable=True)
+    invitecode = Column(String(10), nullable=False, unique=True)
+    groupsize = Column(Integer)
+
+    guardian = relationship("Guardian", back_populates="projectGroup")
+    projectreservation = relationship("ProjectReservation", back_populates="group")
+    users = relationship("Users", back_populates="studentsgroup")
+
+
+class Users(Base):
+    __tablename__ = 'users'
+    userid = Column(Integer, primary_key=True, autoincrement=True)
+    groupid = Column(Integer, ForeignKey('projectgroup.groupid')) #, autoincrement=True)  #dodalam nullable=True
+    name = Column(String(25), nullable=False)
+    surname = Column(String(50), nullable=False)
+    email = Column(String(50), nullable=False)
+    password = Column(String(64), nullable=False)  #do zmiany potem !!!!!
+    rolename = Column(String(25), nullable=False)
+
+    studentsgroup = relationship("ProjectGroup", back_populates="users")
+
 
 class Guardian(Base):
-    __tablename__ = 'Guardian'
-    GuardianID = Column(Integer, primary_key=True)
-    Name = Column(String(25), nullable=False)
-    Surname = Column(String(50), nullable=False)
-    Email = Column(String(50), nullable=False)
+    __tablename__ = 'guardian'
+    guardianid = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(25), nullable=False)
+    surname = Column(String(50), nullable=False)
+    email = Column(String(50), nullable=False)
+
+    projectGroup = relationship("ProjectGroup", back_populates='guardian')
+
 
 class ActionHistory(Base):
-    __tablename__ = 'ActionHistory'
-    HistoryID = Column(Integer, primary_key=True)
-    ReservationID = Column(Integer, ForeignKey('ProjectReservation.ProjectReservationID'), nullable=False)
-    DataTime = Column(DateTime, nullable=False)
-    Content = Column(Text, nullable=False)
-    Displayed = Column(Boolean, nullable=False)
+    __tablename__ = 'actionhistory'
+    historyid = Column(Integer, primary_key=True, autoincrement=True)
+    reservationid = Column(Integer, ForeignKey('projectreservation.projectreservationid'), nullable=False)
+    datatime = Column(DateTime, nullable=False)
+    content = Column(Text, nullable=False)
+    displayed = Column(Boolean, nullable=False)
 
-
+    reservation = relationship("ProjectReservation", back_populates="history")
