@@ -30,8 +30,8 @@ class RoleEnum(str, Enum):
 
 
 class ProjectStatus(str, Enum):
-    available = "available"
-    reserved = "reserved"
+    available = "wolny"
+    reserved = "zarezerwowany"
 
 
 app = FastAPI()

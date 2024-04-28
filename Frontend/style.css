@@ -168,6 +168,7 @@ input[type="checkbox"] {
     margin-left: 40px;
     margin-right: 40px;
     margin-bottom: 20px;
+    margin-top: 30px;
 }
 
 .topicList {
@@ -207,6 +208,17 @@ input[type="checkbox"] {
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
     grid-template-columns: 1fr 2fr 4fr 1fr 1fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+}
+
+.borderItemAdmin {
+    background-color: #bae7f3;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 1fr 2fr 4fr 1fr 1fr 1fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
 }
@@ -253,6 +265,24 @@ input[type="checkbox"] {
     grid-template-columns: 2fr 3fr 3fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
+}
+
+.topicItemAdmin {
+    cursor: pointer;
+    background-color: #fff;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    height: 55px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 1fr 2fr 4fr 1fr 1fr 1fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+    align-items: center;
+}
+
+.topicItemAdmin:hover {
+    background-color: var(--hover2);
 }
 
 .topicItem {
