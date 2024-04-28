@@ -20,24 +20,32 @@
         <button class="headerButton">Przeglądaj tematy</button>
         <button id="logout" class="headerButton">Wyloguj się</button>
     </section>
-    
+ 
     <section class="grid">
         <div class="menu">
             <p>Przeglądaj</p>
             <button id="homeButton" class="menuButton"><img src="home.png" alt="There should be home photo"> Strona główna </button>
-            <button id="searchButton" class="menuButton"><img src="loupe.png" alt="There should be home photo"> Wolne grupy </button>
-            <button id="groupButton" class="pageButton"><img src="people.png" alt="There should be home photo"> Twoja grupa </button>
+            <button id="searchButton" class="pageButton"><img src="loupe.png" alt="There should be home photo"> Wolne grupy </button>
+            <button id="groupButton" class="menuButton"><img src="people.png" alt="There should be home photo"> Twoja grupa </button>
             <button id="enrollmentButton" class="menuButton"><img src="home.png" alt="There should be home photo"> Zapisy </button>
         </div>
         <div class="page">
-    
+            <div class="signInHeader">Zapisy na projekt</div>
+
+            <div id="errorId" class="errorMessage">
+                Niestety temat jest już zajęty
+            </div>
+            <div id="successId" class="successMessage">
+                Udało Ci się zapisać
+            </div>
+        
+            <section class="idSection">
+                <input id="idTopic" placeholder="Wpisz ID tematu">
+                <button onclick="id()">Zapisz</button>
+            </section>
         </div>
     </section>
-    <section class="content">
-        <h2>Zapisy na projekt</h2>
-        <input type="text" id="topicID" placeholder="Wpisz ID tematu">
-        <button id="signupButton">Zapisz</button>
-        <div id="confirmationMessage"></div>
-    </section>
+    
+    <script src="script.js"></script>
     </body>
     </html>
