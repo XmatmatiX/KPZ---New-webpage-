@@ -17,7 +17,7 @@ CREATE TABLE project (
 CREATE TABLE projectReservation (
   projectreservationid SERIAL NOT NULL,
   projectid            int4 NOT NULL,
-  groupv              int4 NOT NULL,
+  groupid              int4 NOT NULL,
   isconfirmed          bool,
   status               varchar(25) NOT NULL,
   confirmationpath     varchar(255),
@@ -65,6 +65,6 @@ ALTER TABLE actionhistory OWNER TO postgres;
 
 ALTER TABLE projectreservation ADD CONSTRAINT FKProjectRes276242 FOREIGN KEY (projectid) REFERENCES project (projectid);
 ALTER TABLE users ADD CONSTRAINT FKUser82101 FOREIGN KEY (groupid) REFERENCES projectgroup (groupid);
-ALTER TABLE projectreservation ADD CONSTRAINT FKProjectRes901919 FOREIGN KEY (groupid) REFERENCES projectgroup (groupid); #w pierwszym groupv
+ALTER TABLE projectreservation ADD CONSTRAINT FKProjectRes901919 FOREIGN KEY (groupid) REFERENCES projectgroup (groupid);
 ALTER TABLE actionhistory ADD CONSTRAINT FKActionHist803780 FOREIGN KEY (reservationid) REFERENCES projectreservation (projectreservationid);
 ALTER TABLE projectgroup ADD CONSTRAINT FKGroup34297 FOREIGN KEY (guardianid) REFERENCES guardian (guardianid);
