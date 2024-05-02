@@ -143,6 +143,13 @@ def create_project_group(db: Session, group: schemas.ProjectGroupCreate):
     db.refresh(db_group)
     return db_group
 
+# def create_project_group_with_leader(db: Session, group: schemas.ProjectGroupCreate):
+#     if group.invitecode is None:
+#         group.invitecode = generate_invite_code()
+#     db_group = models.ProjectGroup(invitecode=group.invitecode, groupsize=1)
+#     db.add(db_group)
+#     db.commit()
+#     db.refresh(db_group)
 
 def create_project_group_short(db: Session, user: schemas.UserReturn) -> models.ProjectGroup:
     """
@@ -182,11 +189,15 @@ def get_user_by_id(db: Session, id: int):
 
 def get_all_users(db: Session):
     return db.query(models.Users).all()
-
+def get_free_students(db: Session):
+    # Pobierz wszystkich użytkowników, którzy nie mają przypisanej grupy
+    return db.query(models.Users).filter(models.Users.groupid == None).all()
 
 def get_all_projetcs(db: Session):
     return db.query(models.Project).all()
 
+def get_all_groups(db: Session):
+    return db.query(models.ProjectGroup).all()
 
 def get_all_guardians(db: Session):
     return db.query(models.Guardian).all()
@@ -264,6 +275,8 @@ def get_groups_assigned_to_projects(db: Session, project: models.Project) -> lis
 Update
 """
 
+# # dodawanie uzytkownika do grupy
+# def update_project_group_users(db:Session, user)
 
 def update_user_role(db: Session, user: schemas.UserBase, role: str):
     user.rolename = role
