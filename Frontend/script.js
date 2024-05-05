@@ -64,6 +64,44 @@ document.addEventListener("DOMContentLoaded", function() {
         window.location.href = "enrollment.html";
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+    const manageButton = document.getElementById('managePosition');
+
+    if (manageButton) {
+        manageButton.addEventListener('click', function() {
+            window.location.href = 'changeLider.html'; // Przekierowanie do strony changeLider.html
+        });
+    } else {
+        console.log('Przycisk zarządzania stanowiskiem nie został znaleziony');
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    const groupButton = document.getElementById('groupButton');
+
+    if (groupButton) {
+        groupButton.addEventListener('click', function() {
+            window.location.href = 'studentInGroup.html'; // Przekierowanie do strony changeLider.html
+        });
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    const changeButton = document.getElementById('change');
+
+    if (changeButton) {
+        changeButton.addEventListener('click', function() {
+            window.location.href = 'changeLider.html'; // Przekierowanie do strony changeLider.html
+        });
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    const changeButton = document.getElementById('signIn');
+
+    if (changeButton) {
+        changeButton.addEventListener('click', function() {
+            window.location.href = 'zapisyView.html'; // Przekierowanie do strony changeLider.html
+        });
+    }
+});
 
 /* ADMIN VIEW*/
 
@@ -148,3 +186,188 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+/*student bez grupy*/
+document.addEventListener("DOMContentLoaded", function() {
+    const joinButton = document.querySelector(".join-btn");
+    const createButton = document.querySelector(".create-btn");
+    const joinGroupInput = document.querySelector(".option input[type='text']");
+    const createGroupInput = document.querySelector(".option:nth-child(2) input[type='text']");
+
+    joinButton.addEventListener("click", function() {
+        const groupPassword = joinGroupInput.value.trim();
+        if (groupPassword) {
+            // Symulacja żądania AJAX
+            fetch('/join-group', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password: groupPassword })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Udało się dołączyć do grupy.");
+                } else {
+                    alert("Nie udało się dołączyć do grupy: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Wystąpił błąd podczas dołączania do grupy.");
+            });
+        } else {
+            alert("Proszę podać hasło grupy.");
+        }
+    });
+
+    createButton.addEventListener("click", function() {
+        const groupName = createGroupInput.value.trim();
+        if (groupName) {
+            // Symulacja żądania AJAX
+            fetch('/create-group', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: groupName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Grupa została utworzona.");
+                } else {
+                    alert("Nie udało się utworzyć grupy: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Wystąpił błąd podczas tworzenia grupy.");
+            });
+        } else {
+            alert("Proszę podać nazwę grupy.");
+        }
+    });
+});
+
+
+
+document.getElementById('tutor').addEventListener('click', function() {
+    document.getElementById('formModal').style.display = 'block';
+});
+
+document.getElementsByClassName('close')[0].onclick = function() {
+    document.getElementById('formModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    var modal = document.getElementById('formModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function submitForm() {
+    var imie = document.getElementById('imie').value;
+    var nazwisko = document.getElementById('nazwisko').value;
+    var email = document.getElementById('email').value;
+    alert('Imię: ' + imie + '\nNazwisko: ' + nazwisko + '\nEmail: ' + email);
+    document.getElementById('formModal').style.display = 'none';
+}
+document.getElementById('file').addEventListener('click', function() {
+    document.getElementById('fileModal').style.display = 'block';
+});
+
+document.getElementsByClassName('close')[0].onclick = function() {
+    document.getElementById('fileModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    var modal = document.getElementById('fileModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+document.getElementById('openModal').addEventListener('click', function() {
+    document.getElementById('fileModal').style.display = 'block';
+});
+
+document.getElementsByClassName('close')[0].onclick = function() {
+    document.getElementById('fileModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById('fileModal')) {
+        document.getElementById('fileModal').style.display = 'none';
+    }
+}
+function deleteFile() {
+    var fileInput = document.getElementById('fileInput');
+    if (fileInput) {
+        fileInput.value = ''; // Resetuje wybór plików
+    }
+}
+
+function uploadFiles() {
+    var fileInput = document.getElementById('fileInput');
+    var files = fileInput.files;
+    var formData = new FormData();
+
+    // Dodaje pliki do obiektu FormData
+    for (let i = 0; i < files.length; i++) {
+        formData.append('files[]', files[i]);
+    }
+
+    // Opcje fetch do wysłania plików
+    fetch('/upload', {  // Zakładam, że "/upload" to endpoint na Twoim serwerze
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())  // Oczekuje, że serwer zwróci JSON
+    .then(data => {
+        console.log('Success:', data);
+        alert('Pliki zostały pomyślnie wysłane.');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Wystąpił błąd podczas przesyłania plików.');
+    });
+}
+
+
+function showModal() {
+    const modal = document.getElementById('formModal');
+    modal.style.display = 'block';
+  
+    const closeButton = modal.querySelector('.close');
+    closeButton.onclick = function() {
+      modal.style.display = 'none';
+    }
+  
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+  }
+  
+  // Przycisk do otwierania modala
+  document.getElementById('join-btn').addEventListener('click', showModal);
+  document.getElementById('send').addEventListener('click', function() {
+    alert('Plik został wysłany do zatwierdzenia.');
+});
+/*studentInGroup*/
+
+function leaveGroup(groupName, leaderName) {
+    document.getElementById('groupName').textContent = groupName;
+    document.getElementById('leaderName').textContent = leaderName;
+    document.getElementById('leaveModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('leaveModal').style.display = 'none';
+}
+
+document.querySelector('.modal .close').addEventListener('click', closeModal);
+openModal('Grupa XYZ', 'Jan Kowalski');
+
