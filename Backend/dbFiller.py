@@ -4,7 +4,7 @@ from database import SessionLocal
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:mysecretpassword@localhost:5432/postgres"
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:Kpz2024@localhost:5432/kpz_database"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

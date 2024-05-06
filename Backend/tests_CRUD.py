@@ -6,7 +6,7 @@ from Backend import CRUD, models, schemas
 from database import SessionLocal
 import exceptions
 
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:mysecretpassword@localhost:5432/postgres"
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:Kpz2024@localhost:5432/kpz_database"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
