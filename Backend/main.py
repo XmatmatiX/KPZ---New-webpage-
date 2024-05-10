@@ -206,7 +206,7 @@ def project_list(db: Session = Depends(get_db)):
     return {"logos": logos, "companynames": companynames, "titles": titles, "projecstid": pid, "minsizes": minsizes,
             "maxsizes": maxsizes, "status": stats}
 
-
+########### SEKCJA ADMIN ################
 @app.get("/Admin/ProjectList")
 def admin_project_list(db: Session = Depends(get_db)):
     projects = CRUD.get_all_projects(db)
@@ -254,6 +254,204 @@ def admin_group(id: int, db: Session = Depends(get_db)):
     return {"id": id, "members": members, "thema": project.projecttitle, "company": project.companyname,
             "state": reservation.status}
 
+@app.get("/Admin/Groups")
+def admin_groups(db: Session = Depends(get_db)):
+    groups = CRUD.get_all_groups(db)
+    return {"groups:": groups}
+
+    id = []
+    guardian = []
+    invitecode = []
+    size = []
+
+    for group in groups:
+        # Dodawanie atrybutów do odpowiednich list
+        group_ids.append(group.groupid)
+        group_guardians.append(group.guardianid)
+        group_invitecodes.append(group.invitecode)
+        group_sizes.append(group.groupsize)
+
+    # Zwracanie wyniku jako słownik
+    return {
+        "id": group_ids,
+        "guardian": group_guardians,
+        "invitecode": group_invitecodes,
+        "size": group_sizes
+    }
+@app.get("/Admin/FreeStudents")
+def admin_free_students(db: Session = Depends(get_db)):
+    students = CRUD.get_free_students(db)
+    return {"students:": students}
+
+    student_ids = []
+    student_names = []
+    student_surnames = []
+    student_indexes = []
+
+    for student in students:
+        # Dodawanie atrybutów do odpowiednich list
+        student_ids.append(student.userid)
+        student_names.append(student.name)
+        student_surnames.append(student.surname)
+        student_indexes.append(student.index)
+
+    # Zwracanie wyniku jako słownik
+    return {
+        "id": student_ids,
+        "name": student_names,
+        "surname": student_surnames,
+        "index": student_indexes
+    }
+
+
+
+########### SEKCJA STUDENT ################
+
+@app.get("/Student/Group/{id}")
+def get_student_group(student_id: int, db: Session = Depends(get_db)):
+    # Get the student by their id
+    student = CRUD.get_user_by_id(db, student_id)
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    # Get the group of the student
+    group = CRUD.get_group(db, student.groupid)
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+
+    # Initialize lists for member details
+    member_details = []
+
+    # Get group members
+    members = CRUD.get_group_members(db, group.groupid)
+
+    # Check if the project is reserved
+    reservation = CRUD.get_project_reservation_by_group(db, group.groupid)
+    if reservation:
+        # Project is reserved, get contact information
+        contact_info = {
+            "company": reservation.project.companyname,
+            "contact_email": reservation.project.email,
+            "contact_phone": reservation.project.phonenumber
+        }
+    else:
+        # Project is not reserved, set contact information to null
+        contact_info = {
+            "company": None,
+            "contact_email": None,
+            "contact_phone": None
+        }
+
+    # Check if the group has a guardian
+    guardian = CRUD.get_guardian(db, group.guardianid)
+    if guardian:
+        # Guardian exists, get guardian details
+        guardian_info = {
+            "guardian_name": f"{guardian.name} {guardian.surname}",
+            "guardian_email": guardian.email
+        }
+    else:
+        # Guardian does not exist, set guardian details to null
+        guardian_info = {
+            "guardian_name": None,
+            "guardian_email": None
+        }
+
+    # Iterate over group members and get their details
+    for member in members:
+        member_details.append({
+            "name": member.name,
+            "surname": member.surname,
+            "role": member.rolename
+        })
+
+    # Return the group information along with student details
+    return {
+        "contact_info": contact_info,
+        "guardian_info": guardian_info,
+        "members": member_details,
+        "invite_code": group.invitecode,
+        "group_size": group.groupsize
+    }
+
+@app.put("/Student/ChangeLeader/{id}")
+def put_change_leader(user_id: int, db: Session = Depends(get_db)):
+    user = CRUD.get_user_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Sprawdź, czy użytkownik jest liderem
+    if user.rolename != RoleEnum.leader.value:
+        # Jeśli użytkownik nie jest liderem, zmień jego status na studenta
+        user.rolename = RoleEnum.student.value
+
+        # Znajdź aktualnego lidera i zmień jego status na studenta
+        current_leader = CRUD.get_current_leader(db)
+        if current_leader:
+            current_leader.rolename = RoleEnum.student.value
+
+        # Przypisz wybranego użytkownika jako lidera
+        user.rolename = RoleEnum.leader.value
+
+        # Zapisz zmiany w bazie danych
+        db.commit()
+
+    return {"message": "Leader changed successfully"}
+# NIE DZIALA JESZCZE
+# @app.post("/Student/Enroll/{id}")
+# def enroll_student_to_project(project_id: int, user_id: int, db: Session = Depends(get_db)):
+#     # Sprawdź, czy użytkownik istnieje
+#     user = CRUD.get_user_by_id(db, user_id)
+#     if not user:
+#         raise HTTPException(status_code=404, detail="User not found")
+#
+#     # Sprawdź, czy użytkownik ma rolę lidera
+#     if user.rolename != "leader":
+#         raise HTTPException(status_code=403, detail="You must be a leader to enroll in a project")
+#
+#     # Sprawdź, czy projekt istnieje
+#     project = CRUD.get_project_by_id(db, project_id)
+#     if not project:
+#         raise HTTPException(status_code=404, detail="Project not found")
+#
+#     # Stwórz nową rezerwację projektu
+#     reservation = schemas.ProjectReservationCreate(projectid=project_id, groupid=user.groupid)
+#
+#     try:
+#         # Spróbuj utworzyć rezerwację projektu
+#         new_reservation = CRUD.create_project_reservation(db, reservation)
+#     except exceptions.ProjectNotAvailableException:
+#         raise HTTPException(status_code=400, detail="Project cannot be reserved at the moment")
+#
+#     return {"message": "Enrollment successful", "group_id": user.groupid, "project_id": project_id}
+
+@app.post("/Student/unsubscribe/{id}")
+def unsubscribe_from_group(user_id: int, db: Session = Depends(get_db)):
+    # Pobierz użytkownika
+    user = CRUD.get_user_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Sprawdź, czy użytkownik należy do jakiejkolwiek grupy
+    if not user.groupid:
+        raise HTTPException(status_code=400, detail="User is not in any group")
+
+    # Pobierz grupę użytkownika
+    group = CRUD.get_group(db, user.groupid)
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+
+    # Jeśli użytkownik jest liderem grupy, nie pozwól mu opuścić grupy
+    if user.rolename == RoleEnum.leader.value:
+        raise HTTPException(status_code=400, detail="You cannot leave the group because you are the leader")
+
+    # Jeśli użytkownik jest zwykłym członkiem grupy, usuń go z grupy
+    CRUD.remove_user_from_group(db, user_id)
+
+    # Zapisz zmiany w bazie danych
+    db.commit()
+
+    return {"message": "User unsubscribed from the group successfully"}
 
 # Dependency to check LDAP authentication
 # def check_ldap_auth(credentials: HTTPBasicCredentials = Depends(security)):
@@ -312,11 +510,4 @@ def admin_group(id: int, db: Session = Depends(get_db)):
 def read_root():
     return {"Hello": "World"}
 
-# @app.get("/items/{item_id}")
-# def read_item(item_id: int, q: Union[str, None] = None):
-#     return {"item_id": item_id, "q": q}
 
-
-# @app.put("/items/{item_id}")
-# def update_item(item_id: int, item: Item):
-#     return {"item_name": item.name, "item_id": item_id}
