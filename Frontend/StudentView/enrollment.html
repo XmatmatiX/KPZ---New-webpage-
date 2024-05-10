@@ -11,14 +11,13 @@
     <title>KPZ</title>
 </head>
 <body>
-
 <section class="header">
     <img src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
     <div class="title">
         <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
         <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
     </div>
-    <button id="topicsStudent" class="headerButton">Przeglądaj tematy</button>
+    <button class="headerButton">Przeglądaj tematy</button>
     <button id="logout" class="headerButton">Wyloguj się</button>
 </section>
 
@@ -31,11 +30,22 @@
         <button id="enrollmentButton" class="pageButton"><img src="../Images/home.png" alt="There should be home photo"> Zapisy </button>
     </div>
     <div class="page">
+        <div class="signInHeader">Zapisy na projekt</div>
 
+        <div id="errorId" class="errorMessage">
+            Niestety temat jest już zajęty
+        </div>
+        <div id="successId" class="successMessage">
+            Udało Ci się zapisać
+        </div>
+
+        <section class="idSection">
+            <input id="idTopic" placeholder="Wpisz ID tematu">
+            <button onclick="id()">Zapisz</button>
+        </section>
     </div>
 </section>
 
 <script src="studentScript.js"></script>
-
 </body>
 </html>

@@ -13,6 +13,7 @@
     --radius-small: 5px;
 
     --font-small: 14px;
+    --font-big: 24px;
 
     --title-font: "Italiana", sans-serif;
     --transition: all 0.3s ease-in-out; /* efekt po najechaniu*/
@@ -434,6 +435,20 @@ input {
     margin-bottom: 10px; /* Odstęp między paragrafami */
 }
 
+.successMessage {
+    margin: 0px auto;
+    background-color: rgba(111, 227, 39, 0.348); /* Czerwone tło z przezroczystością */
+    width: 400px;
+    height: 60px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
 .grid{
     display: grid;
     grid-template-columns: repeat(12,1fr);  /*1 fr - fraction = podziel ekran na 12 czesci*/
@@ -502,6 +517,24 @@ h2 {
     padding-right: 200px;
     font-size: 20px;
 }
+
+/*p {*/
+/*    color: #323232;*/
+/*    line-height: 1.6;*/
+/*    !*font-size: large;*!*/
+/*}*/
+
+/*.buttonStudent {*/
+/*    background-color: #1c1c1c;*/
+/*    color: white;*/
+/*    border: none;*/
+/*    padding: 10px 20px;*/
+/*    margin: 10px 5px;*/
+/*    cursor: pointer;*/
+/*    border-radius: 10px;*/
+/*    font-size: 1rem;*/
+/*    transition: background-color 0.3s;*/
+/*}*/
 
 article {
     margin: 30px 24px;
@@ -573,4 +606,373 @@ article {
     align-items: center;
     font-weight: normal;
 }
+
+/*zapisyView*/
+.signInHeader {
+    background-color: var(--primary-light);
+    font-size: var(--font-big);
+    width: 400px;
+    height: 60px;
+    margin: 20px auto;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Wyśrodkowanie zawartości na osi poziomej */
+    text-align: center; /* Wyśrodkowanie tekstu */
+}
+.idSection {
+    background-color: var(--neutral);
+    width: 400px;
+    height: 300px;
+    margin: 20px auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Wyśrodkowanie zawartości na osi poziomej */
+}
+
+.idSection input {
+    margin-bottom: 20px; /* Zwiększenie odstępu między inputami */
+}
+
+/*StudentInGroup*/
+.content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    /*margin-left: 200px; /* Odpowiednik szerokości sidebar */
+    padding: 10px;
+}
+.group-info, .reservation-info {
+    background:  #bbdefb;
+    margin: 10px;
+    padding: 20px;
+    border-radius: 4px;
+    width: calc(50% - 20px);
+    float: left;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.member {
+    background: #E6F7FF;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+.member img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+/*h2 {*/
+/*    color: #333;*/
+/*}*/
+
+span {
+    font-weight: bold;
+}
+.leave-group {
+    background: #000000;
+    color: #fffdfd;
+    padding: 10px 20px;
+    align-items: center;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.leave-group:hover {
+    background: #a4a4a4;
+}
+.modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 400px;
+}
+
+.close {
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #f00;
+}
+
+/*lider change*/
+.main-content {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.info-box {
+    background-color: #a1d3e5;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.alert-box {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffa502;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 30px;
+    line-height: 1.5;
+    color: #856404;
+}
+
+.nominate-button {
+    background-color: #050505;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+
+}
+
+.group-members {
+    margin-top: 10px;
+}
+
+.member {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.delete-group {
+    background-color: #050505;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    box-sizing: border-box;
+    margin-top: 300px;
+}
+/*student without group*/
+.group-options {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.options-header {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.option {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.option h3 {
+    color: #0056b3;
+    margin-bottom: 10px;
+}
+
+.option p {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    box-sizing: border-box; /* Dla zapewnienia, że padding nie zmienia szerokości */
+}
+/*yourGroupLider*/
+.container {
+    display: flex; /* Ustawia flexbox na kontenerze */
+    justify-content: space-between; /* Rozdziela elementy równomiernie w poziomie */
+    align-items: start; /* Wyrównuje elementy do góry kontenera */
+    flex-wrap: wrap; /* Zapewnia przenoszenie na nową linię, jeżeli brakuje miejsca */
+}
+
+.group-info{
+    background-color: #bbdefb;
+    padding: 20px;
+    margin-bottom: 30px; /* Zwiększony margines dolny dla większej przestrzeni */
+    border-radius: 8px; /* Zaokrąglone rogi */
+    margin-right: 20px; /* Dodaje odstęp po prawej stronie każdego boxu */
+    margin-left: 20px;  /* Dodaje odstęp po lewej stronie każdego boxu */
+}
+
+.group-info p {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+h3 {
+    font-weight: normal;
+    font-size: large;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+.button-container button {
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin: 15px 0; /* Zwiększone odstępy między przyciskami */
+    width: 40%; /* Szerokość przycisków do 80% kontenera */
+    cursor: pointer;
+    transition: background-color 0.3s; /* Subtelna animacja zmiany koloru */
+}
+
+.button-container button:hover {
+    background-color: #555;
+}
+.rest-info{
+    background-color: #bbdefb;
+    padding: 15px;
+    /* Odstęp między kontenerami */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    /* Dodaje odstęp po prawej stronie każdego boxu */
+    /* Dodaje odstęp po lewej stronie każdego boxu */
+    margin: 20px 40px 20px 800px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+}
+
+.modal-content input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    display: block;
+    border: 1px solid #ccc;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000000;
+}
+
+.modalFile {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    border-radius: 8px; /* zaokrąglone rogi */
+}
+
+.modal-content {
+    background-color: #f0f0f0;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+    min-width: 300px;
+    position: relative;
+}
+.modal-content input [type="file"] {
+    display: block;
+    margin: 40px 0; /* marginesy dla oddzielenia od innych elementów */
+    width: 90%; /* mniejsza szerokość, aby nie wychodził poza obręb modalu */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}
+
+
+.button-upl {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #2f3fbb;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button-upl:hover {
+    background-color: #aaa;
+}
+/*modal w student bez grupy*/
 
