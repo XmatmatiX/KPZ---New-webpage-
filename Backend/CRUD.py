@@ -82,38 +82,19 @@ def create_action_history_short(db: Session, rid: int, contentA: str) -> models.
     return db_action_history
 
 
-def create_user(db: Session, user: schemas.UserCreate):
+
+
+
+
+def create_user(db: Session, user: schemas.UserCreate) -> models.Users:
     """
-    Nie jestem pewna czy to dobry pomysl, zeby zawsze byl liderem przy tworzeniu
+    Creates an user with a role 'student'
     :param db:
     :param user:
     :return:
     """
-    # Tworzenie obiektu użytkownika na podstawie danych z argumentu user
-    db_user = models.Users(name=user.name, surname=user.surname, email=user.email, password=user.password,
-                           rolename=("leader"))  # przy tworzeniu user jest liderem
-    # Dodawanie użytkownika do sesji
-    db.add(db_user)
-
-    # Zatwierdzanie zmian w sesji
-    db.commit()
-
-    # Odświeżenie obiektu, aby zawierał najnowsze dane z bazy (opcjonalne)
-    db.refresh(db_user)
-
-    # Zwrócenie nowo dodanego użytkownika
-    return db_user
-
-
-def create_user2(db: Session, user: schemas.UserCreate) -> models.Users:
-    """
-    Creates an user with a role assigned in schemas
-    :param db:
-    :param user:
-    :return:
-    """
-    db_user = models.Users(name=user.name, surname=user.surname, email=user.email, password=user.password,
-                           rolename=user.rolename)  # przepisanie roli
+    db_user = models.Users(name=user.name, surname=user.surname, email=user.email,
+                           rolename=user.rolename)  # przepisanie roli ZAWSZE JEST STUDENTEM
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

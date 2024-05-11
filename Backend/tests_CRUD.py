@@ -17,14 +17,14 @@ def test_user_CRUD():
         name="Test",
         surname="User",
         email="test@example.com",
-        password="password123",
+        # password="password123",
         rolename="student"
     )
     db = SessionLocal()
     """
-    test create_user2
+    test create_user
     """
-    created_user = CRUD.create_user2(db, user_data)
+    created_user = CRUD.create_user(db, user_data)
     # Check that the user exists in the database
     assert created_user is not None
     # Check that the user data matches the expected data
@@ -177,10 +177,10 @@ def test_update_user_role():
         name="Test",
         surname="User",
         email="test@example.com",
-        password="password123",
+        # password="password123",
         rolename="student"
     )
-    user = CRUD.create_user2(db, user_data)
+    user = CRUD.create_user(db, user_data)
     changed_user = CRUD.update_user_role(db, user, "leader")
     assert changed_user is not None
     assert changed_user.name == user.name
@@ -209,11 +209,11 @@ def test_update_user_group_id():
         name="Test",
         surname="User",
         email="test@example.com",
-        password="password123",
+        # password="password123",
         rolename="student"
     )
     group_data = schemas.ProjectGroupCreate()
-    user = CRUD.create_user2(db, user_data)
+    user = CRUD.create_user(db, user_data)
     group = CRUD.create_project_group(db, group_data)
     changed_user = CRUD.update_user_group_id(db, user, group.groupid)
     assert changed_user is not None
@@ -244,46 +244,46 @@ def test_project_reservation_CRUD():
         name="user1",
         surname="User",
         email="test@example.com",
-        password="password123",
+        # password="password123",
         rolename="student"
     )
     user2 = schemas.UserCreate(
         name="user2",
         surname="User",
         email="test@example.com",
-        password="password123",
+        # password="password123",
         rolename="student"
     )
     user3 = schemas.UserCreate(
         name="user3",
         surname="User",
         email="test@example.com",
-        password="password123",
+        # password="password123",
         rolename="student"
     )
     user4 = schemas.UserCreate(
         name="user4",
         surname="User",
         email="test@example.com",
-        password="password123",
+        # password="password123",
         rolename="student"
     )
     user5 = schemas.UserCreate(
         name="user5",
         surname="User",
         email="test@example.com",
-        password="password123",
+        # password="password123",
         rolename="student"
     )
 
     """
     Tworzenie studentow i grupy
     """
-    user1 = CRUD.create_user2(db, user1)
-    user2 = CRUD.create_user2(db, user2)
-    user3 = CRUD.create_user2(db, user3)
-    user4 = CRUD.create_user2(db, user4)
-    user5 = CRUD.create_user2(db, user5)
+    user1 = CRUD.create_user(db, user1)
+    user2 = CRUD.create_user(db, user2)
+    user3 = CRUD.create_user(db, user3)
+    user4 = CRUD.create_user(db, user4)
+    user5 = CRUD.create_user(db, user5)
     group = CRUD.create_project_group_short(db, user2)
     CRUD.update_user_group_id(db, user1, group.groupid)
     CRUD.update_user_group_id(db, user3, group.groupid)
@@ -418,27 +418,27 @@ def test_get_group_members_and_leader():
         name="user1",
         surname="User",
         email="test@example.com",
-        password="password123",
+        # password="password123",
         rolename="sss"
     )
     user2 = schemas.UserCreate(
         name="user2",
         surname="User",
         email="test@example.com",
-        password="password123",
+        # password="password123",
         rolename="sss"
     )
     user3 = schemas.UserCreate(
         name="user3",
         surname="User",
         email="test@example.com",
-        password="password123",
+        # password="password123",
         rolename="sss"
     )
 
-    user1 = CRUD.create_user2(db, user1)
-    user2 = CRUD.create_user2(db, user2)
-    user3 = CRUD.create_user2(db, user3)
+    user1 = CRUD.create_user(db, user1)
+    user2 = CRUD.create_user(db, user2)
+    user3 = CRUD.create_user(db, user3)
     user1 = CRUD.update_user_role(db, user1, 'student')
     user2 = CRUD.update_user_role(db, user2, 'student')
     user3 = CRUD.update_user_role(db, user3, 'student')
@@ -497,21 +497,21 @@ def test_group_functionality():
         name="user1",
         surname="User",
         email="test@example.com",
-        password="password123",
+        # password="password123",
         rolename="student"
     )
     user2 = schemas.UserCreate(
         name="user2",
         surname="User",
         email="test@example.com",
-        password="password123",
+        # password="password123",
         rolename="student"
     )
     user3 = schemas.UserCreate(
         name="user3",
         surname="User",
         email="test@example.com",
-        password="password123",
+        # password="password123",
         rolename="student"
     )
 
@@ -523,9 +523,9 @@ def test_group_functionality():
     """
     Tworzenie studentow i grupy
     """
-    user1 = CRUD.create_user2(db, user1)
-    user2 = CRUD.create_user2(db, user2)
-    user3 = CRUD.create_user2(db, user3)
+    user1 = CRUD.create_user(db, user1)
+    user2 = CRUD.create_user(db, user2)
+    user3 = CRUD.create_user(db, user3)
     group = CRUD.create_project_group_short(db, user2)
     guardian = CRUD.create_guardian(db, guardian)
 

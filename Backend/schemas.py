@@ -86,7 +86,7 @@ class UserBase(BaseModel):
     surname: str
     email: str
     # Password: str
-    rolename: str
+    rolename: str ='student'
 
 # trzymamy haslo tutaj zeby np nie bylo dostepne podczas pobierania danych z bazy
 class UserCreate(UserBase):
