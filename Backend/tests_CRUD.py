@@ -300,16 +300,16 @@ def test_project_reservation_CRUD():
     """
     Creating reservation should create a proper action history
     """
-    action_history = CRUD.get_action_history(db, created_reservation.projectreservationid)
+    action_history = CRUD.get_action_history(db, created_reservation.groupid)
     assert action_history is not None
     assert len(action_history) >= 1
     history = action_history[0]
-    assert history.reservationid == created_reservation.projectreservationid
+    assert history.groupid == created_reservation.groupid
     assert history.content == "Zarezerwowano projekt"
 
     updated_history = CRUD.update_action_history_displayed(db, history)
     assert updated_history is not None
-    assert updated_history.reservationid == history.reservationid
+    assert updated_history.groupid == history.groupid
     assert updated_history.content == history.content
     assert updated_history.displayed
     assert updated_history.historyid == history.historyid
@@ -353,30 +353,30 @@ def test_project_reservation_CRUD():
     assert updated_reservation.confirmationpath == path
     assert updated_reservation.projectreservationid == reservation.projectreservationid
 
-    history2 = CRUD.get_action_history(db, updated_reservation.projectreservationid)
+    history2 = CRUD.get_action_history(db, updated_reservation.groupid)
 
     assert len(action_history) + 1 == len(history2)
     newaction = [x for x in history2 if x not in action_history]
     assert newaction is not None
     assert newaction[0].content == 'Dodano pliki'
     assert not newaction[0].displayed
-    assert newaction[0].reservationid == updated_reservation.projectreservationid
+    assert newaction[0].groupid == updated_reservation.groupid
 
     updated_reservation = CRUD.update_project_reservation_isConfirmed(db, reservation)
     assert updated_reservation is not None
     assert updated_reservation.projectid == reservation.projectid
     assert updated_reservation.groupid == reservation.groupid
-    assert updated_reservation.isConfirmed == True
+    assert updated_reservation.isConfirmed
     assert updated_reservation.projectreservationid == reservation.projectreservationid
 
-    history3 = CRUD.get_action_history(db, updated_reservation.projectreservationid)
+    history3 = CRUD.get_action_history(db, updated_reservation.groupid)
 
     assert len(history2) + 1 == len(history3)
     newaction = [x for x in history3 if x not in history2]
     assert newaction is not None
     assert newaction[0].content == 'Zatwierdzono'
     assert not newaction[0].displayed
-    assert newaction[0].reservationid == updated_reservation.projectreservationid
+    assert newaction[0].groupid == updated_reservation.groupid
 
     group2 = CRUD.create_project_group_short(db, user4)
     CRUD.update_user_group_id(db, user5, group2.groupid)
@@ -392,7 +392,7 @@ def test_project_reservation_CRUD():
     """
     CRUD.delete_project_reservation(db, created_reservation)
     assert CRUD.get_project_reservation_by_id(db, created_reservation.projectreservationid) is None
-    assert len(CRUD.get_action_history(db, created_reservation.projectreservationid)) == 0
+    assert len(CRUD.get_action_history(db, created_reservation.groupid)) != 0
     user1 = CRUD.update_user_group_id(db, user1, None)
     group = CRUD.get_group(db, group.groupid)
     with pytest.raises(Exception) as exception_info:
@@ -565,4 +565,5 @@ def test_group_functionality():
     CRUD.update_user_group_id(db, user3, None)
     group = CRUD.get_group(db, gid)
     assert group is None
+
 

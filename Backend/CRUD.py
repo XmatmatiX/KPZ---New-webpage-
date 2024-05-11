@@ -31,7 +31,7 @@ def create_project_reservation(db: Session, project : models.Project , group : m
             db.add(db_reservation)
             db.commit()
             db.refresh(db_reservation)
-            create_action_history_short(db, db_reservation.projectreservationid, "Zarezerwowano projekt")
+            create_action_history(db, group.groupid, "Zarezerwowano projekt")
             return db_reservation
         raise exceptions.GroupSizeNotValidForProjectException
     raise exceptions.ProjectNotAvailableException
@@ -57,24 +57,26 @@ if is_project_available(db, reservation.projectid):
 raise exceptions.ProjectNotAvailableException"""
 
 
+"""
+Schemas Action Hisotry nakazuje podanie kazdorazowo czasu, ktory i tak jest przypisywany w create
 def create_action_history(db: Session, action_history: schemas.ActionHistoryCreate):
-    db_action_history = models.ActionHistory(reservationid=action_history.reservationid, datatime=datetime.now(),
+    db_action_history = models.ActionHistory(groupid=action_history.groupid, datatime=datetime.now(),
                                              content=action_history.content, displayed=False)
     db.add(db_action_history)
     db.commit()
     db.refresh(db_action_history)
     return db_action_history
+"""
 
-
-def create_action_history_short(db: Session, rid: int, contentA: str) -> models.ActionHistory:
+def create_action_history(db: Session, gid: int, contentA: str) -> models.ActionHistory:
     """
     Creates an action history given shorter parametrs
     :param db: Session
-    :param rid: id of the reservation
+    :param rid: id of the group
     :param contentA: content of the history (messaged)
     :return: the schemas of made action history
     """
-    db_action_history = models.ActionHistory(reservationid=rid, datatime=datetime.now(),
+    db_action_history = models.ActionHistory(groupid=gid, datatime=datetime.now(),
                                              content=contentA, displayed=False)
     db.add(db_action_history)
     db.commit()
@@ -211,8 +213,8 @@ def get_project_reservation_by_project(db:Session, pid: int) -> list[models.Proj
     return db.query(models.ProjectReservation).filter(models.ProjectReservation.projectid == pid).all()
 
 
-def get_action_history(db: Session, reservation_id: int) -> list[models.ActionHistory] | None:
-    return db.query(models.ActionHistory).filter(models.ActionHistory.reservationid == reservation_id).all()
+def get_action_history(db: Session, group_id: int) -> list[models.ActionHistory] | None:
+    return db.query(models.ActionHistory).filter(models.ActionHistory.groupid == group_id).all()
 
 
 def get_action_history_id(db: Session, id: int):
@@ -366,7 +368,7 @@ def update_project_reservation_files(db: Session, reservation: schemas.ProjectRe
     reservation.status = "waiting"
     db.commit()
     db.refresh(reservation)
-    create_action_history_short(db, reservation.projectreservationid, contentA="Dodano pliki")
+    create_action_history(db, reservation.groupid, contentA="Dodano pliki")
     return reservation
 
 
@@ -378,7 +380,7 @@ def update_project_reservation_isConfirmed(db: Session, reservation: schemas.Pro
     reservation.status = "confirmed"
     db.commit()
     db.refresh(reservation)
-    create_action_history_short(db, reservation.projectreservationid, contentA="Zatwierdzono")
+    create_action_history(db, reservation.groupid, contentA="Zatwierdzono")
     return reservation
 
 
@@ -439,6 +441,7 @@ def delete_group(db: Session, group: schemas.ProjectGroupReturn):
         raise exceptions.DeleteGroupException
     try:
         if group.groupsize == 1:
+            delete_ALL_action_history(db, group.groupid)
             db.delete(group)
             db.commit()
     except Exception:
@@ -465,21 +468,21 @@ def delete_group_admin(db: Session, group:schemas.ProjectGroupReturn):
 
 def delete_project_reservation(db: Session, reservation: schemas.ProjectReservationBase):
     """
-    This deletes a reservation as well as all acton history connected to that
+    This deletes a reservation as well as all acton history connected to that - NOPE
     :param db:
     :param reservation:
     :return:
     """
-    delete_ALL_action_history(db, reservation.projectreservationid)
+    #delete_ALL_action_history(db, reservation.groupid)
     db.delete(reservation)
     db.commit()
 
 
-def delete_ALL_action_history(db: Session, reservationid: int):
+def delete_ALL_action_history(db: Session, groupid: int):
     """
     Deltes all action history attached to a project reservation
     """
-    db.query(models.ActionHistory).filter(models.ActionHistory.reservationid == reservationid).delete()
+    db.query(models.ActionHistory).filter(models.ActionHistory.groupid == groupid).delete()
     db.commit()
 
 
