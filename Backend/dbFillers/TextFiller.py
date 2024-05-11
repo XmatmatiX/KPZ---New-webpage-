@@ -7,7 +7,7 @@ passwords=['123', 'haslo']
 rolename='student'
 
 def randomUsers():
-    file = open('dbFillers/users.txt', 'w')
+    file = open('users.txt', 'w')
     for i in range(20):
         name = random.choice(names)
         surname = random.choice(surnames)
@@ -17,10 +17,13 @@ def randomUsers():
     file.close()
 
 def randomGuardian():
-    file = open('dbFillers/guardians.txt', 'w')
+    file = open('guardians.txt', 'w')
     for i in range(5):
         name = random.choice(names)
         surname = random.choice(surnames)
         email = name.lower() + '.' + surname.lower() + email_end
         file.write(name + " " + surname + " " + email +"\n")
     file.close()
+
+randomUsers()
+randomGuardian()

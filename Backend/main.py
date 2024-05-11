@@ -13,7 +13,7 @@ from passlib.context import CryptContext
 #from pydantic import parse_obj_as, ValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
-import models, schemas, CRUD
+import models, schemas, CRUD, exceptions
 from database import SessionLocal, engine
 
 from config import ALGORITHM, SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ORIGINS
@@ -259,25 +259,6 @@ def admin_groups(db: Session = Depends(get_db)):
     groups = CRUD.get_all_groups(db)
     return {"groups:": groups}
 
-    id = []
-    guardian = []
-    invitecode = []
-    size = []
-
-    for group in groups:
-        # Dodawanie atrybutów do odpowiednich list
-        group_ids.append(group.groupid)
-        group_guardians.append(group.guardianid)
-        group_invitecodes.append(group.invitecode)
-        group_sizes.append(group.groupsize)
-
-    # Zwracanie wyniku jako słownik
-    return {
-        "id": group_ids,
-        "guardian": group_guardians,
-        "invitecode": group_invitecodes,
-        "size": group_sizes
-    }
 @app.get("/Admin/FreeStudents")
 def admin_free_students(db: Session = Depends(get_db)):
     students = CRUD.get_free_students(db)
@@ -309,6 +290,9 @@ def admin_free_students(db: Session = Depends(get_db)):
 
 @app.get("/Student/Group/{id}")
 def get_student_group(student_id: int, db: Session = Depends(get_db)):
+    """
+    UWAG podaj id STUDENTA a nie GRUPY
+    """
     # Get the student by their id
     student = CRUD.get_user_by_id(db, student_id)
     if not student:
@@ -376,6 +360,9 @@ def get_student_group(student_id: int, db: Session = Depends(get_db)):
 
 @app.put("/Student/ChangeLeader/{id}")
 def put_change_leader(user_id: int, db: Session = Depends(get_db)):
+    """
+    Podaj ID nowego lidera
+    """
     user = CRUD.get_user_by_id(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -386,7 +373,7 @@ def put_change_leader(user_id: int, db: Session = Depends(get_db)):
         user.rolename = RoleEnum.student.value
 
         # Znajdź aktualnego lidera i zmień jego status na studenta
-        current_leader = CRUD.get_current_leader(db)
+        current_leader = CRUD.get_group_leader(db, user.groupid)
         if current_leader:
             current_leader.rolename = RoleEnum.student.value
 
@@ -398,8 +385,8 @@ def put_change_leader(user_id: int, db: Session = Depends(get_db)):
 
     return {"message": "Leader changed successfully"}
 # NIE DZIALA JESZCZE
-@app.post("/Student/Enroll/{id}")
-def enroll_student_to_project(project_id: int, user_id: int, db: Session = Depends(get_db)):
+@app.post("/Student/{user_id}/Enroll/{project_id}")
+def enroll_student_to_project( user_id: int, project_id: int, db: Session = Depends(get_db)):
     # Sprawdź, czy użytkownik istnieje
     user = CRUD.get_user_by_id(db, user_id)
     if not user:
@@ -414,16 +401,16 @@ def enroll_student_to_project(project_id: int, user_id: int, db: Session = Depen
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    # Stwórz nową rezerwację projektu
-    reservation = schemas.ProjectReservationCreate(projectid=project_id, groupid=user.groupid)
-
+    group = CRUD.get_group(db, user.groupid)
     try:
         # Spróbuj utworzyć rezerwację projektu
-        new_reservation = CRUD.create_project_reservation(db, reservation)
+        new_reservation = CRUD.create_project_reservation(db, project, group)
     except exceptions.ProjectNotAvailableException:
         raise HTTPException(status_code=400, detail="Project cannot be reserved at the moment")
+    except exceptions.GroupSizeNotValidForProjectException:
+        raise HTTPException(status_code=400, detail="Group size doesnt meet requirements")
 
-    return {"message": "Enrollment successful", "group_id": user.groupid, "project_id": project_id}
+    return {"message": "Enrollment successful", "group_id": user.groupid, "project_name": project.projecttitle}
 
 @app.post("/Student/unsubscribe/{id}")
 def unsubscribe_from_group(user_id: int, db: Session = Depends(get_db)):
@@ -446,7 +433,10 @@ def unsubscribe_from_group(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="You cannot leave the group because you are the leader")
 
     # Jeśli użytkownik jest zwykłym członkiem grupy, usuń go z grupy
-    CRUD.remove_user_from_group(db, user_id)
+    try:
+        CRUD.update_user_group_id(db, user, None)
+    except exceptions.GroupWithReservation:
+        raise HTTPException(status_code=400, detail="You cannot leave the group which has reservation")
 
     # Zapisz zmiany w bazie danych
     db.commit()

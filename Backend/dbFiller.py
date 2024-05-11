@@ -24,20 +24,13 @@ def fill_database():
     CRUD.update_user_group_id(db, users[15], group.groupid)
     CRUD.update_user_group_id(db, users[17], group.groupid)
     CRUD.update_project_group_guardian(db, group.groupid,guards[2].guardianid)
-    reservation = schemas.ProjectReservationCreate(
-        projectid=projects[0].projectid,
-        groupid=group.groupid,
-    )
-    CRUD.create_project_reservation(db, reservation)
+    CRUD.create_project_reservation(db, projects[0], group)
+
     group = CRUD.create_project_group_short(db, users[4])
     CRUD.update_user_group_id(db, users[6], group.groupid)
     CRUD.update_user_group_id(db, users[10], group.groupid)
     CRUD.update_project_group_guardian(db, group.groupid,guards[0].guardianid)
-    reservation = schemas.ProjectReservationCreate(
-        projectid=projects[1].projectid,
-        groupid=group.groupid,
-    )
-    CRUD.create_project_reservation(db, reservation)
+    CRUD.create_project_reservation(db, projects[1], group)
 
 
 
@@ -64,7 +57,7 @@ def readUsers(db: SessionLocal):
             password=password,
             rolename="student"
         )
-        created_users.append(CRUD.create_user2(db, user))
+        created_users.append(CRUD.create_user(db, user))
     return created_users
 
 def readGuardians(db: SessionLocal):

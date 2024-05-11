@@ -15,6 +15,13 @@ Create
 maximumgroupsize = 6
 
 
+"""
+Statusy rezerwacji: "reserved"  -zarezerwowano
+ "waiting" - wyslano pliki
+"confirmed" - potwierdzono
+"""
+
+
 def create_project_reservation(db: Session, project : models.Project , group : models.ProjectGroup) -> models.ProjectReservation | exceptions.ProjectNotAvailableException:
     """
     Checks if project can be reserved and if yes, checks if group's size is adecuate for this project creates new project reservation,
@@ -189,6 +196,9 @@ def get_user_by_surname(db: Session, surname: str):
 def get_user_by_email (db: Session, email: str):
     return db.query(models.Users).filter(models.Users.email == email).first()
 
+def get_free_students(db):
+    return db.query(models.Users).filter(models.Users.groupid == None).all()
+
 
 def get_project_by_id(db: Session, project_id: int):
     return db.query(models.Project).filter(models.Project.projectid == project_id).first()
@@ -197,7 +207,18 @@ def get_project_by_id(db: Session, project_id: int):
 def get_project_by_company(db: Session, project_name: string) -> list[models.Project] |None:
     return db.query(models.Project).filter(models.Project.companyname == project_name).all()
 
+def get_all_projects(db):
+    return db.query(models.Project).all()
 
+def get_groups_assigned_to_projects(db, project):
+    """
+    Returns list of groupid realising the project
+    """
+    reservations=db.query(models.ProjectReservation).filter(models.ProjectReservation.projectid==project.projectid).all()
+    groups= []
+    for reservation in reservations:
+        groups.append(reservation.groupid)
+    return groups
 
 
 def get_project_reservation_by_id(db: Session, project_reservation_id: int) -> models.ProjectReservation | None:
@@ -232,6 +253,9 @@ def get_group(db: Session, groupid: int):
 def get_group_members(db: Session, groupid: int) -> list[models.Users] | None:
     return db.query(models.Users).filter(models.Users.groupid == groupid).all()
 
+def get_all_groups(db):
+    return db.query(models.ProjectGroup).all()
+
 
 def get_group_leader(db: Session, groupid: int) -> models.Users | None:
     members = get_group_members(db, groupid)
@@ -243,6 +267,7 @@ def get_group_leader(db: Session, groupid: int) -> models.Users | None:
 
 def get_guardian(db: Session, id: int) -> models.Guardian | None:
     return db.query(models.Guardian).filter(models.Guardian.guardianid == id).first()
+
 
 
 """
@@ -363,6 +388,8 @@ def update_project_reservation_files(db: Session, reservation: schemas.ProjectRe
     """
     Add files with confirmation for the reservation, creates an actionHistory saying that files had been added
     :return : returns the changed reservation
+
+    UWAGA DO SERWERA: czy argumnent path jest konieczny, czy ma byc po prostu grupa z rezerwacji
     """
     reservation.confirmationpath = path
     reservation.status = "waiting"
@@ -458,7 +485,7 @@ def delete_group_admin(db: Session, group:schemas.ProjectGroupReturn):
         reservation = get_project_reservation_by_group(db, group.groupid)
         delete_project_reservation(db, reservation)
     members = get_group_members(db, group.groupid)
-    if len(members) is not 0:
+    if len(members) != 0:
         for member in members:
             member.groupid = None
             member.rolename = "student"
@@ -474,6 +501,7 @@ def delete_project_reservation(db: Session, reservation: schemas.ProjectReservat
     :return:
     """
     #delete_ALL_action_history(db, reservation.groupid)
+    create_action_history(db, reservation.groupid, "Usunieto rezerwacje projektu")
     db.delete(reservation)
     db.commit()
 
