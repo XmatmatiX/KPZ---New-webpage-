@@ -15,24 +15,46 @@ Create
 maximumgroupsize = 6
 
 
-def create_project_reservation(db: Session,
-                               reservation: schemas.ProjectReservationCreate) -> models.ProjectReservation | exceptions.ProjectNotAvailableException:
+def create_project_reservation(db: Session, project : models.Project , group : models.ProjectGroup) -> models.ProjectReservation | exceptions.ProjectNotAvailableException:
     """
-    Checks if project can be reserved and if yes, creates new project reservation,
+    Checks if project can be reserved and if yes, checks if group's size is adecuate for this project creates new project reservation,
     if not returns None
     :param db: Session
     :param reservation: schemas of reservation to be made
-    :return: None if project reservation was not possible, otherwise return the reservation
+    :return: return the reservation
+    :raise exceptions.ProjectNotAvailableException : if project cannot be reserved - all the group projects were taken
     """
-    if can_reserve_project(db, reservation.projectid):
-        db_reservation = models.ProjectReservation(projectid=reservation.projectid, groupid=reservation.groupid,
-                                                   isconfirmed=False, status="reserved")
-        db.add(db_reservation)
-        db.commit()
-        db.refresh(db_reservation)
-        create_action_history_short(db, db_reservation.projectreservationid, "Zarezerwowano projekt")
-        return db_reservation
+    if is_project_available(db, project.projectid):
+        if is_size_valid(project, group):
+            db_reservation = models.ProjectReservation(projectid=project.projectid, groupid=group.groupid,
+                                                       isconfirmed=False, status="reserved")
+            db.add(db_reservation)
+            db.commit()
+            db.refresh(db_reservation)
+            create_action_history_short(db, db_reservation.projectreservationid, "Zarezerwowano projekt")
+            return db_reservation
+        raise exceptions.GroupSizeNotValidForProjectException
     raise exceptions.ProjectNotAvailableException
+
+"""def create_project_reservation(db: Session,
+                           reservation: schemas.ProjectReservationCreate) -> models.ProjectReservation | exceptions.ProjectNotAvailableException:
+"""
+#Checks if project can be reserved and if yes, checks if group's size is adecuate for this project creates new project reservation,
+#if not returns None
+#:param db: Session
+#:param reservation: schemas of reservation to be made
+#:return: return the reservation
+#:raise exceptions.ProjectNotAvailableException : if project cannot be reserved - all the group projects were taken
+"""
+if is_project_available(db, reservation.projectid):
+    db_reservation = models.ProjectReservation(projectid=reservation.projectid, groupid=reservation.groupid,
+                                               isconfirmed=False, status="reserved")
+    db.add(db_reservation)
+    db.commit()
+    db.refresh(db_reservation)
+    create_action_history_short(db, db_reservation.projectreservationid, "Zarezerwowano projekt")
+    return db_reservation
+raise exceptions.ProjectNotAvailableException"""
 
 
 def create_action_history(db: Session, action_history: schemas.ActionHistoryCreate):
@@ -83,7 +105,7 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
-def create_user2(db: Session, user: schemas.UserCreate):
+def create_user2(db: Session, user: schemas.UserCreate) -> models.Users:
     """
     Creates an user with a role assigned in schemas
     :param db:
@@ -170,7 +192,7 @@ Tutaj jest jeden a w get by surname jest all ? Możemy dac w obu tak samo?
 
 
 def get_user_by_name(db: Session, name: str):
-    db_user = db.query(models.Users).filter(models.Users.name == name).first()
+    db_user = db.query(models.Users).filter(models.Users.name == name).all()
     return db_user
 
 
@@ -178,17 +200,21 @@ def get_user_by_id(db: Session, id: int):
     db_user = db.query(models.Users).filter(models.Users.userid == id).first()
     return db_user
 
+def get_user_by_surname(db: Session, surname: str):
+    return db.query(models.Users).filter(models.Users.surname == surname).all()
+
+def get_user_by_email (db: Session, email: str):
+    return db.query(models.Users).filter(models.Users.email == email).first()
+
 
 def get_project_by_id(db: Session, project_id: int):
     return db.query(models.Project).filter(models.Project.projectid == project_id).first()
 
 
-def get_project_by_company(db: Session, project_name: string):
+def get_project_by_company(db: Session, project_name: string) -> list[models.Project] |None:
     return db.query(models.Project).filter(models.Project.companyname == project_name).all()
 
 
-def get_user_by_surname(db: Session, surname: str):
-    return db.query(models.Users).filter(models.Users.surname == surname).all()
 
 
 def get_project_reservation_by_id(db: Session, project_reservation_id: int) -> models.ProjectReservation | None:
@@ -200,8 +226,11 @@ def get_project_reservation_by_group(db: Session, group_id: int):
     return db.query(models.ProjectReservation).filter(
         models.ProjectReservation.groupid == group_id).first()
 
+def get_project_reservation_by_project(db:Session, pid: int) -> list[models.ProjectReservation]|None :
+    return db.query(models.ProjectReservation).filter(models.ProjectReservation.projectid == pid).all()
 
-def get_action_history(db: Session, reservation_id: int):
+
+def get_action_history(db: Session, reservation_id: int) -> list[models.ActionHistory] | None:
     return db.query(models.ActionHistory).filter(models.ActionHistory.reservationid == reservation_id).all()
 
 
@@ -209,7 +238,7 @@ def get_action_history_id(db: Session, id: int):
     return db.query(models.ActionHistory).filter(models.ActionHistory.historyid == id).first()
 
 
-def get_group_by_invite_code(db: Session, invite_code: str):
+def get_group_by_invite_code(db: Session, invite_code: str) -> models.ProjectGroup | None:
     return db.query(models.ProjectGroup).filter(models.ProjectGroup.invitecode == invite_code).first()
 
 
@@ -238,7 +267,7 @@ Update
 """
 
 
-def update_user_role(db: Session, user: schemas.UserBase, role: str):
+def update_user_role(db: Session, user: schemas.UserBase, role: str) -> schemas.UserReturn:
     user.rolename = role
     db.commit()
     db.refresh(user)
@@ -269,7 +298,22 @@ def update_group_group_size(db: Session, gid: int, increase: bool):
     db.refresh(group)
 
 
-def update_user_group_id(db: Session, user: schemas.UserBase, group: int):
+def update_user_group_id(db: Session, user: schemas.UserReturn, group: int) -> Exception | schemas.UserReturn:
+    """
+    Actualize student's assigmnet to a group
+    If group to which user wants to join already has reservation then change is not possible, same happens if user's current group has reservation (GroupWithReservation)
+    In other case if user's rolename is "Student" then the change is done and teh group size of both groups is made \n
+    If user's rolename is "leader", then its surte that user belongs to group and therefore None case is not evaluated,
+    if users's current group's size is 1, then change is possible but the rolename of user is changed to "student" and his current group is automatically deleted.
+    If user's current group size is not 1 then raises LeaderException
+    :param db: Session
+    :param user: user whose group is changing
+    :param group: id of user's new group
+    :raises exceptions.GroupWithReservation
+    :raises exceptions.LeaderException
+    """
+    if (user.groupid is not None) and has_group_reservation(db, user.groupid):
+        raise exceptions.GroupWithReservation
     if not has_group_reservation(db, group):
         if user.rolename == "student":
             if group is None:
@@ -305,6 +349,9 @@ def update_user_group_id(db: Session, user: schemas.UserBase, group: int):
 
 
 def update_project_group_guardian(db: Session, gid: int, guardian: int):
+    """
+    Change the group's guardian
+    """
     group = get_group(db, gid)
     if (group.guardianid is None) or (group.guardianid is not guardian):
         group.guardianid = guardian
@@ -314,6 +361,9 @@ def update_project_group_guardian(db: Session, gid: int, guardian: int):
 
 
 def update_action_history_displayed(db: Session, history: schemas.ActionHistoryBase):
+    """
+    Change the displayed atribute of actionHistory to True
+    """
     history.displayed = True
     db.commit()
     db.refresh(history)
@@ -327,6 +377,10 @@ Dodanie pliku tworzy rowniez actionhistory o tym
 
 
 def update_project_reservation_files(db: Session, reservation: schemas.ProjectReservationBase, path):
+    """
+    Add files with confirmation for the reservation, creates an actionHistory saying that files had been added
+    :return : returns the changed reservation
+    """
     reservation.confirmationpath = path
     reservation.status = "waiting"
     db.commit()
@@ -336,17 +390,14 @@ def update_project_reservation_files(db: Session, reservation: schemas.ProjectRe
 
 
 def update_project_reservation_isConfirmed(db: Session, reservation: schemas.ProjectReservationBase):
+    """
+    Confirm teh project reservation - action that should be made by an admin
+    """
     reservation.isConfirmed = True
     reservation.status = "confirmed"
     db.commit()
     db.refresh(reservation)
-    action = schemas.ActionHistoryCreate(
-        reservationid=reservation.projectreservationid,
-        content='Zatwierdzono',
-        datatime='13.04.2012',
-        displayed=False
-    )
-    create_action_history(db, action)
+    create_action_history_short(db, reservation.projectreservationid, contentA="Zatwierdzono")
     return reservation
 
 
@@ -355,9 +406,23 @@ Delete
 """
 
 
-def delete_user(db: Session, user: schemas.UserBase):
-    if user.rolename == "leader":
+def delete_user(db: Session, user: schemas.UserReturn):
+    """
+    Cant delete a leader, if user is the only member of his grop, then the group is deleted,
+    Otherwise groupsize is decremented
+    """
+    group_id = user.groupid
+    if group_id is not None:
+        group = get_group(db, group_id)
+    else:
+        group = None
+    if user.rolename == "leader" and group.groupsize >1:
         raise exceptions.LeaderException
+    try:
+        if group is not None:
+            update_group_group_size(db, group_id, False)
+    except exceptions.MinimumSizeGroupException:
+        delete_group(db, group)
     db.delete(user)
     db.commit()
 
@@ -368,12 +433,16 @@ def delete_all_users(db: Session):
 
 
 def delete_project(db: Session, project: schemas.Project):
-    try:
-        db.delete(project)
-        db.commit()
-    except:
-        db.rollback()
-        raise exceptions.AssignedProjectException
+    """
+    Deletes a project and every reservation of this project
+    """
+    reservations = get_project_reservation_by_project(db, project.projectid)
+    if reservations is not None and len(reservations) > 0:
+        for reservation in reservations:
+            delete_project_reservation(db, reservation)
+
+    db.delete(project)
+    db.commit()
 
 
 def delete_group(db: Session, group: schemas.ProjectGroupReturn):
@@ -396,6 +465,22 @@ def delete_group(db: Session, group: schemas.ProjectGroupReturn):
         raise exceptions.GroupWithReservation
 
 
+def delete_group_admin(db: Session, group:schemas.ProjectGroupReturn):
+    """
+    Delete a group from database - admin version - can delete a group even if it has members or reservation
+    If user was in a group, his group is changed to None
+    """
+    if has_group_reservation(db, group.groupid):
+        reservation = get_project_reservation_by_group(db, group.groupid)
+        delete_project_reservation(db, reservation)
+    members = get_group_members(db, group.groupid)
+    if len(members) is not 0:
+        for member in members:
+            member.groupid = None
+            member.rolename = "student"
+    db.delete(group)
+    db.commit()
+
 
 def delete_project_reservation(db: Session, reservation: schemas.ProjectReservationBase):
     """
@@ -410,6 +495,9 @@ def delete_project_reservation(db: Session, reservation: schemas.ProjectReservat
 
 
 def delete_ALL_action_history(db: Session, reservationid: int):
+    """
+    Deltes all action history attached to a project reservation
+    """
     db.query(models.ActionHistory).filter(models.ActionHistory.reservationid == reservationid).delete()
     db.commit()
 
@@ -437,6 +525,9 @@ def delete_guardian(db: Session, guardian: schemas.GuardianBase):
 
 
 def delete_all(db: Session):
+    """
+    Deleted everything
+    """
     delete_all_users(db)
     db.query(models.ActionHistory).delete()
     db.query(models.ProjectReservation).delete()
@@ -451,15 +542,23 @@ Inne potrzebne funkcje
 """
 
 
-def can_reserve_project(db: Session, pid: int) -> bool:
+def is_project_available(db: Session, pid: int) -> bool:
     """
-    Zwraca True jesli liczba rezerwacji projektu zezwala na wykonanie projektu, false jesli zajete sa wszystkie grupy projektowe
-    pid  - id projecktu
+    :return: True if the number of project reservation is lower than the maximum limit so the project can still be reserved, returns False in other case
     """
     return number_project_reserved(db, pid) < (get_project_by_id(db, pid)).groupnumber
 
+def is_size_valid(project: models.Project , group: models.ProjectGroup) -> bool:
+    """
+    Checks if the group size is valid for the project
+    """
+    return project.mingroupsize <= group.groupsize <= project.maxgroupsize
+
 
 def number_project_reserved(db: Session, pid: int) -> int:
+    """
+    Returns number of reservation of particular project (which id is pid)
+    """
     return db.query(models.ProjectReservation).filter(models.ProjectReservation.projectid == pid).count()
 
 
@@ -471,6 +570,8 @@ def generate_invite_code(size=6, chars=string.ascii_uppercase + string.digits) -
     return ''.join(random.choice(chars) for _ in range(size))
 
 def has_group_reservation(db: Session, gid : int):
-    db_query = db.query(models.ProjectReservation).filter(models.ProjectReservation.groupid == gid).first()
-    return db_query is not None
+    """
+    Checks if group has made a project rseesrvation
+    """
+    return get_project_reservation_by_group(db, gid) is not None
 
