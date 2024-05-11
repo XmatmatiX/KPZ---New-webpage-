@@ -90,8 +90,8 @@ class UserBase(BaseModel):
 
 # trzymamy haslo tutaj zeby np nie bylo dostepne podczas pobierania danych z bazy
 class UserCreate(UserBase):
-    password: str
-    # pass
+    # password: str
+    pass
 
 
 class UserReturn(UserBase):
@@ -126,7 +126,8 @@ class GuardianReturn(GuardianBase):
 
 
 class ActionHistoryBase(BaseModel):
-    reservationid: int
+    # reservationid: int
+    groupid: int
     datatime: str
     content: str
     displayed: bool

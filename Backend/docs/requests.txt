@@ -36,7 +36,6 @@ CREATE TABLE users (
   name     varchar(25) NOT NULL,
   surname  varchar(50) NOT NULL,
   email    varchar(50) NOT NULL,
-  password varchar(64) NOT NULL,
   rolename varchar(25) NOT NULL,
   CONSTRAINT userid
     PRIMARY KEY (userid));
@@ -49,7 +48,7 @@ CREATE TABLE guardian (
     PRIMARY KEY (guardianid));
 CREATE TABLE actionhistory (
   historyid     SERIAL NOT NULL,
-  reservationid int4 NOT NULL,
+  groupid int4 NOT NULL,
   datatime      timestamp NOT NULL,
   content       text NOT NULL,
   displayed     bool NOT NULL,
@@ -66,5 +65,5 @@ ALTER TABLE actionhistory OWNER TO postgres;
 ALTER TABLE projectreservation ADD CONSTRAINT FKProjectRes276242 FOREIGN KEY (projectid) REFERENCES project (projectid);
 ALTER TABLE users ADD CONSTRAINT FKUser82101 FOREIGN KEY (groupid) REFERENCES projectgroup (groupid);
 ALTER TABLE projectreservation ADD CONSTRAINT FKProjectRes901919 FOREIGN KEY (groupid) REFERENCES projectgroup (groupid);
-ALTER TABLE actionhistory ADD CONSTRAINT FKActionHist803780 FOREIGN KEY (reservationid) REFERENCES projectreservation (projectreservationid);
+ALTER TABLE actionhistory ADD CONSTRAINT FKActionHist803780 FOREIGN KEY (groupid) REFERENCES projectgroup (groupid);
 ALTER TABLE projectgroup ADD CONSTRAINT FKGroup34297 FOREIGN KEY (guardianid) REFERENCES guardian (guardianid);

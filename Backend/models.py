@@ -41,7 +41,7 @@ class ProjectReservation(Base):
 
     project = relationship("Project", back_populates="reservations")
     group = relationship("ProjectGroup", back_populates="projectreservation")
-    history = relationship("ActionHistory", back_populates="reservation")
+    # history = relationship("ActionHistory", back_populates="studentsgroup")
 
 
 class ProjectGroup(Base):
@@ -55,6 +55,7 @@ class ProjectGroup(Base):
     guardian = relationship("Guardian", back_populates="projectGroup")
     projectreservation = relationship("ProjectReservation", back_populates="group")
     users = relationship("Users", back_populates="studentsgroup")
+    history = relationship("ActionHistory", back_populates="studentsgroup")
 
 
 class Users(Base):
@@ -64,7 +65,7 @@ class Users(Base):
     name = Column(String(25), nullable=False)
     surname = Column(String(50), nullable=False)
     email = Column(String(50), nullable=False)
-    password = Column(String(64), nullable=False)  #do zmiany potem !!!!!
+    # password = Column(String(64), nullable=False)  #USUNIETE !!!!!
     rolename = Column(String(25), nullable=False)
 
     studentsgroup = relationship("ProjectGroup", back_populates="users")
@@ -83,9 +84,11 @@ class Guardian(Base):
 class ActionHistory(Base):
     __tablename__ = 'actionhistory'
     historyid = Column(Integer, primary_key=True, autoincrement=True)
-    reservationid = Column(Integer, ForeignKey('projectreservation.projectreservationid'), nullable=False)
+    # reservationid = Column(Integer, ForeignKey('projectreservation.projectreservationid'), nullable=False)
+    groupid = Column(Integer, ForeignKey('projectgroup.groupid'), nullable=False)
     datatime = Column(DateTime, nullable=False)
     content = Column(Text, nullable=False)
     displayed = Column(Boolean, nullable=False)
 
-    reservation = relationship("ProjectReservation", back_populates="history")
+    # group = relationship("ProjectReservation", back_populates="history")
+    studentsgroup = relationship("ProjectGroup", back_populates="history")
