@@ -358,7 +358,7 @@ def delete_group_action_history(group_id: int, db: Session = Depends(get_db)):
 @app.get("/Student/Group/{id}")
 def get_student_group(student_id: int, db: Session = Depends(get_db)):
     """
-    UWAG podaj id STUDENTA a nie GRUPY
+    Returns information about a group to which student with id belong
     """
     # Get the student by their id
     student = CRUD.get_user_by_id(db, student_id)
@@ -428,7 +428,7 @@ def get_student_group(student_id: int, db: Session = Depends(get_db)):
 @app.put("/Student/ChangeLeader/{id}")
 def put_change_leader(user_id: int, db: Session = Depends(get_db)):
     """
-    Podaj ID nowego lidera
+    Change leader of a group <- the ID is of a new leader
     """
     user = CRUD.get_user_by_id(db, user_id)
     if not user:
@@ -451,9 +451,12 @@ def put_change_leader(user_id: int, db: Session = Depends(get_db)):
         db.commit()
 
     return {"message": "Leader changed successfully"}
-# NIE DZIALA JESZCZE
+
 @app.post("/Student/{user_id}/Enroll/{project_id}")
 def enroll_student_to_project( user_id: int, project_id: int, db: Session = Depends(get_db)):
+    """
+    Makes reseravtion of a project - should be done by leader otherwise raise exception
+    """
     # Sprawdź, czy użytkownik istnieje
     user = CRUD.get_user_by_id(db, user_id)
     if not user:
@@ -496,12 +499,15 @@ def unsubscribe_from_group(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Group not found")
 
     # Jeśli użytkownik jest liderem grupy, nie pozwól mu opuścić grupy
-    if user.rolename == RoleEnum.leader.value:
-        raise HTTPException(status_code=400, detail="You cannot leave the group because you are the leader")
+    #TO JUZ JEST SPRAWDZANE I PRZEWIDZIANE W CRUD <- zmiana jest mozliwa nawet jesli jest liderem jesli jest jedynym w groupi - patrz CRUD
+    #if user.rolename == RoleEnum.leader.value:
+    #    raise HTTPException(status_code=400, detail="You cannot leave the group because you are the leader")
 
     # Jeśli użytkownik jest zwykłym członkiem grupy, usuń go z grupy
     try:
         CRUD.update_user_group_id(db, user, None)
+    except exceptions.LeaderException:
+        raise HTTPException(status_code=400, detail="You cannot leave the group because you are the leader")
     except exceptions.GroupWithReservation:
         raise HTTPException(status_code=400, detail="You cannot leave the group which has reservation")
 
@@ -509,6 +515,40 @@ def unsubscribe_from_group(user_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "User unsubscribed from the group successfully"}
+
+@app.post("/Student/{user_id}/JoinGroup/{inviteCode}")
+def join_group(user_id: int, inviteCode: str, db: Session = Depends(get_db)):
+    """
+    Makes student with user_id join a group with inviteCode
+    """
+    student = CRUD.get_user_by_id(db, user_id)
+    if not student:
+        raise HTTPException(status_code=404, detail="User not found")
+    group = CRUD.get_group_by_invite_code(db, inviteCode)
+    if not group:
+        raise HTTPException(status_code=404, detail="Group with such inviteCode doesnt exist")
+    try:
+        CRUD.update_user_group_id(db, student, group.groupid)
+        return {"message": "Join completed succesfully"}
+    except exceptions.GroupWithReservation:
+        raise HTTPException(status_code=404, detail="The squad of a group with reservation can not be changed")
+    except exceptions.LeaderException:
+        raise HTTPException(status_code=404, detail="Leader can not change the group")
+    except exceptions.GroupSizeExccededException:
+        raise HTTPException(status_code=404, detail="Group is too large to have another member")
+    except exceptions.MinimumSizeGroupException:
+        raise HTTPException(status_code=404, detail="???")
+
+@app.post("/Student/{user_id}/CreateGroup")
+def create_group(user_id: int, db: Session = Depends(get_db)):
+    student = CRUD.get_user_by_id(db, user_id)
+    if not student:
+        raise HTTPException(status_code=404, detail="User not found")
+    try:
+        group=CRUD.create_project_group_short(db, student)
+        return {"messsage": "the group was succesfully created, here is its inviteCode"+group.invitecode}
+    except Exception as e:
+        print (e)
 
 # Dependency to check LDAP authentication
 # def check_ldap_auth(credentials: HTTPBasicCredentials = Depends(security)):

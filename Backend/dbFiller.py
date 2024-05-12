@@ -48,13 +48,13 @@ def readUsers(db: SessionLocal):
         name = vals[0]
         surname = vals[1]
         email = vals[2]
-        password = vals[3]
+        #password = vals[3]
         role = vals[4]
         user = schemas.UserCreate(
             name=name,
             surname=surname,
             email=email,
-            password=password,
+           # password=password,
             rolename="student"
         )
         created_users.append(CRUD.create_user(db, user))
