@@ -181,7 +181,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 @app.get("/ProjectList")
 def project_list(db: Session = Depends(get_db)):
     projects = CRUD.get_all_projects(db)
-    return {"projects:": projects}
+    # return {"projects:": projects}
 
     logos = []
     companynames = []
@@ -222,6 +222,7 @@ def project_detail(project_id: int, db: Session = Depends(get_db)):
 @app.get("/Admin/ProjectList")
 def admin_project_list(db: Session = Depends(get_db)):
     projects = CRUD.get_all_projects(db)
+    return {"projects:": projects}
     logos = []
     companynames = []
     titles = []
@@ -322,6 +323,24 @@ def get_student(id:int, db:Session=Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
 
     return {"student": student }
+@app.put("/Admin/AdminCreate/{email}")
+def put_admin_create(email:str, db:Session=Depends(get_db)):
+    """
+    Nadanie user praw admina
+    """
+    student=CRUD.get_user_by_email(db,email)
+    if not student:
+        raise HTTPException(status_code=404, detail="User not found")
+    if student.rolename ==RoleEnum.admin.value:
+        raise HTTPException(status_code=404, detail="User is alrady admin")
+    if student.groupid:
+        raise HTTPException(status_code=404, detail="Admin can not be assigned to a project")
+
+    CRUD.update_to_admin(db,email)
+    return {"message": " Admin changed succesfully"}
+
+
+
 @app.post("/Admin/SignToGroup/{user_id}{groupId}")
 def post_sign_to_group(user_id:int, groupId:int,db:Session=Depends(get_db)):
     """

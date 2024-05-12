@@ -285,6 +285,16 @@ def update_user_role(db: Session, user: schemas.UserBase, role: str) -> schemas.
     db.refresh(user)
     return user
 
+def update_to_admin(db:Session, email:str):
+    """
+    Change user role from "student to "admin
+    """
+    user=get_user_by_email(db,email)
+    if user.groupid is None:
+        user.rolename= "admin"
+        db.commit()
+        db.refresh(user)
+
 
 def update_group_group_size(db: Session, gid: int, increase: bool):
     """
