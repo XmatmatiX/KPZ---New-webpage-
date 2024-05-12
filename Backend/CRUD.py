@@ -241,6 +241,9 @@ def get_action_history(db: Session, group_id: int) -> list[models.ActionHistory]
 def get_action_history_id(db: Session, id: int):
     return db.query(models.ActionHistory).filter(models.ActionHistory.historyid == id).first()
 
+def get_all_history(db:Session):
+    return db.query(models.ActionHistory).all()
+
 
 def get_group_by_invite_code(db: Session, invite_code: str) -> models.ProjectGroup | None:
     return db.query(models.ProjectGroup).filter(models.ProjectGroup.invitecode == invite_code).first()
@@ -270,6 +273,7 @@ def get_guardian(db: Session, id: int) -> models.Guardian | None:
 
 
 
+
 """
 Update
 """
@@ -292,26 +296,28 @@ def update_group_group_size(db: Session, gid: int, increase: bool):
     raise Exception if the group size would be invalid because if the operation (max group size is for now 6, min is 1)
     """
     group = get_group(db, gid)
-    if increase:
-        if group.groupsize + 1 > maximumgroupsize:
-            raise exceptions.GroupSizeExccededException
+    if group is not None:
+        if increase:
+            if group.groupsize + 1 > maximumgroupsize:
+                raise exceptions.GroupSizeExccededException
+            else:
+                group.groupsize += 1
         else:
-            group.groupsize += 1
-    else:
-        if group.groupsize == 1:
-            raise exceptions.MinimumSizeGroupException
-        else:
-            group.groupsize -= 1
-    db.commit()
-    db.refresh(group)
+            if group.groupsize == 1:
+             #   raise exceptions.MinimumSizeGroupException
+                delete_group(db, group)
+            else:
+                group.groupsize -= 1
+        db.commit()
+        db.refresh(group)
 
 
 def update_user_group_id(db: Session, user: schemas.UserReturn, group: int) -> Exception | schemas.UserReturn:
     """
     Actualize student's assigmnet to a group
     If group to which user wants to join already has reservation then change is not possible, same happens if user's current group has reservation (GroupWithReservation)
-    In other case if user's rolename is "Student" then the change is done and teh group size of both groups is made \n
-    If user's rolename is "leader", then its surte that user belongs to group and therefore None case is not evaluated,
+    In other case if user's rolename is "Student" then the change is done and the group size of both groups is changed \n
+    If user's rolename is "leader", then its sure that user belongs to group and therefore None case is not evaluated,
     if users's current group's size is 1, then change is possible but the rolename of user is changed to "student" and his current group is automatically deleted.
     If user's current group size is not 1 then raises LeaderException
     :param db: Session
@@ -335,7 +341,7 @@ def update_user_group_id(db: Session, user: schemas.UserReturn, group: int) -> E
                 update_group_group_size(db, group, True)
                 db.commit()
                 db.refresh(user)
-            elif user.groupid is not group:
+            elif user.groupid != group:
                 update_group_group_size(db, user.groupid, False)
                 user.groupid = group
                 update_group_group_size(db, group, True)
@@ -346,6 +352,7 @@ def update_user_group_id(db: Session, user: schemas.UserReturn, group: int) -> E
             if user_group.groupsize == 1:
                 user.rolename = "student"
                 user.groupid = group
+                update_group_group_size(db, group, True)
                 db.commit()
                 db.refresh(user)
                 delete_group(db, user_group)
@@ -468,7 +475,7 @@ def delete_group(db: Session, group: schemas.ProjectGroupReturn):
         raise exceptions.DeleteGroupException
     try:
         if group.groupsize == 1:
-            delete_ALL_action_history(db, group.groupid)
+            delete_ALL_action_history_of_one_group(db, group.groupid)
             db.delete(group)
             db.commit()
     except Exception:
@@ -506,7 +513,7 @@ def delete_project_reservation(db: Session, reservation: schemas.ProjectReservat
     db.commit()
 
 
-def delete_ALL_action_history(db: Session, groupid: int):
+def delete_ALL_action_history_of_one_group(db: Session, groupid: int):
     """
     Deltes all action history attached to a project reservation
     """
@@ -515,6 +522,9 @@ def delete_ALL_action_history(db: Session, groupid: int):
 
 
 def delete_action_history(db: Session, action: schemas.ActionHistoryBase):
+    """
+    Deletes specific action
+    """
     db.delete(action)
     db.commit()
 

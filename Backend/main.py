@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends, FastAPI, HTTPException, status, Security
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, SecurityScopes
 #from jose import JWTError, jwt
-from passlib.context import CryptContext
+# from passlib.context import CryptContext
 #from pydantic import parse_obj_as, ValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -18,7 +18,7 @@ from database import SessionLocal, engine
 
 from config import ALGORITHM, SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ORIGINS
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login", scopes={"user": "Zwykly user", "arbiter": "Arbiter"})
 
@@ -206,6 +206,18 @@ def project_list(db: Session = Depends(get_db)):
     return {"logos": logos, "companynames": companynames, "titles": titles, "projecstid": pid, "minsizes": minsizes,
             "maxsizes": maxsizes, "status": stats}
 
+
+@app.get("/Project/{id}")
+def project_detail(project_id: int, db: Session = Depends(get_db)):
+    project = CRUD.get_project_by_id(db, project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not not found")
+    num_taken = CRUD.number_project_reserved(db, project.projectid)
+    return {"id": project_id, "logo": project.logopath ,"companyname": project.companyname, "title": project.projecttitle,
+            "description": project.description, "technologies": project.technologies, "minsize": project.mingroupsize, "maxsize": project.maxgroupsize,
+            "groupnumber": project.groupnumber, "remarks": project.remarks, "cooperationtype": project.cooperationtype,
+            "numertaken": num_taken}
+
 ########### SEKCJA ADMIN ################
 @app.get("/Admin/ProjectList")
 def admin_project_list(db: Session = Depends(get_db)):
@@ -242,6 +254,15 @@ def admin_project_list(db: Session = Depends(get_db)):
 def admin_project(id: int, db: Session = Depends(get_db)):
     return CRUD.get_project_by_id(db, id)
 
+@app.get("/Admin/Reservation/{project_id}")
+def admin_reservation(project_id: int, db: Session = Depends(get_db)):
+    """
+            Zwraca dane o danej rezerwacji
+    """
+    reservation = CRUD.get_project_reservation_by_id(db, project_id)
+    project = CRUD.get_project_by_id(db, reservation.projectid)
+    return {"company": project.companyname,"id": project_id, "thema": project.projecttitle, "group":reservation.groupid,
+            "state": reservation.status}
 
 @app.get("/Admin/Group/{id}")
 def admin_group(id: int, db: Session = Depends(get_db)):
@@ -256,11 +277,17 @@ def admin_group(id: int, db: Session = Depends(get_db)):
 
 @app.get("/Admin/Groups")
 def admin_groups(db: Session = Depends(get_db)):
+    """
+        Zwraca wszystkie grupy
+    """
     groups = CRUD.get_all_groups(db)
     return {"groups:": groups}
 
 @app.get("/Admin/FreeStudents")
 def admin_free_students(db: Session = Depends(get_db)):
+    """
+        Zwraca wszytskich zalogowanych studentow bez grup
+    """
     students = CRUD.get_free_students(db)
     return {"students:": students}
 
@@ -284,6 +311,106 @@ def admin_free_students(db: Session = Depends(get_db)):
         "index": student_indexes
     }
 
+@app.get("/Admin/Student/{id}")
+def get_student(id:int, db:Session=Depends(get_db)):
+    """
+            Szczegoly studenta
+
+    """
+    student=CRUD.get_user_by_id(db,id)
+    if not student:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {"student": student }
+@app.post("/Admin/SignToGroup/{user_id}{groupId}")
+def post_sign_to_group(user_id:int, groupId:int,db:Session=Depends(get_db)):
+    """
+            Przypisanie studenta do danej grupy.
+
+    """
+    student=CRUD.get_user_by_id(db, user_id)
+    if not student:
+        raise HTTPException(status_code=404, detail="User not found")
+    group= CRUD.get_group(db, groupId)
+
+    if not group:
+        raise HTTPException(status_code=404, detail="Group with such groupID doesnt exist")
+    try:
+        CRUD.update_user_group_id(db, student, group.groupid)
+        return {"message": "Join completed succesfully"}
+    except exceptions.GroupWithReservation:
+        raise HTTPException(status_code=404, detail="The squad of a group with reservation can not be changed")
+    except exceptions.LeaderException:
+        raise HTTPException(status_code=404, detail="Leader can not change the group")
+    except exceptions.GroupSizeExccededException:
+        raise HTTPException(status_code=404, detail="Group is too large to have another member")
+    except exceptions.MinimumSizeGroupException:
+        raise HTTPException(status_code=404, detail="???")
+
+
+
+@app.get("/Admin/Notification")
+def get_notifications(db: Session = Depends(get_db)):
+    """
+    Zwraca cala action history
+    """
+    all_history = CRUD.get_all_history(db)
+    return all_history
+
+@app.get("/Admin/Notification/{id}")
+def get_notification_by_id(id: int, db: Session = Depends(get_db)):
+    """
+    Zwraca action history o konkretnym id - skoro to zwracamy, to automatycznie action hisotyr jest zmieniane na displayed=TRUE
+    """
+    notification = CRUD.get_action_history_id(db, id)
+    if notification is None:
+        raise HTTPException(status_code=404, detail="Notification not not found")
+    CRUD.update_action_history_displayed(db, notification)
+    return notification
+
+@app.get("/Admin/{group_id}/Notification")
+def get_group_action_history(group_id: int, db: Session = Depends(get_db)):
+    """
+    Zwraca cale action history konkretnej grupy  - albo pusta liste jesli nic nie ma
+    """
+    group = CRUD.get_group(db, group_id)
+    if group is None:
+        raise HTTPException(status_code=404, detail="Group not not found")
+    history = CRUD.get_action_history(db, group_id)
+    if history is None:
+        raise HTTPException(status_code=404, detail="Action history not found")
+    return history
+
+@app.delete("/Admin/Notification/{id}")
+def delete_notification_by_id(notificaton_id: int, db: Session = Depends(get_db)):
+    """
+    Usuwa konkretne action history
+    """
+    action = CRUD.get_action_history_id(db, notificaton_id)
+    if action is None:
+        return {"message": "Action doesn't exist"}
+    CRUD.delete_action_history(db, action)
+    return {"message": "Action deleted successfully"}
+
+
+@app.delete("/Admin/{group_id}/Notification")
+def delete_group_action_history(group_id: int, db: Session = Depends(get_db)):
+    """
+    Deletes all action history referred to a group with id
+    """
+    group = CRUD.get_group(db, group_id)
+    if group is None:
+        raise HTTPException(status_code=404, detail="Group not found")
+    CRUD.delete_ALL_action_history_of_one_group(db, group_id)
+    return {"message": "Group's action history succesfully deleted"}
+
+@app.delete("/Admin/database-clear")
+def delete_database(db: Session = Depends(get_db)):
+    """
+    Deletes database
+    """
+    CRUD.delete_all(db)
+    return {"message": "Database succesfully deleted"}
 
 
 ########### SEKCJA STUDENT ################
@@ -291,7 +418,7 @@ def admin_free_students(db: Session = Depends(get_db)):
 @app.get("/Student/Group/{id}")
 def get_student_group(student_id: int, db: Session = Depends(get_db)):
     """
-    UWAG podaj id STUDENTA a nie GRUPY
+    Returns information about a group to which student with id belong
     """
     # Get the student by their id
     student = CRUD.get_user_by_id(db, student_id)
@@ -361,7 +488,7 @@ def get_student_group(student_id: int, db: Session = Depends(get_db)):
 @app.put("/Student/ChangeLeader/{id}")
 def put_change_leader(user_id: int, db: Session = Depends(get_db)):
     """
-    Podaj ID nowego lidera
+    Change leader of a group <- the ID is of a new leader
     """
     user = CRUD.get_user_by_id(db, user_id)
     if not user:
@@ -384,9 +511,12 @@ def put_change_leader(user_id: int, db: Session = Depends(get_db)):
         db.commit()
 
     return {"message": "Leader changed successfully"}
-# NIE DZIALA JESZCZE
+
 @app.post("/Student/{user_id}/Enroll/{project_id}")
 def enroll_student_to_project( user_id: int, project_id: int, db: Session = Depends(get_db)):
+    """
+    Makes reseravtion of a project - should be done by leader otherwise raise exception
+    """
     # Sprawdź, czy użytkownik istnieje
     user = CRUD.get_user_by_id(db, user_id)
     if not user:
@@ -429,12 +559,15 @@ def unsubscribe_from_group(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Group not found")
 
     # Jeśli użytkownik jest liderem grupy, nie pozwól mu opuścić grupy
-    if user.rolename == RoleEnum.leader.value:
-        raise HTTPException(status_code=400, detail="You cannot leave the group because you are the leader")
+    #TO JUZ JEST SPRAWDZANE I PRZEWIDZIANE W CRUD <- zmiana jest mozliwa nawet jesli jest liderem jesli jest jedynym w groupi - patrz CRUD
+    #if user.rolename == RoleEnum.leader.value:
+    #    raise HTTPException(status_code=400, detail="You cannot leave the group because you are the leader")
 
     # Jeśli użytkownik jest zwykłym członkiem grupy, usuń go z grupy
     try:
         CRUD.update_user_group_id(db, user, None)
+    except exceptions.LeaderException:
+        raise HTTPException(status_code=400, detail="You cannot leave the group because you are the leader")
     except exceptions.GroupWithReservation:
         raise HTTPException(status_code=400, detail="You cannot leave the group which has reservation")
 
@@ -442,6 +575,40 @@ def unsubscribe_from_group(user_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "User unsubscribed from the group successfully"}
+
+@app.post("/Student/{user_id}/JoinGroup/{inviteCode}")
+def join_group(user_id: int, inviteCode: str, db: Session = Depends(get_db)):
+    """
+    Makes student with user_id join a group with inviteCode
+    """
+    student = CRUD.get_user_by_id(db, user_id)
+    if not student:
+        raise HTTPException(status_code=404, detail="User not found")
+    group = CRUD.get_group_by_invite_code(db, inviteCode)
+    if not group:
+        raise HTTPException(status_code=404, detail="Group with such inviteCode doesnt exist")
+    try:
+        CRUD.update_user_group_id(db, student, group.groupid)
+        return {"message": "Join completed succesfully"}
+    except exceptions.GroupWithReservation:
+        raise HTTPException(status_code=404, detail="The squad of a group with reservation can not be changed")
+    except exceptions.LeaderException:
+        raise HTTPException(status_code=404, detail="Leader can not change the group")
+    except exceptions.GroupSizeExccededException:
+        raise HTTPException(status_code=404, detail="Group is too large to have another member")
+    except exceptions.MinimumSizeGroupException:
+        raise HTTPException(status_code=404, detail="???")
+
+@app.post("/Student/{user_id}/CreateGroup")
+def create_group(user_id: int, db: Session = Depends(get_db)):
+    student = CRUD.get_user_by_id(db, user_id)
+    if not student:
+        raise HTTPException(status_code=404, detail="User not found")
+    try:
+        group=CRUD.create_project_group_short(db, student)
+        return {"messsage": "the group was succesfully created, here is its inviteCode"+group.invitecode}
+    except Exception as e:
+        print (e)
 
 # Dependency to check LDAP authentication
 # def check_ldap_auth(credentials: HTTPBasicCredentials = Depends(security)):
