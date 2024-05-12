@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../style.css"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Roboto+Flex:opsz,wght@8..144,300&display=swap" rel="stylesheet">
+
+    <title>KPZ</title>
+</head>
+<body>
+
+<section class="header">
+    <img src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
+    <div class="title">
+        <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
+        <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
+    </div>
+    <button id="topicsStudent" class="headerButton">Przeglądaj tematy</button>
+    <button id="logout" class="headerButton">Wyloguj się</button>
+</section>
+
+<section class="grid">
+    <div class="menu">
+        <p>Przeglądaj</p>
+        <button id="homeAdmin" class="menuButton"><img src="../Images/home.png" alt="There should be home photo"> Strona główna </button>
+        <button id="searchStudent" class="menuButton"><img src="../Images/loupe.png" alt="There should be home photo"> Studenci </button>
+        <button id="groups" class="menuButton"><img src="../Images/loupe.png" alt="There should be home photo"> Grupy </button>
+        <button id="addTopic" class="menuButton"><img src="../Images/radio.png" alt="There should be home photo"> Dodaj temat </button>
+        <button id="addGroup" class="menuButton"><img src="../Images/radio.png" alt="There should be home photo"> Dodaj grupę </button>
+        <button id="notifications" class="pageButton"><img src="../Images/radio.png" alt="There should be home photo"> Powiadomienia </button>
+        <button id="settings" class="menuButton"><img src="../Images/radio.png" alt="There should be home photo"> Ustawienia </button>
+    </div>
+    <div class="page">
+
+        <section class="topicList">
+
+            <div class="borderNotification">
+                <p>Grupa</p>
+                <p>Treść</p>
+                <p>Data</p>
+            </div>
+
+            <div class="notificationItem">
+                <p>id_grupy</p>
+                <p>Grupa załączyła załączniki</p>
+                <p>17:04 28/03/2024</p>
+                <button class="searchButton"> <img src="../Images/trash.png" alt="Here should be a photo"> </button>
+            </div>
+
+            <div class="notificationItem">
+                <p>kpz123</p>
+                <p>Grupa załączyła załączniki</p>
+                <p>09:10 28/03/2024</p>
+                <button class="searchButton"> <img src="../Images/trash.png" alt="Here should be a photo"> </button>
+            </div>
+        </section>
+
+    </div>
+</section>
+
+<script src="AdminScripts/adminScript.js"></script>
+
+</body>
+</html>

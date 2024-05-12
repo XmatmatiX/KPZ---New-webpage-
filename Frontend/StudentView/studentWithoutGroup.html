@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../style.css"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Roboto+Flex:opsz,wght@8..144,300&display=swap" rel="stylesheet">
+
+    <title>KPZ</title>
+</head>
+<body>
+
+<section class="header">
+    <img src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
+    <div class="title">
+        <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
+        <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
+    </div>
+    <button class="headerButton">Przeglądaj tematy</button>
+    <button id="logout" class="headerButton">Wyloguj się</button>
+</section>
+
+<section class="grid">
+    <div class="menu">
+        <p>Przeglądaj</p>
+        <button id="homeButton" class="pageButton"><img src="../Images/home.png" alt="There should be home photo"> Strona główna </button>
+        <button id="searchButton" class="menuButton"><img src="../Images/loupe.png" alt="There should be home photo"> Wolne grupy </button>
+        <button id="groupButton" class="menuButton"><img src="../Images/people.png" alt="There should be home photo"> Twoja grupa </button>
+        <button id="enrollmentButton" class="menuButton"><img src="../Images/home.png" alt="There should be home photo"> Zapisy </button>
+    </div>
+    <div class="page">
+        <div class="group-options">
+            <div class="options-header">
+                Wygląda na to, że nie jesteś jeszcze członkiem żadnej grupy. Oto twoje opcje (możesz wybrać tylko jedną, ale jeśli wybierasz, będziesz mógł zmienić zdanie i opuścić grupę):
+            </div>
+            <div class="option">
+                <h3>Opcja 1. Dołącz do istniejącej grupy</h3>
+                <p>Dołącz do istniejącej grupy - wpisz w polu tekstowym hasło grupy otrzymane od jej lidera.</p>
+                <input type="text" placeholder="Podaj hasło grupy">
+                <button class="join-btn">Dołącz</button>
+            </div>
+            <div class="option">
+                <h3>Opcja 2. Utwórz nową grupę</h3>
+                <p>Utwórz nową grupę - zostaniesz liderem tej grupy, generowane jest hasło grupy, które podajesz studentom, z którymi chcesz tworzyć grupę, by mogli się oni do niej zapisać.</p>
+                <input type="text" placeholder="Podaj nazwę grupy">
+                <button class="create-btn">Utwórz</button>
+            </div>
+            <div id="joinGroupModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Dołączono do zespołu id/nazwa grupy, którego liderem jest imię_nazwisko_lider</h2>
+                    <label for="memberName">Jan Kowalski</label>
+                    <input type="text" id="memberName" name="memberName" placeholder="Wpisz nazwisko i imię...">
+                    <button>Wyszukaj</button>
+                    <!--  TU BYLO ID searchButton ale usunelam bo gdzies juz jest button o takim id -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script src="studentScript.js"></script>
+
+</body>
+</html>

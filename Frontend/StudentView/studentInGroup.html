@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../style.css"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Roboto+Flex:opsz,wght@8..144,300&display=swap" rel="stylesheet">
+
+    <title>KPZ</title>
+</head>
+
+<body>
+<section class="header">
+    <img src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
+    <div class="title">
+        <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
+        <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
+    </div>
+    <button class="headerButton">Przeglądaj tematy</button>
+    <button id="logout" class="headerButton">Wyloguj się</button>
+</section>
+<section class="grid">
+    <div class="menu">
+        <p>Przeglądaj</p>
+        <button id="homeButton" class="menuButton"><img src="../Images/home.png" alt="There should be home photo"> Strona główna </button>
+        <button id="searchButton" class="menuButton"><img src="../Images/loupe.png" alt="There should be home photo"> Wolne grupy </button>
+        <button id="groupButton" class="pageButton"><img src="../Images/people.png" alt="There should be home photo"> Twoja grupa </button>
+        <button id="enrollmentButton" class="menuButton"><img src="../Images/home.png" alt="There should be home photo"> Zapisy </button>
+    </div>
+    <div class="page">
+        <div class="content">
+            <section class="group-info">
+                <h2>Szczegóły grupy</h2>
+                <div class="member">
+                    <img src="../Images/Vector.jpg" alt="Avatar studenta">
+                    <p>Imię Nazwisko Indeks (lider)</p>
+                </div>
+                <div class="member">
+                    <img src="../Images/Vector.jpg" alt="Avatar studenta">
+                    <p>Imię Nazwisko Indeks (student2)</p>
+                </div>
+                <div class="member">
+                    <img src="../Images/Vector.jpg" alt="Avatar studenta">
+                    <p>Imię Nazwisko Indeks (student3)</p>
+                </div>
+            </section>
+            <section class="reservation-info">
+                <h2>Stan rezerwacji</h2>
+                <p>Temat: <span>Nazwa tematu</span></p>
+                <p>Status: <span>Bez rezerwacji/zarezerwowany/zatwierdzony</span></p>
+                <p>Opiekun: <span>Imię i nazwisko i mail</span></p>
+                <h2>Kontakt z firmą</h2>
+                <p>Osoba kontaktowa: <span>imię i nazwisko</span></p>
+                <p>Kontakt: <span>adres e-mail</span></p>
+                <div id="leaveModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <form id="leaveForm">
+                            <button id="leaveButton" class="leave-group" onclick="leaveGroup()">Opuść grupę</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</section>
+
+<script src="studentScript.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../style.css"/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Roboto+Flex:opsz,wght@8..144,300&display=swap" rel="stylesheet">
+
+  <title>KPZ</title>
+</head>
+
+<body>
+<section class="header">
+  <img src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
+  <div class="title">
+    <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
+    <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
+  </div>
+  <button class="headerButton">Przeglądaj tematy</button>
+  <button id="logout" class="headerButton">Wyloguj się</button>
+</section>
+<section class="grid">
+  <div class="menu">
+    <p>Przeglądaj</p>
+    <button id="homeButton" class="menuButton"><img src="../Images/home.png" alt="There should be home photo"> Strona główna </button>
+    <button id="searchButton" class="menuButton"><img src="../Images/loupe.png" alt="There should be home photo"> Wolne grupy </button>
+    <button id="groupButton" class="pageButton"><img src="../Images/people.png" alt="There should be home photo"> Twoja grupa </button>
+    <button id="enrollmentButton" class="menuButton"><img src="../Images/home.png" alt="There should be home photo"> Zapisy </button>
+  </div>
+  <div class="page">
+    <section class="main-content">
+      <div class="info-box">
+        <div class="alert-box">
+          <p><strong>Nie możesz opuścić grupy, dopóki jesteś jej liderem.</strong> Aby opuścić grupę, która oprócz Ciebie ma innych członków, musisz nominować innego członka na lidera. <em>Nominowany/a musi wyrazić zgodę na zostanie liderem.</em> Opuszczenie grupy, której jesteś jedynym członkiem, spowoduje usunięcie grupy.</p>
+        </div>
+
+        <div class="group-members">
+          <div class="member">
+            <img src="../Images/Vector.jpg" alt="Avatar studenta">
+            <input type="checkbox"> Imię Nazwisko Indeks (student1)
+          </div>
+          <div class="member">
+            <img src="../Images/Vector.jpg" alt="Avatar studenta">
+            <input type="checkbox"> Imię Nazwisko Indeks (student2)
+          </div>
+          <div class="member">
+            <img src="../Images/Vector.jpg" alt="Avatar studenta">
+            <input type="checkbox"> Imię Nazwisko Indeks (student3)
+          </div>
+        </div>
+        <button class="nominate-button">Nominuj lidera</button>
+        <button class="delete-group">Usuń grupę</button>
+      </div>
+
+  </div>
+</section>
+
+</body>
+</html>
