@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends, FastAPI, HTTPException, status, Security
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, SecurityScopes
 #from jose import JWTError, jwt
-from passlib.context import CryptContext
+# from passlib.context import CryptContext
 #from pydantic import parse_obj_as, ValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -18,7 +18,7 @@ from database import SessionLocal, engine
 
 from config import ALGORITHM, SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ORIGINS
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login", scopes={"user": "Zwykly user", "arbiter": "Arbiter"})
 
@@ -254,6 +254,15 @@ def admin_project_list(db: Session = Depends(get_db)):
 def admin_project(id: int, db: Session = Depends(get_db)):
     return CRUD.get_project_by_id(db, id)
 
+@app.get("/Admin/Reservation/{project_id}")
+def admin_reservation(project_id: int, db: Session = Depends(get_db)):
+    """
+            Zwraca dane o danej rezerwacji
+    """
+    reservation = CRUD.get_project_reservation_by_id(db, project_id)
+    project = CRUD.get_project_by_id(db, reservation.projectid)
+    return {"company": project.companyname,"id": project_id, "thema": project.projecttitle, "group":reservation.groupid,
+            "state": reservation.status}
 
 @app.get("/Admin/Group/{id}")
 def admin_group(id: int, db: Session = Depends(get_db)):
@@ -268,11 +277,17 @@ def admin_group(id: int, db: Session = Depends(get_db)):
 
 @app.get("/Admin/Groups")
 def admin_groups(db: Session = Depends(get_db)):
+    """
+        Zwraca wszystkie grupy
+    """
     groups = CRUD.get_all_groups(db)
     return {"groups:": groups}
 
 @app.get("/Admin/FreeStudents")
 def admin_free_students(db: Session = Depends(get_db)):
+    """
+        Zwraca wszytskich zalogowanych studentow bez grup
+    """
     students = CRUD.get_free_students(db)
     return {"students:": students}
 
@@ -295,6 +310,44 @@ def admin_free_students(db: Session = Depends(get_db)):
         "surname": student_surnames,
         "index": student_indexes
     }
+
+@app.get("/Admin/Student/{id}")
+def get_student(id:int, db:Session=Depends(get_db)):
+    """
+            Szczegoly studenta
+
+    """
+    student=CRUD.get_user_by_id(db,id)
+    if not student:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {"student": student }
+@app.post("/Admin/SignToGroup/{user_id}{groupId}")
+def post_sign_to_group(user_id:int, groupId:int,db:Session=Depends(get_db)):
+    """
+            Przypisanie studenta do danej grupy.
+
+    """
+    student=CRUD.get_user_by_id(db, user_id)
+    if not student:
+        raise HTTPException(status_code=404, detail="User not found")
+    group= CRUD.get_group(db, groupId)
+
+    if not group:
+        raise HTTPException(status_code=404, detail="Group with such groupID doesnt exist")
+    try:
+        CRUD.update_user_group_id(db, student, group.groupid)
+        return {"message": "Join completed succesfully"}
+    except exceptions.GroupWithReservation:
+        raise HTTPException(status_code=404, detail="The squad of a group with reservation can not be changed")
+    except exceptions.LeaderException:
+        raise HTTPException(status_code=404, detail="Leader can not change the group")
+    except exceptions.GroupSizeExccededException:
+        raise HTTPException(status_code=404, detail="Group is too large to have another member")
+    except exceptions.MinimumSizeGroupException:
+        raise HTTPException(status_code=404, detail="???")
+
+
 
 @app.get("/Admin/Notification")
 def get_notifications(db: Session = Depends(get_db)):
@@ -351,6 +404,13 @@ def delete_group_action_history(group_id: int, db: Session = Depends(get_db)):
     CRUD.delete_ALL_action_history_of_one_group(db, group_id)
     return {"message": "Group's action history succesfully deleted"}
 
+@app.delete("/Admin/database-clear")
+def delete_database(db: Session = Depends(get_db)):
+    """
+    Deletes database
+    """
+    CRUD.delete_all(db)
+    return {"message": "Database succesfully deleted"}
 
 
 ########### SEKCJA STUDENT ################
