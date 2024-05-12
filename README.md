@@ -57,7 +57,7 @@ http://127.0.0.1:8000/docs
 - Usunięcie tabel:
 
 ```sql
-DROP TABLE IF EXISTS project, projectReservation, projectGroup, users, guardian, actionhistory CASCADE;
+DROP TABLE IF EXISTS project, projectReservation, projectGroup, users, guardian, actionhistory, "User", projectreservation, project, "Group" CASCADE;
 ```
 
 - Wypełnienie bazy danych do testów:
