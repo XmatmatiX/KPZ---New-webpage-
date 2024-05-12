@@ -387,3 +387,92 @@ function closeModal() {
 
 document.querySelector('.modal .close').addEventListener('click', closeModal);
 openModal('Grupa XYZ', 'Jan Kowalski');
+
+/*studentGroup*/
+document.addEventListener("DOMContentLoaded", function() {
+    // Identyfikator studenta, dla którego chcemy uzyskać informacje o grupie
+    const studentId = '123'; // Załóżmy, że to jest nasz studentId
+
+    // Funkcja do pobierania danych grupy studenta
+    function fetchGroupDetails(studentId) {
+        fetch(`http://127.0.0.1:8000/Student/Group/${studentId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Group Details:', data);
+                displayGroupDetails(data);
+            })
+            .catch(error => console.error('Error fetching group details:', error));
+    }
+
+    // Funkcja do wyświetlania szczegółów grupy na stronie
+    function displayGroupDetails(data) {
+        const groupInfo = document.getElementById('group-info');
+        groupInfo.innerHTML = `<h2>Informacje o grupie</h2>
+                                <p>Kod zaproszenia: ${data.invite_code}</p>
+                                <p>Rozmiar grupy: ${data.group_size}</p>
+                                <h3>Opiekun grupy:</h3>
+                                <p>Imię i nazwisko: ${data.guardian_info.guardian_name ? data.guardian_info.guardian_name : 'Brak'}</p>
+                                <p>Email: ${data.guardian_info.guardian_email ? data.guardian_info.guardian_email : 'Brak'}</p>
+                                <h3>Członkowie grupy:</h3>`;
+        data.members.forEach(member => {
+            groupInfo.innerHTML += `<p>${member.name} ${member.surname} - ${member.role}</p>`;
+        });
+    }
+
+    // Wywołanie funkcji
+    fetchGroupDetails(studentId);
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const nominateButton = document.querySelector('.nominate-button');
+
+    if (nominateButton) {
+        nominateButton.addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll('.group-members input[type="checkbox"]');
+            let newLeaderId = null;
+
+            // Przejście przez wszystkie checkboxy i znalezienie zaznaczonego
+            checkboxes.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    // Załóżmy, że każdy checkbox ma atrybut `data-user-id` z ID użytkownika
+                    newLeaderId = checkbox.getAttribute('data-user-id');
+                }
+            });
+
+            if (newLeaderId) {
+                changeLeader(newLeaderId);
+            } else {
+                alert('Proszę wybrać nowego lidera!');
+            }
+        });
+    }
+
+    // Funkcja do wysłania żądania zmiany lidera
+    function changeLeader(newLeaderId) {
+        const groupId = '123'; // Tutaj ustaw prawidłowe ID grupy
+        fetch(`http://127.0.0.1:8000/Student/ChangeLeader/${newLeaderId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id_grupy: groupId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Lider został zmieniony.');
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Nie udało się zmienić lidera.');
+        });
+    }
+});
+
+
+
