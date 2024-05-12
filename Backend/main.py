@@ -206,6 +206,18 @@ def project_list(db: Session = Depends(get_db)):
     return {"logos": logos, "companynames": companynames, "titles": titles, "projecstid": pid, "minsizes": minsizes,
             "maxsizes": maxsizes, "status": stats}
 
+
+@app.get("/Project/{id}")
+def project_detail(project_id: int, db: Session = Depends(get_db)):
+    project = CRUD.get_project_by_id(db, project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not not found")
+    num_taken = CRUD.number_project_reserved(db, project.projectid)
+    return {"id": project_id, "logo": project.logopath ,"companyname": project.companyname, "title": project.projecttitle,
+            "description": project.description, "technologies": project.technologies, "minsize": project.mingroupsize, "maxsize": project.maxgroupsize,
+            "groupnumber": project.groupnumber, "remarks": project.remarks, "cooperationtype": project.cooperationtype,
+            "numertaken": num_taken}
+
 ########### SEKCJA ADMIN ################
 @app.get("/Admin/ProjectList")
 def admin_project_list(db: Session = Depends(get_db)):
@@ -283,6 +295,61 @@ def admin_free_students(db: Session = Depends(get_db)):
         "surname": student_surnames,
         "index": student_indexes
     }
+
+@app.get("/Admin/Notification")
+def get_notifications(db: Session = Depends(get_db)):
+    """
+    Zwraca cala action history
+    """
+    all_history = CRUD.get_all_history(db)
+    return all_history
+
+@app.get("/Admin/Notification/{id}")
+def get_notification_by_id(id: int, db: Session = Depends(get_db)):
+    """
+    Zwraca action history o konkretnym id - skoro to zwracamy, to automatycznie action hisotyr jest zmieniane na displayed=TRUE
+    """
+    notification = CRUD.get_action_history_id(db, id)
+    if notification is None:
+        raise HTTPException(status_code=404, detail="Notification not not found")
+    CRUD.update_action_history_displayed(db, notification)
+    return notification
+
+@app.get("/Admin/{group_id}/Notification")
+def get_group_action_history(group_id: int, db: Session = Depends(get_db)):
+    """
+    Zwraca cale action history konkretnej grupy  - albo pusta liste jesli nic nie ma
+    """
+    group = CRUD.get_group(db, group_id)
+    if group is None:
+        raise HTTPException(status_code=404, detail="Group not not found")
+    history = CRUD.get_action_history(db, group_id)
+    if history is None:
+        raise HTTPException(status_code=404, detail="Action history not found")
+    return history
+
+@app.delete("/Admin/Notification/{id}")
+def delete_notification_by_id(notificaton_id: int, db: Session = Depends(get_db)):
+    """
+    Usuwa konkretne action history
+    """
+    action = CRUD.get_action_history_id(db, notificaton_id)
+    if action is None:
+        return {"message": "Action doesn't exist"}
+    CRUD.delete_action_history(db, action)
+    return {"message": "Action deleted successfully"}
+
+
+@app.delete("/Admin/{group_id}/Notification")
+def delete_group_action_history(group_id: int, db: Session = Depends(get_db)):
+    """
+    Deletes all action history referred to a group with id
+    """
+    group = CRUD.get_group(db, group_id)
+    if group is None:
+        raise HTTPException(status_code=404, detail="Group not found")
+    CRUD.delete_ALL_action_history_of_one_group(db, group_id)
+    return {"message": "Group's action history succesfully deleted"}
 
 
 

@@ -241,6 +241,9 @@ def get_action_history(db: Session, group_id: int) -> list[models.ActionHistory]
 def get_action_history_id(db: Session, id: int):
     return db.query(models.ActionHistory).filter(models.ActionHistory.historyid == id).first()
 
+def get_all_history(db:Session):
+    return db.query(models.ActionHistory).all()
+
 
 def get_group_by_invite_code(db: Session, invite_code: str) -> models.ProjectGroup | None:
     return db.query(models.ProjectGroup).filter(models.ProjectGroup.invitecode == invite_code).first()
@@ -267,6 +270,7 @@ def get_group_leader(db: Session, groupid: int) -> models.Users | None:
 
 def get_guardian(db: Session, id: int) -> models.Guardian | None:
     return db.query(models.Guardian).filter(models.Guardian.guardianid == id).first()
+
 
 
 
@@ -468,7 +472,7 @@ def delete_group(db: Session, group: schemas.ProjectGroupReturn):
         raise exceptions.DeleteGroupException
     try:
         if group.groupsize == 1:
-            delete_ALL_action_history(db, group.groupid)
+            delete_ALL_action_history_of_one_group(db, group.groupid)
             db.delete(group)
             db.commit()
     except Exception:
@@ -506,7 +510,7 @@ def delete_project_reservation(db: Session, reservation: schemas.ProjectReservat
     db.commit()
 
 
-def delete_ALL_action_history(db: Session, groupid: int):
+def delete_ALL_action_history_of_one_group(db: Session, groupid: int):
     """
     Deltes all action history attached to a project reservation
     """
@@ -515,6 +519,9 @@ def delete_ALL_action_history(db: Session, groupid: int):
 
 
 def delete_action_history(db: Session, action: schemas.ActionHistoryBase):
+    """
+    Deletes specific action
+    """
     db.delete(action)
     db.commit()
 
