@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (manageButton) {
         manageButton.addEventListener('click', function() {
-            window.location.href = 'changeLieder.html'; // Przekierowanie do strony changeLieder.html
+            window.location.href = 'changeLeader.html';
         });
     } else {
         console.log('Przycisk zarządzania stanowiskiem nie został znaleziony');
@@ -92,11 +92,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (changeButton) {
         changeButton.addEventListener('click', function() {
-            window.location.href = 'changeLieder.html'; // Przekierowanie do strony changeLider.html
+            window.location.href = 'changeLeader.html'; // Przekierowanie do strony changeLider.html
         });
     }
 });
+document.addEventListener("DOMContentLoaded", function() {
+    
+    const homeButton = document.getElementById("signInHome");
 
+    if(homeButton)
+        {
+            homeButton.addEventListener("click", function() {
+                window.location.href = "../StudentView/enrollment.html";
+            });
+        }
+});
 // Project List
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -472,6 +482,12 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('Nie udało się zmienić lidera.');
         });
     }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('nominate').addEventListener('click', function() {
+        alert('Został nadany lider grupy: ');
+    });
 });
 
 

@@ -641,6 +641,7 @@ article {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    align-items: flex-start; /* Dodane, aby kontenery były wyrównane do góry */
     /*margin-left: 200px; /* Odpowiednik szerokości sidebar */
     padding: 10px;
 }
@@ -651,6 +652,7 @@ article {
     border-radius: 4px;
     width: calc(50% - 20px);
     float: left;
+    flex: 1;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -668,9 +670,13 @@ article {
     margin-right: 10px;
 }
 
-/*h2 {*/
-/*    color: #333;*/
-/*}*/
+h7 {
+    color: #333;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 span {
     font-weight: bold;
@@ -783,6 +789,8 @@ span {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 .options-header {
@@ -816,10 +824,11 @@ input[type="text"] {
     border-radius: 4px;
     box-sizing: border-box; /* Dla zapewnienia, że padding nie zmienia szerokości */
 }
-/*yourGroupLider*/
+/*yourGroupLeader*/
 .container {
     display: flex; /* Ustawia flexbox na kontenerze */
-    justify-content: space-between; /* Rozdziela elementy równomiernie w poziomie */
+    align-items: flex-start;
+    /*justify-content: space-between; /* Rozdziela elementy równomiernie w poziomie */
     align-items: start; /* Wyrównuje elementy do góry kontenera */
     flex-wrap: wrap; /* Zapewnia przenoszenie na nową linię, jeżeli brakuje miejsca */
 }
