@@ -65,6 +65,7 @@ body{
 .logoImage {
     max-width: 100%;
     max-height: 100%;
+    cursor: pointer;
 }
 
 .title {
@@ -170,6 +171,116 @@ input[type="checkbox"] {
     margin-right: 40px;
     margin-bottom: 20px;
     margin-top: 30px;
+}
+
+.topicDetailsHeader {
+    background-color: #bae7f3;
+    padding: 10px 40px;
+    display: grid;
+    grid-template-columns: 1fr 8fr;
+    gap: 20px;
+    align-items: center;
+    height: 80px;
+}
+
+.topicSection {
+    margin: 20px 40px;
+    padding: 10px 10px;
+}
+
+.logo {
+    max-width: 50%;
+    max-height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.companyName {
+    font-weight: bold;
+    font-size: 30px;
+}
+
+.contactSection {
+    margin: 10px 0;
+}
+
+.contactDetails {
+    padding: 10px 0;
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    gap: 20px;
+    align-items: center;
+    justify-content: start;
+}
+
+.contact {
+    /*padding: 14px 20px;*/
+    /*justify-content: center;*/
+    /*align-items: center;*/
+    /*border-radius: var(--radius-medium);*/
+    /*border: none;*/
+    background-color: #FFFFFF;
+    width: 300px;
+    padding: 7px 10px;
+    border-radius: var(--radius-small);
+}
+
+.topicDetails {
+    background-color: #FFFFFF;
+    padding: 20px 0;
+    /*border-radius: var(--radius-large);*/
+}
+
+.topicName {
+    font-size: var(--font-big);
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.topicDescription {
+    padding: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 2;
+    font-size: 17px;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+}
+
+.topicLabel {
+    font-weight: bold;
+    font-size: 17px;
+    padding: 15px 25px;
+}
+
+.details {
+    font-size: 17px;
+    padding: 0 25px;
+}
+
+.someDetails {
+    /*display: grid;*/
+    /*align-items: center;*/
+    /*grid-template-columns: 2fr 8fr;*/
+    /*justify-content: start;*/
+    padding: 15px 25px;
+    display: flex;
+    align-items: center;
+}
+
+.topicLabel2 {
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.details2 {
+    font-size: 17px;
+    margin-left: 8px;
 }
 
 .topicList {
@@ -607,6 +718,12 @@ article {
     font-weight: normal;
 }
 
+.topicSection {
+    padding: 0;
+    font-weight: normal;
+    margin: 0 40px 50px;
+}
+
 /*zapisyView*/
 .signInHeader {
     background-color: var(--primary-light);
@@ -974,5 +1091,4 @@ h3 {
 .button-upl:hover {
     background-color: #aaa;
 }
-/*modal w student bez grupy*/
 
