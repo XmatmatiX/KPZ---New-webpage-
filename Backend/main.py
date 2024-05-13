@@ -431,6 +431,11 @@ def delete_admin(id: int,db: Session= Depends(get_db)):
     CRUD.delete_user(db, admin)
     return {"message": "Admin deleted successfully"}
 
+@app.post("/Admin/UploadProjects")
+def post_uploads_projects(db: Session = Depends(get_db)):
+    projects=[]
+    projects.append(CRUD.create_project_from_forms(db))
+    return {"message": "Successfully submitted projects", "projects":projects}
 
 @app.put("/Admin/Group/{group_id}/Confirm")
 def confirm_realization(group_id: int, db: Session = Depends(get_db)):
