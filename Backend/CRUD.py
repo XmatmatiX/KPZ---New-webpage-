@@ -3,6 +3,8 @@ import string
 from datetime import datetime
 
 from sqlalchemy.orm import Session
+import pandas as pd
+from openpyxl import load_workbook
 
 import models
 import schemas
@@ -170,6 +172,54 @@ def create_project_group_short(db: Session, user: schemas.UserReturn) -> models.
     update_user_group_id(db, user, db_group.groupid)
     update_user_role(db, user, "leader")
     return db_group
+
+
+def create_project_from_forms(db: Session):
+    """
+    Sciagniecie rekordow z pliku excel wygenerowanego z google forms
+    """
+    file_path = 'docs/KPZ_FORMS.xlsx'  # Dodaj ścieżkę do pliku
+
+
+    created_projects=[]
+
+    try:
+        # Wczytaj plik Excel
+        wb = load_workbook(file_path)
+        sheet = wb.active
+
+        # Wybierz dane z pliku Excel przy użyciu pandas
+        # df = pd.read_excel(file_path)
+
+        # Iteracja przez wiersze w DataFrame
+        # for index, row in df.iterrows():
+        for cell_e,cell_f,cell_b,cell_d,cell_g,cell_i,cell_j in \
+                zip(sheet['E'][1:],sheet['F'][1:],sheet['B'][1:],
+                    sheet['D'][1:],sheet['G'][1:],sheet['I'][1:],sheet['J'][1:]):
+            project = schemas.ProjectCreate(
+                companyname=str(cell_e.value),
+                projecttitle=str(cell_f.value),
+                email=str(cell_b.value),
+                phonenumber=str(cell_d.value),
+                description=str(cell_g.value),
+                mingroupsize=(cell_i.value),
+                maxgroupsize=(cell_j.value),
+                groupnumber=3,
+                englishgroup=False
+                # remarks=row["Dodatkowe uwagi"],
+                # cooperationtype = row["Planowane formy współpracy"]
+
+            )
+            created= create_project(db, project)
+            print(f"Creating project: {project}")
+            created_projects.append(created)
+        return created_projects
+    except Exception as e:
+        # Złapanie i obsługa błędów
+        print(f"An error occurred: {str(e)}")
+
+
+
 
 
 """

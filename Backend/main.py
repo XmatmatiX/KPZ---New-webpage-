@@ -404,13 +404,20 @@ def delete_group_action_history(group_id: int, db: Session = Depends(get_db)):
     CRUD.delete_ALL_action_history_of_one_group(db, group_id)
     return {"message": "Group's action history succesfully deleted"}
 
-@app.delete("/Admin/database-clear")
+@app.delete("/Admin/DatabaseClear")
 def delete_database(db: Session = Depends(get_db)):
     """
     Deletes database
     """
     CRUD.delete_all(db)
     return {"message": "Database succesfully deleted"}
+
+@app.post("/Admin/UploadProjects")
+def post_uploads_projects(db: Session = Depends(get_db)):
+    projects=[]
+    projects.append(CRUD.create_project_from_forms(db))
+    return {"message": "Successfully submitted projects", "projects":projects}
+
 
 
 ########### SEKCJA STUDENT ################
