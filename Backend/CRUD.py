@@ -185,6 +185,17 @@ def get_user_by_name(db: Session, name: str):
     db_user = db.query(models.Users).filter(models.Users.name == name).all()
     return db_user
 
+def get_user_by_something(db: Session, text:str) -> list[models.Users] | None:
+    """
+    Return user whose name, surname or email contains that something
+    """
+
+    match = db.query(models.Users).filter(models.Users.name.icontains(text), models.Users.rolename!="admin").all()
+    match2 = db.query(models.Users).filter(models.Users.surname.icontains(text), models.Users.rolename!="admin").all()
+    match3 = db.query(models.Users).filter(models.Users.email.icontains(text), models.Users.rolename!="admin").all()
+    result = match +match2 + match3
+    return result
+
 
 def get_user_by_id(db: Session, id: int):
     db_user = db.query(models.Users).filter(models.Users.userid == id).first()
@@ -204,7 +215,7 @@ def get_project_by_id(db: Session, project_id: int):
     return db.query(models.Project).filter(models.Project.projectid == project_id).first()
 
 
-def get_project_by_company(db: Session, project_name: string) -> list[models.Project] |None:
+def get_project_by_company(db: Session, project_name: str) -> list[models.Project] |None:
     return db.query(models.Project).filter(models.Project.companyname == project_name).all()
 
 def get_all_projects(db):
@@ -226,7 +237,7 @@ def get_project_reservation_by_id(db: Session, project_reservation_id: int) -> m
         models.ProjectReservation.projectreservationid == project_reservation_id).first()
 
 
-def get_project_reservation_by_group(db: Session, group_id: int):
+def get_project_reservation_by_group(db: Session, group_id: int) -> models.ProjectReservation | None:
     return db.query(models.ProjectReservation).filter(
         models.ProjectReservation.groupid == group_id).first()
 
@@ -314,10 +325,10 @@ def update_group_group_size(db: Session, gid: int, increase: bool):
 
 def update_user_group_id(db: Session, user: schemas.UserReturn, group: int) -> Exception | schemas.UserReturn:
     """
-    Actualize student's assigmnet to a group
+    Actualize students assigmnet to a group
     If group to which user wants to join already has reservation then change is not possible, same happens if user's current group has reservation (GroupWithReservation)
     In other case if user's rolename is "Student" then the change is done and the group size of both groups is changed \n
-    If user's rolename is "leader", then its sure that user belongs to group and therefore None case is not evaluated,
+    If users rolename is "leader", then its sure that user belongs to group and therefore None case is not evaluated,
     if users's current group's size is 1, then change is possible but the rolename of user is changed to "student" and his current group is automatically deleted.
     If user's current group size is not 1 then raises LeaderException
     :param db: Session
@@ -408,9 +419,11 @@ def update_project_reservation_files(db: Session, reservation: schemas.ProjectRe
 
 def update_project_reservation_isConfirmed(db: Session, reservation: schemas.ProjectReservationBase):
     """
-    Confirm teh project reservation - action that should be made by an admin
+    Confirm teh project reservation - action that should be made by an admin - gives some problems
     """
     reservation.isConfirmed = True
+    db.commit()
+    db.refresh(reservation)
     reservation.status = "confirmed"
     db.commit()
     db.refresh(reservation)
@@ -445,7 +458,8 @@ def delete_user(db: Session, user: schemas.UserReturn):
 
 
 def delete_all_users(db: Session):
-    db.query(models.Users).filter(models.Users.groupid is not None).delete()
+
+    db.query(models.Users).filter(models.Users.groupid is not None, models.Users.rolename!="admin").delete()
     db.commit()
 
 

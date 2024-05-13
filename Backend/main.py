@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
-import random
-import time
 from enum import Enum
 
 from sqlalchemy.orm import Session
@@ -311,6 +308,20 @@ def admin_free_students(db: Session = Depends(get_db)):
         "index": student_indexes
     }
 
+@app.post("/Admin/SearchStudent/{parameter}")
+def search_students(parameter: str, db: Session = Depends(get_db)):
+    students = CRUD.get_user_by_something(db, parameter)
+    names = []
+    surnames = []
+    groups = []
+    roles = []
+    for student in students:
+        names.append(student.name)
+        surnames.append(student.surname)
+        groups.append(student.groupid)
+        roles.append(student.rolename)
+    return {"names": names, "surnames": surnames, "groups": groups, "roles": roles}
+
 @app.get("/Admin/Student/{id}")
 def get_student(id:int, db:Session=Depends(get_db)):
     """
@@ -407,11 +418,30 @@ def delete_group_action_history(group_id: int, db: Session = Depends(get_db)):
 @app.delete("/Admin/database-clear")
 def delete_database(db: Session = Depends(get_db)):
     """
-    Deletes database
+    Deletes database -wont delete any admin!
     """
     CRUD.delete_all(db)
     return {"message": "Database succesfully deleted"}
 
+@app.put("/Admin/AdminDelete/{id}")
+def delete_admin(id: int,db: Session= Depends(get_db)):
+    admin = CRUD.get_user_by_id(db, id)
+    if admin is None:
+        return {"message": "Such admin didn't exist"}
+    CRUD.delete_user(db, admin)
+    return {"message": "Admin deleted successfully"}
+
+
+@app.put("/Admin/Group/{group_id}/Confirm")
+def confirm_realization(group_id: int, db: Session = Depends(get_db)):
+    group = CRUD.get_group(db, group_id)
+    if group is None:
+        raise HTTPException(status_code=404, detail="Group not found")
+    if not CRUD.has_group_reservation(db, group_id):
+        raise HTTPException(status_code=404, detail="Group doesnt have reservation")
+    reservation = CRUD.get_project_reservation_by_group(db, group_id)
+    CRUD.update_project_reservation_isConfirmed(db, reservation)
+    return {"message": "The group's reservation confirmed succesfully"}
 
 ########### SEKCJA STUDENT ################
 

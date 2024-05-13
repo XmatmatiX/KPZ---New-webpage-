@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from Backend import CRUD, models, schemas
+from Backend import CRUD, models, schemas, dbFiller
 from database import SessionLocal
 import exceptions
 
@@ -484,7 +484,7 @@ def test_delete_all():
     db = SessionLocal()
     CRUD.delete_all(db)
     assert len(db.query(models.Guardian).all()) == 0
-    assert len(db.query(models.Users).all()) == 0
+    assert len(db.query(models.Users).all()) != 0 # admini zostali
     assert len(db.query(models.ProjectReservation).all()) == 0
     assert len(db.query(models.ActionHistory).all()) == 0
     assert len(db.query(models.ProjectGroup).all()) == 0
