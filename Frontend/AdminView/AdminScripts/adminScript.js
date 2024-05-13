@@ -113,6 +113,5 @@ document.addEventListener("DOMContentLoaded", function() {
 const logo = document.querySelector('.logoImage');
 
 logo.addEventListener('click', () => {
-    console.log("Nacisnieto logo")
     window.location.href = 'adminHome.html'; // Przenieś użytkownika na stronę główną
 });
