@@ -183,6 +183,17 @@ input[type="checkbox"] {
     height: 80px;
 }
 
+.detailsHeader {
+    background-color: #bae7f3;
+    padding: 10px 40px;
+    display: grid;
+    grid-template-columns: 1fr 8fr;
+    gap: 20px;
+    align-items: center;
+    height: 80px;
+    margin: 20px 0;
+}
+
 .topicSection {
     margin: 20px 40px;
     padding: 10px 10px;
