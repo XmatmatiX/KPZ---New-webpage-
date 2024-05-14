@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../style.css"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Roboto+Flex:opsz,wght@8..144,300&display=swap" rel="stylesheet">
+
+    <title>KPZ</title>
+</head>
+<body>
+
+<section class="header">
+    <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
+    <div class="title">
+        <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
+        <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
+    </div>
+    <button id="topicsStudent" class="headerButton">Przeglądaj tematy</button>
+    <button id="logout" class="headerButton">Wyloguj się</button>
+</section>
+
+<section class="grid">
+    <div class="menu">
+        <p>Przeglądaj</p>
+        <button id="homeAdmin" class="menuButton"><img src="../Images/home.png" alt="There should be a photo"> Rezerwacje </button>
+        <button id="searchStudent" class="menuButton"><img src="../Images/loupe.png" alt="There should be a photo"> Studenci </button>
+        <button id="groups" class="menuButton"><img src="../Images/loupe.png" alt="There should be a photo"> Grupy </button>
+        <button id="addTopic" class="menuButton"><img src="../Images/plus.png" alt="There should be a photo"> Dodaj temat </button>
+        <button id="addGroup" class="pageButton"><img src="../Images/plus.png" alt="There should be a photo"> Dodaj grupę </button>
+        <button id="notifications" class="menuButton"><img src="../Images/notification.png" alt="There should be a photo"> Powiadomienia </button>
+        <button id="settings" class="menuButton"><img src="../Images/settings.png" alt="There should be a photo"> Ustawienia </button>
+    </div>
+    <div class="page">
+
+        <h1>Tworzenie nowej grupy</h1>
+        <section class="addGroup">
+            <input class="groupInput" placeholder="Nazwa grupy">
+            <input class="groupInput" list="guardian" placeholder="Opiekun grupy">
+            <datalist id="guardian">
+                <option value="mg inż. Jan Kowalski">
+                <option value="inż. Dariusz Siodło">
+                <option value="inż. Bogdan Mądralski">
+            </datalist>
+
+            <div class="inputWithButton">
+                <input class="groupInput" list="topicList" placeholder="Temat">
+                <datalist id="topicList">
+                    <option value="Car Tinder">
+                    <option value="System do zarządzania tematami projektowymi">
+                    <option value="Dzieje sie">
+                        <!-- LISTA ROZWIJANA TEMATÓW -->
+                </datalist>
+                <button id="addNewTopic" class="newTopicButton">Dodaj nowy temat</button>
+            </div>
+        </section>
+
+        <h1>Studenci</h1>
+
+        <section class="addGroup">
+            <div class="inputWithButton">
+                <input class="groupInput" list="studentList" placeholder="Student">
+                <datalist id="studentList">
+                    <option value="Jan Kowalski">
+                    <option value="Ela Nowak">
+                    <option value="Szymon Szymański">
+                </datalist>
+                <button class="searchButton">Dodaj</button>
+            </div>
+
+            <section class="studentGroupList">
+
+                <div class="borderStudent">
+                    <p>Indeks</p>
+                    <p>Imię</p>
+                    <p>Nazwisko</p>
+                </div>
+
+                <div class="studentGroupItem">
+                    <p>263548</p>
+                    <p>Iwona</p>
+                    <p>Przykładna</p>
+                </div>
+
+                <div class="studentGroupItem">
+                    <p>263548</p>
+                    <p>Kacper</p>
+                    <p>Przykładny</p>
+                </div>
+
+            </section>
+
+            <button class="addButton">Dodaj grupę</button>
+
+        </section>
+
+    </div>
+</section>
+
+<script src="AdminScripts/adminScript.js"></script>
+
+</body>
+</html>

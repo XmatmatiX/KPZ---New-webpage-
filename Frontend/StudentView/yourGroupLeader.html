@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../style.css"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Roboto+Flex:opsz,wght@8..144,300&display=swap" rel="stylesheet">
+
+    <title>KPZ</title>
+</head>
+<body>
+<section class="header">
+    <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
+    <div class="title">
+        <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
+        <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
+    </div>
+    <button class="headerButton">Przeglądaj tematy</button>
+    <button id="logout" class="headerButton">Wyloguj się</button>
+</section>
+
+<section class="grid">
+    <div class="menu">
+        <p>Przeglądaj</p>
+        <button id="homeButton" class="menuButton"><img src="../Images/home.png" alt="There should be home photo"> Strona główna </button>
+        <button id="searchButton" class="menuButton"><img src="../Images/loupe.png" alt="There should be home photo"> Wolne grupy </button>
+        <button id="groupButton" class="pageButton"><img src="../Images/people.png" alt="There should be home photo"> Twoja grupa </button>
+        <button id="enrollmentButton" class="menuButton"><img src="../Images/home.png" alt="There should be home photo"> Zapisy </button>
+    </div>
+    <div class="page">
+        <div class="container-lider">
+            <section class="group-info">
+                <h3>Skład grupy</h3>
+                <div class="group-members">
+                    <div class="member">
+                        <img src="../Images/Vector.jpg" alt="Avatar studenta">
+                        <p>Imię Nazwisko Indeks (lider)</p>
+                    </div>
+                    <div class="member">
+                        <img src="../Images/Vector.jpg" alt="Avatar studenta">
+                        <p>Imię Nazwisko Indeks (student2)</p>
+                    </div>
+                    <div class="member">
+                        <img src="../Images/Vector.jpg" alt="Avatar studenta">
+                        <p>Imię Nazwisko Indeks (student3)</p>
+                    </div>
+                </div>
+                <div class="button-container">
+                    <button id="tutor">Wprowadź opiekuna</button>
+                    <button id="file">Załącz pliki</button>
+                    <button id="send">Wyślij do zatwierdzenia</button>
+                </div>
+                <p>Jeśli jeszcze tego nie zrobiłeś, załącz zgodę opiekuna i wszystkich Waszych prowadzących przedmiot na realizację tematu (dozwolony format to .png, .jpg, .pdf)</p>
+            </section>
+            <section class="rest-info">
+                <h3>Stan rezerwacji</h3>
+                <p><strong>Temat:</strong> Nazwa tematu (lub brak gdy jeszcze nie wybrano)</p>
+                <p><strong>Status:</strong> Bez rezerwacji/zarezerwowany/zatwierdzony</p>
+                <p><strong>Opiekun:</strong> Imię i nazwisko i mail (lub brak gdy jeszcze nie wybrano)</p>
+
+                <h3>Kontakt z firmą</h3>
+                <p><strong>Osoba kontaktowa:</strong> imię i nazwisko</p>
+                <p><strong>Kontakt:</strong> adres e-mail</p>
+
+                <div class="button-container">
+                    <button id="change">Zarządzaj swoim stanowiskiem w grupie</button>
+                </div>
+            </section>
+
+
+        </div>
+
+        <div id="formModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <form id="opiekunForm">
+                    <label for="imie">Imię:</label>
+                    <input type="text" id="imie" name="imie" required>
+
+                    <label for="nazwisko">Nazwisko:</label>
+                    <input type="text" id="nazwisko" name="nazwisko" required>
+
+                    <label for="email">Adres e-mail:</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <button type="button" onclick="submitForm()">Zatwierdź</button>
+                </form>
+            </div>
+        </div>
+        <div id="fileModal" class="modalFile">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <form id="uploadForm">
+                    <input type="file" id="fileInput" multiple>
+                    <button id="deleteButton" onclick="deleteFile()">🗑️</button>
+                    <button id="button-upl" onclick="uploadFiles()">Upload</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+
+<script src="studentScript.js"></script>
+</body>
+</html>

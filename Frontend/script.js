@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
     logoutButton.addEventListener("click", function() {
         // Przenieś użytkownika do strony landingPage.html
-        window.location.href = "landingPage.html";
+        window.location.href = "../landingPage.html";
     });
 });
 
@@ -78,6 +78,94 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
+document.addEventListener("DOMContentLoaded", function() {
+    // Pobierz przycisk "Wyloguj się"
+    var groupsWithoutTopic = document.getElementById("groups");
+
+    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
+    groupsWithoutTopic.addEventListener("click", function() {
+        // Przenieś użytkownika do strony landingPage.html
+        window.location.href = "groups.html";
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Pobierz przycisk "Wyloguj się"
+    var groupsWithoutTopic = document.getElementById("searchStudent");
+
+    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
+    groupsWithoutTopic.addEventListener("click", function() {
+        // Przenieś użytkownika do strony landingPage.html
+        window.location.href = "students.html";
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Pobierz przycisk "Wyloguj się"
+    var groupsWithoutTopic = document.getElementById("addTopic");
+
+    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
+    groupsWithoutTopic.addEventListener("click", function() {
+        // Przenieś użytkownika do strony landingPage.html
+        window.location.href = "addTopic.html";
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Pobierz przycisk "Wyloguj się"
+    var groupsWithoutTopic = document.getElementById("addGroup");
+
+    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
+    groupsWithoutTopic.addEventListener("click", function() {
+        // Przenieś użytkownika do strony landingPage.html
+        window.location.href = "addGroup.html";
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Pobierz przycisk "Wyloguj się"
+    var groupsWithoutTopic = document.getElementById("notifications");
+
+    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
+    groupsWithoutTopic.addEventListener("click", function() {
+        // Przenieś użytkownika do strony landingPage.html
+        window.location.href = "notifications.html";
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Pobierz przycisk "Wyloguj się"
+    var groupsWithoutTopic = document.getElementById("settings");
+
+    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
+    groupsWithoutTopic.addEventListener("click", function() {
+        // Przenieś użytkownika do strony landingPage.html
+        window.location.href = "settings.html";
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Pobierz przycisk "Wyloguj się"
+    var topics = document.getElementById("topicsStudent");
+
+    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
+    topics.addEventListener("click", function() {
+        // Przenieś użytkownika do strony landingPage.html
+        window.location.href = "topicsView.html";
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Pobierz przycisk "Wyloguj się"
+    var newTopic = document.getElementById("addNewTopic");
+
+    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
+    newTopic.addEventListener("click", function() {
+        // Przenieś użytkownika do strony landingPage.html
+        window.location.href = "addTopic.html";
+    });
+});
+
 const login=() => {
 
     const inputLogin = document.getElementById("login");
@@ -95,3 +183,65 @@ const login=() => {
         message.style.display = "flex";
     }
 }
+
+const logo = document.querySelector('.logoImage');
+
+logo.addEventListener('click', () => {
+    window.location.href = 'landingPage.html'; // Przenieś użytkownika na stronę główną
+});
+
+// Project List
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Pobranie danych z endpointa GET /ProjectList
+    fetch('http://127.0.0.1:8000/ProjectList')
+        .then(response => response.json())
+        .then(data => {
+            const topicList = document.getElementById('topicList');
+
+            console.log("Dane")
+            console.log(data)
+
+            const projects = data['projects:']; // Pobranie tablicy projektów
+            console.log("Projects")
+            console.log(projects)
+
+            // Generowanie nowych elementów HTML na podstawie danych z tokena
+            projects.forEach(topic => {
+                const topicItem = document.createElement('div');
+                topicItem.classList.add('topicItem');
+
+                // Ustalenie tekstu dla groupSize
+                let groupMin = topic.mingroupsize;
+                let groupMax = topic.maxgroupsize;
+                if (groupMax === groupMin)
+                {
+                    topicItem.innerHTML = `
+                        <p>${topic.logopath}</p>
+                        <p>${topic.companyname}</p>
+                        <p>${topic.projecttitle}</p>
+                        <p>${topic.maxgroupsize}</p>
+                        <p>${topic.groupnumber}</p>
+                    `;
+                }
+                else {
+                    topicItem.innerHTML = `
+                        <p>${topic.logopath}</p>
+                        <p>${topic.companyname}</p>
+                        <p>${topic.projecttitle}</p>
+                        <p>${topic.mingroupsize} - ${topic.maxgroupsize}</p>
+                        <p>${topic.groupnumber}</p>
+                    `;
+                }
+
+                // Dodanie nasłuchiwania zdarzenia kliknięcia na każdy element topicItem
+                topicItem.addEventListener('click', function() {
+                    // Wyświetlenie szczegółów tematu po kliknięciu
+                    alert(`Szczegóły tematu:\n${topic.projecttitle}\n${topic.companyname}\nGroup Size: ${topic.mingroupsize} - ${topic.maxgroupsize}\nGroup Number: ${topic.groupnumber}`);
+                });
+
+                topicList.appendChild(topicItem);
+            });
+        })
+        .catch(error => console.error('Błąd pobierania danych:', error));
+});
