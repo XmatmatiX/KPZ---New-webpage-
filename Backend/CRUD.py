@@ -91,7 +91,7 @@ def create_user2(db: Session, user: schemas.UserCreate):
     :param user:
     :return:
     """
-    db_user = models.Users(name=user.name, surname=user.surname, email=user.email, password=user.password,
+    db_user = models.Users(name=user.name, surname=user.surname, email=user.email,
                            rolename=user.rolename)  # przepisanie roli
     db.add(db_user)
     db.commit()

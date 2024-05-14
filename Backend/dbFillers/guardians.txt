@@ -1,0 +1,5 @@
+Radoslaw Kowalski radoslaw.kowalski@example.com
+Karol Kowalski karol.kowalski@example.com
+Edek Niebieski edek.niebieski@example.com
+Karol Zarowka karol.zarowka@example.com
+Genofewa Kowalski genofewa.kowalski@example.com
