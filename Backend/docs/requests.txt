@@ -10,7 +10,7 @@ CREATE TABLE project (
   mingroupsize    int4 NOT NULL,
   maxgroupsize    int4 NOT NULL,
   groupnumber     int4 NOT NULL,
-  englishgroup    bool,
+  englishgroup    text,
   remarks         text,
   cooperationtype text,
   PRIMARY KEY (projectid));
@@ -18,14 +18,12 @@ CREATE TABLE projectReservation (
   projectreservationid SERIAL NOT NULL,
   projectid            int4 NOT NULL,
   groupid              int4 NOT NULL,
-  isconfirmed          bool,
   status               varchar(25) NOT NULL,
   confirmationpath     varchar(255),
   PRIMARY KEY (projectreservationid));
 CREATE TABLE projectGroup (
   groupid    SERIAL NOT NULL,
   guardianid int4,
-  name       varchar(50),
   invitecode varchar(10) NOT NULL,
   groupsize     int4,
   CONSTRAINT groupid
@@ -33,6 +31,7 @@ CREATE TABLE projectGroup (
 CREATE TABLE users (
   userid   SERIAL NOT NULL,
   groupid  int4,
+  keycloackid  varchar(255),
   name     varchar(25) NOT NULL,
   surname  varchar(50) NOT NULL,
   email    varchar(50) NOT NULL,

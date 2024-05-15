@@ -18,7 +18,7 @@ class ProjectBase(BaseModel):
     mingroupsize: int
     maxgroupsize: int
     groupnumber: int
-    englishgroup: bool
+    englishgroup: str
     remarks: str = None
     cooperationtype: Optional[str] = None
 
@@ -37,7 +37,6 @@ class Project(ProjectBase):
 class ProjectReservationBase(BaseModel):
     projectid: int
     groupid: int
-    isconfirmed: bool = None
     status: str = None
     confirmationpath: Optional[str] = None
 
@@ -65,7 +64,6 @@ class ProjectReservationReturn(ProjectReservationBase):
 
 class ProjectGroupBase(BaseModel):
     guardianid: int = None
-    name: str = None
     invitecode: str = None
     groupsize: int = None
 
@@ -90,7 +88,7 @@ class UserBase(BaseModel):
 
 # trzymamy haslo tutaj zeby np nie bylo dostepne podczas pobierania danych z bazy
 class UserCreate(UserBase):
-    # password: str
+    keycloackid: str
     pass
 
 

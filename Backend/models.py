@@ -23,7 +23,7 @@ class Project(Base):
     mingroupsize = Column(Integer, nullable=False)
     maxgroupsize = Column(Integer, nullable=False)
     groupnumber = Column(Integer, nullable=False)
-    englishgroup = Column(Boolean)
+    englishgroup = Column(Text)
     remarks = Column(Text)
     cooperationtype = Column(Text)
 
@@ -35,7 +35,6 @@ class ProjectReservation(Base):
     projectreservationid = Column(Integer, primary_key=True, autoincrement=True)
     projectid = Column(Integer, ForeignKey('project.projectid'), nullable=False)
     groupid = Column(Integer, ForeignKey('projectgroup.groupid'), nullable=False, unique=True)
-    isconfirmed = Column(Boolean)
     status = Column(String(25), nullable=False)
     confirmationpath = Column(String(255))
 
@@ -48,7 +47,6 @@ class ProjectGroup(Base):
     __tablename__ = 'projectgroup'
     groupid = Column(Integer, primary_key=True, autoincrement=True)
     guardianid = Column(Integer, ForeignKey('guardian.guardianid'), nullable=True)
-    name = Column(String(50), nullable=True)
     invitecode = Column(String(10), nullable=False, unique=True)
     groupsize = Column(Integer)
 
@@ -67,6 +65,7 @@ class Users(Base):
     email = Column(String(50), nullable=False)
     # password = Column(String(64), nullable=False)  #USUNIETE !!!!!
     rolename = Column(String(25), nullable=False)
+    keycloackid = Column(String(255), nullable=False)
 
     studentsgroup = relationship("ProjectGroup", back_populates="users")
 

@@ -35,8 +35,7 @@ def create_project_reservation(db: Session, project : models.Project , group : m
     """
     if is_project_available(db, project.projectid):
         if is_size_valid(project, group):
-            db_reservation = models.ProjectReservation(projectid=project.projectid, groupid=group.groupid,
-                                                       isconfirmed=False, status="reserved")
+            db_reservation = models.ProjectReservation(projectid=project.projectid, groupid=group.groupid, status="reserved")
             db.add(db_reservation)
             db.commit()
             db.refresh(db_reservation)
@@ -105,7 +104,7 @@ def create_user(db: Session, user: schemas.UserCreate) -> models.Users:
     :return:
     """
     db_user = models.Users(name=user.name, surname=user.surname, email=user.email,
-                           rolename=user.rolename)  # przepisanie roli ZAWSZE JEST STUDENTEM
+                           rolename=user.rolename, keycloackid=user.keycloackid)  # przepisanie roli ZAWSZE JEST STUDENTEM
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -200,9 +199,9 @@ def create_project_from_forms(db: Session):
 
         # Iteracja przez wiersze w DataFrame
         # for index, row in df.iterrows():
-        for cell_e,cell_f,cell_b,cell_d,cell_g,cell_i,cell_j in \
+        for cell_e,cell_f,cell_b,cell_d,cell_g,cell_i,cell_j,cell_l in \
                 zip(sheet['E'][1:],sheet['F'][1:],sheet['B'][1:],
-                    sheet['D'][1:],sheet['G'][1:],sheet['I'][1:],sheet['J'][1:]):
+                    sheet['D'][1:],sheet['G'][1:],sheet['I'][1:],sheet['J'][1:],sheet['L'][1:]):
             project = schemas.ProjectCreate(
                 companyname=str(cell_e.value),
                 projecttitle=str(cell_f.value),
@@ -212,7 +211,7 @@ def create_project_from_forms(db: Session):
                 mingroupsize=(cell_i.value),
                 maxgroupsize=(cell_j.value),
                 groupnumber=3,
-                englishgroup=False
+                englishgroup=str(cell_l.value),
                 # remarks=row["Dodatkowe uwagi"],
                 # cooperationtype = row["Planowane formy współpracy"]
 
@@ -321,7 +320,7 @@ def histories_whole_info(db:Session):
             proj=project.projectid
         else:
             proj=None
-        complexHistory.append({"group": history.groupid, "content": history.content, "date":history.datatime, "project": proj })
+        complexHistory.append({"group": history.groupid,"historyid": history.historyid ,"content": history.content, "date":history.datatime, "project": proj })
     return complexHistory
 
 def get_group_by_invite_code(db: Session, invite_code: str) -> models.ProjectGroup | None:
@@ -502,7 +501,7 @@ def update_project_reservation_isConfirmed(db: Session, reservation: schemas.Pro
     Confirm teh project reservation - action that should be made by an admin - gives some problems
     """
     reservation.status = "confirmed"
-    reservation.isconfirmed = True
+    # reservation.isconfirmed = True // NIE MAMY ISCONFIRMED
     db.commit()
     db.refresh(reservation)
     create_action_history(db, reservation.groupid, contentA="Zatwierdzono")
