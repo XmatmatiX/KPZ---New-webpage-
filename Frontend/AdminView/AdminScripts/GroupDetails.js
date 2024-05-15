@@ -1,6 +1,20 @@
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
+    // Pobierz przycisk "Wyloguj się"
+    var notificationButton = document.getElementById("notificationButton");
+
+    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
+    notificationButton.addEventListener("click", function() {
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const groupId = urlParams.get('id');
+
+        window.location.href = `groupNotifications.html?id=${groupId}`;
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const groupId = urlParams.get('id');
