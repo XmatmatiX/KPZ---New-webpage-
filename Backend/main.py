@@ -178,7 +178,6 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 @app.get("/ProjectList")
 def project_list(db: Session = Depends(get_db)):
     projects = CRUD.get_all_projects(db)
-    # return {"projects:": projects}
 
     logos = []
     companynames = []
@@ -205,15 +204,15 @@ def project_list(db: Session = Depends(get_db)):
 
 
 @app.get("/Project/{id}")
-def project_detail(project_id: int, db: Session = Depends(get_db)):
-    project = CRUD.get_project_by_id(db, project_id)
+def project_detail(id: int, db: Session = Depends(get_db)):
+    project = CRUD.get_project_by_id(db, id)
     if project is None:
         raise HTTPException(status_code=404, detail="Project not not found")
     num_taken = CRUD.number_project_reserved(db, project.projectid)
-    return {"id": project_id, "logo": project.logopath ,"companyname": project.companyname, "title": project.projecttitle,
+    return {"id": id, "logo": project.logopath ,"companyname": project.companyname, "title": project.projecttitle,
             "description": project.description, "technologies": project.technologies, "minsize": project.mingroupsize, "maxsize": project.maxgroupsize,
             "groupnumber": project.groupnumber, "remarks": project.remarks, "cooperationtype": project.cooperationtype,
-            "numertaken": num_taken}
+            "numertaken": num_taken, "language": project.englishgroup}
 
 ########### SEKCJA ADMIN ################
 @app.get("/Admin/ProjectList")
@@ -384,7 +383,7 @@ def get_notifications(db: Session = Depends(get_db)):
     """
     Zwraca cala action history
     """
-    all_history = CRUD.get_all_history(db)
+    all_history = CRUD.histories_whole_info(db)
     return all_history
 
 @app.get("/Admin/Notification/{id}")
@@ -470,12 +469,12 @@ def confirm_realization(group_id: int, db: Session = Depends(get_db)):
 ########### SEKCJA STUDENT ################
 
 @app.get("/Student/Group/{id}")
-def get_student_group(student_id: int, db: Session = Depends(get_db)):
+def get_student_group(id: int, db: Session = Depends(get_db)):
     """
     Returns information about a group to which student with id belong
     """
     # Get the student by their id
-    student = CRUD.get_user_by_id(db, student_id)
+    student = CRUD.get_user_by_id(db, id)
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
 
@@ -540,11 +539,11 @@ def get_student_group(student_id: int, db: Session = Depends(get_db)):
     }
 
 @app.put("/Student/ChangeLeader/{id}")
-def put_change_leader(user_id: int, db: Session = Depends(get_db)):
+def put_change_leader(id: int, db: Session = Depends(get_db)):
     """
     Change leader of a group <- the ID is of a new leader
     """
-    user = CRUD.get_user_by_id(db, user_id)
+    user = CRUD.get_user_by_id(db, id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -597,9 +596,9 @@ def enroll_student_to_project( user_id: int, project_id: int, db: Session = Depe
     return {"message": "Enrollment successful", "group_id": user.groupid, "project_name": project.projecttitle}
 
 @app.post("/Student/unsubscribe/{id}")
-def unsubscribe_from_group(user_id: int, db: Session = Depends(get_db)):
+def unsubscribe_from_group(id: int, db: Session = Depends(get_db)):
     # Pobierz użytkownika
-    user = CRUD.get_user_by_id(db, user_id)
+    user = CRUD.get_user_by_id(db, id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -663,6 +662,52 @@ def create_group(user_id: int, db: Session = Depends(get_db)):
         return {"messsage": "the group was succesfully created, here is its inviteCode"+group.invitecode}
     except Exception as e:
         print (e)
+
+@app.post("/Student/{user_id}/Group/GuardianAdd/{name}/{surname}/{email}")
+def set_guardian(user_id: int, name: str, surname: str, email: str, db: Session = Depends(get_db)):
+    user = CRUD.get_user_by_id(db, user_id)
+    print(name)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.rolename != "leader":
+        raise HTTPException(status_code=404, detail="Only leader can select guardian")
+    if name != "" and surname != "" and email != "":
+        guard=schemas.GuardianCreate(
+            name=name,
+            surname=surname,
+            email=email
+        )
+        groupid = user.groupid
+        guardian = CRUD.create_guardian(db, guard)
+        print(guardian.name)
+        group=CRUD.update_project_group_guardian(db, groupid, guardian.guardianid)
+        print(group.guardianid)
+        return {"message": "The guardian of group was changed successfully"}
+    raise HTTPException(status_code=404, detail="Lack of required information")
+
+@app.put("/Student/{user_id}/Group/GuardianAdd/{name}/{surname}/{email}")
+def change_guardian(user_id: int, name: str, surname: str, email: str, db: Session = Depends(get_db)):
+    user = CRUD.get_user_by_id(db, user_id)
+    print(name)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.rolename != "leader":
+        raise HTTPException(status_code=404, detail="Only leader can select guardian")
+    if name != "" and surname != "" and email != "":
+        guard=schemas.GuardianCreate(
+            name=name,
+            surname=surname,
+            email=email
+        )
+        groupid = user.groupid
+        guardian = CRUD.create_guardian(db, guard)
+        print(guardian.name)
+        group=CRUD.update_project_group_guardian(db, groupid, guardian.guardianid)
+        print(group.guardianid)
+        return {"message": "The guardian of group was changed successfully"}
+    raise HTTPException(status_code=404, detail="Lack of required information")
+
+
 
 # Dependency to check LDAP authentication
 # def check_ldap_auth(credentials: HTTPBasicCredentials = Depends(security)):

@@ -113,11 +113,18 @@ def create_user(db: Session, user: schemas.UserCreate) -> models.Users:
 
 
 def create_guardian(db: Session, guardian: schemas.GuardianCreate):
-    db_guardian = models.Guardian(name=guardian.name, surname=guardian.surname, email=guardian.email)
-    db.add(db_guardian)
-    db.commit()
-    db.refresh(db_guardian)
-    return db_guardian
+    """
+    Creates guardian if one doesnt yet exist (based on email)
+    or returns one guardian with such email
+    """
+    guard= get_guardian_byEmail(db, guardian.email)
+    if guard is None:
+        db_guardian = models.Guardian(name=guardian.name, surname=guardian.surname, email=guardian.email)
+        db.add(db_guardian)
+        db.commit()
+        db.refresh(db_guardian)
+        return db_guardian
+    return guard
 
 
 def create_project(db: Session, project: schemas.ProjectCreate):
@@ -282,7 +289,7 @@ def get_groups_assigned_to_projects(db, project):
     return groups
 
 
-def get_project_reservation_by_id(db: Session, project_reservation_id: int) -> models.ProjectReservation | None:
+def get_project_reservation_by_id(db: Session, project_reservation_id: int) -> schemas.ProjectReservationReturn | None:
     return db.query(models.ProjectReservation).filter(
         models.ProjectReservation.projectreservationid == project_reservation_id).first()
 
@@ -305,6 +312,17 @@ def get_action_history_id(db: Session, id: int):
 def get_all_history(db:Session):
     return db.query(models.ActionHistory).all()
 
+def histories_whole_info(db:Session):
+    histories = get_all_history(db)
+    complexHistory = []
+    for history in histories:
+        project = get_project_reservation_by_group(db, history.groupid)
+        if project is not None:
+            proj=project.projectid
+        else:
+            proj=None
+        complexHistory.append({"group": history.groupid, "content": history.content, "date":history.datatime, "project": proj })
+    return complexHistory
 
 def get_group_by_invite_code(db: Session, invite_code: str) -> models.ProjectGroup | None:
     return db.query(models.ProjectGroup).filter(models.ProjectGroup.invitecode == invite_code).first()
@@ -333,6 +351,8 @@ def get_guardian(db: Session, id: int) -> models.Guardian | None:
     return db.query(models.Guardian).filter(models.Guardian.guardianid == id).first()
 
 
+def get_guardian_byEmail(db: Session, email: str) -> models.Guardian | None:
+    return db.query(models.Guardian).filter(models.Guardian.email == email).first()
 
 
 """
@@ -439,7 +459,7 @@ def update_project_group_guardian(db: Session, gid: int, guardian: int):
     Change the group's guardian
     """
     group = get_group(db, gid)
-    if (group.guardianid is None) or (group.guardianid is not guardian):
+    if (group.guardianid is None) or (group.guardianid != guardian):
         group.guardianid = guardian
         db.commit()
         db.refresh(group)
@@ -477,14 +497,12 @@ def update_project_reservation_files(db: Session, reservation: schemas.ProjectRe
     return reservation
 
 
-def update_project_reservation_isConfirmed(db: Session, reservation: schemas.ProjectReservationBase):
+def update_project_reservation_isConfirmed(db: Session, reservation: schemas.ProjectReservationReturn):
     """
     Confirm teh project reservation - action that should be made by an admin - gives some problems
     """
-    reservation.isConfirmed = True
-    db.commit()
-    db.refresh(reservation)
     reservation.status = "confirmed"
+    reservation.isconfirmed = True
     db.commit()
     db.refresh(reservation)
     create_action_history(db, reservation.groupid, contentA="Zatwierdzono")
