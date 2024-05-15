@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const projectId = urlParams.get('id');
     console.log("ID: ", projectId)
 
-    // Pobranie szczegółów projektu za pomocą endpointu /Project/{id}
     fetch(`http://127.0.0.1:8000/Project/${projectId}`)
         .then(response => response.json())
         .then(projectData => {

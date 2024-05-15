@@ -27,7 +27,7 @@
         <p>Przeglądaj</p>
         <button id="homeAdmin" class="menuButton"><img src="../Images/home.png" alt="There should be a photo"> Rezerwacje </button>
         <button id="searchStudent" class="menuButton"><img src="../Images/loupe.png" alt="There should be a photo"> Studenci </button>
-        <button id="groups" class="pageButton"><img src="../Images/loupe.png" alt="There should be a photo"> Grupy </button>
+        <button id="groups" class="menuButton"><img src="../Images/loupe.png" alt="There should be a photo"> Grupy </button>
         <button id="addTopic" class="menuButton"><img src="../Images/plus.png" alt="There should be a photo"> Dodaj temat </button>
         <button id="addGroup" class="menuButton"><img src="../Images/plus.png" alt="There should be a photo"> Dodaj grupę </button>
         <button id="notifications" class="menuButton"><img src="../Images/notification.png" alt="There should be a photo"> Powiadomienia </button>
@@ -35,25 +35,30 @@
     </div>
     <div class="page">
 
-        <section class="headerAdmin">
-            <input placeholder="Wyszukaj grupę">
-            <button class="searchButton">Szukaj</button>
-
-            <div class="freeBorder2">
-                <input type="checkbox" id="freeCheckbox">
-                <label for="freeCheckbox">Grupy bez tematu</label>
+        <section class="groupHeader">
+            <h1 id="groupid"></h1>
+            <div id="groupDetails" class="groupSection">
+                <div id="thema" class="groupDetails"></div>
+                <div id="company" class="groupDetails"></div>
+                <div id="guardian" class="groupDetails"></div>
+                <div id="state" class="groupDetails"></div>
             </div>
         </section>
 
-        <section id="groupList" class="topicList">
+        <h1>Studenci</h1>
 
-            <div class="borderGroups">
-                <p>ID grupy</p>
-                <p>Firma</p>
-                <p>Temat</p>
-                <p>Liczba członków</p>
-                <p>Prowadzący</p>
-            </div>
+        <section class="addGroup">
+
+            <section id="studentGroupList" class="studentGroupList2">
+
+                <div class="borderStudent">
+                    <p>Email</p>
+                    <p>Imię</p>
+                    <p>Nazwisko</p>
+                    <p>Rola</p>
+                </div>
+
+            </section>
 
         </section>
 
@@ -61,7 +66,7 @@
 </section>
 
 <script src="AdminScripts/adminScript.js"></script>
-<script src="AdminScripts/Groups.js"></script>
+<script src="AdminScripts/GroupDetails.js"></script>
 
 </body>
 </html>

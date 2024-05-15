@@ -216,6 +216,11 @@ input[type="checkbox"] {
     margin: 10px 0;
 }
 
+.groupSection {
+    margin: 10px 30px;
+    font-weight: normal;
+}
+
 .contactDetails {
     padding: 10px 0;
     display: grid;
@@ -223,6 +228,16 @@ input[type="checkbox"] {
     gap: 20px;
     align-items: center;
     justify-content: start;
+}
+
+.groupDetails {
+    padding: 10px 0;
+    display: grid;
+    grid-template-columns: 1fr 10fr;
+    gap: 20px;
+    align-items: center;
+    justify-content: start;
+    margin-right: 140px;
 }
 
 .contact {
@@ -233,6 +248,12 @@ input[type="checkbox"] {
     /*border: none;*/
     background-color: #FFFFFF;
     width: 300px;
+    padding: 7px 10px;
+    border-radius: var(--radius-small);
+}
+
+.group {
+    background-color: #FFFFFF;
     padding: 7px 10px;
     border-radius: var(--radius-small);
 }
@@ -315,6 +336,15 @@ input[type="checkbox"] {
     font-weight: normal;
 }
 
+.studentGroupList2 {
+    padding: 0;
+    margin-top: 10px;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 120px;
+    font-weight: normal;
+}
+
 .adminList {
     padding: 5px;
     margin-top: 0px;
@@ -363,7 +393,7 @@ input[type="checkbox"] {
     padding: 10px;
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
-    grid-template-columns: 2fr 2fr 5fr 2fr;
+    grid-template-columns: 1fr 2fr 4fr 1fr 2fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
 }
@@ -385,7 +415,7 @@ input[type="checkbox"] {
     padding: 10px;
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
-    grid-template-columns: 2fr 3fr 3fr;
+    grid-template-columns: 3fr 3fr 3fr 1fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
 }
@@ -464,9 +494,10 @@ input[type="checkbox"] {
     background-color: #fff;
     margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
     padding: 10px;
+    height: 55px;
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
-    grid-template-columns: 2fr 2fr 5fr 2fr;
+    grid-template-columns: 1fr 2fr 4fr 1fr 2fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
     align-items: center;
@@ -495,11 +526,17 @@ input[type="checkbox"] {
     padding: 10px;
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
-    grid-template-columns: 2fr 3fr 3fr;
+    grid-template-columns: 3fr 3fr 3fr 1fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
     align-items: center;
 }
+
+.studentGroupItem.leader {
+    /*font-weight: bold;*/
+    border: 2px solid #000;
+}
+
 
 .loginHeader {
     background-color: var(--primary-light);
@@ -511,6 +548,10 @@ input[type="checkbox"] {
     align-items: center;
     justify-content: center; /* Wyśrodkowanie zawartości na osi poziomej */
     text-align: center; /* Wyśrodkowanie tekstu */
+}
+
+.groupHeader {
+    margin-bottom: 20px;
 }
 
 input {

@@ -12,38 +12,22 @@ document.addEventListener("DOMContentLoaded", function() {
             console.log(groups)
 
             // Generowanie nowych elementów HTML na podstawie danych z tokena
-            groups.forEach(topic => {
+            groups.forEach(group => {
                 const groupItem = document.createElement('div');
                 groupItem.classList.add('groupItem');
 
-                // Ustalenie tekstu dla groupSize
-                // let groupMin = topic.mingroupsize;
-                // let groupMax = topic.maxgroupsize;
-                // if (groupMax === groupMin)
-                // {
-                //     groupItem.innerHTML = `
-                //         <p>${topic.logopath}</p>
-                //         <p>${topic.companyname}</p>
-                //         <p>${topic.projecttitle}</p>
-                //         <p>${topic.maxgroupsize}</p>
-                //         <p>${topic.groupnumber}</p>
-                //     `;
-                // }
-                // else {
-                //     groupItem.innerHTML = `
-                //         <p>${topic.logopath}</p>
-                //         <p>${topic.companyname}</p>
-                //         <p>${topic.projecttitle}</p>
-                //         <p>${topic.mingroupsize} - ${topic.maxgroupsize}</p>
-                //         <p>${topic.groupnumber}</p>
-                //     `;
-                // }
-                //
-                // // Dodanie nasłuchiwania zdarzenia kliknięcia na każdy element topicItemAdmin
-                // groupItem.addEventListener('click', function() {
-                //     // Przekierowanie użytkownika do widoku reservationDetails, przekazując ID projektu jako parametr w adresie URL
-                //     window.location.href = `topicDetails.html?id=${topic.projectid}`;
-                // });
+                groupItem.innerHTML = `
+                    <p>${group.groupid}</p>
+                    <p>Firma</p>
+                    <p>Temat</p>
+                    <p>${group.groupsize}</p>
+                    <p>${group.guardianid}</p>
+                `;
+
+                groupItem.addEventListener('click', function() {
+                    // Przekierowanie użytkownika do widoku reservationDetails, przekazując ID projektu jako parametr w adresie URL
+                    window.location.href = `groupDetails.html?id=${group.groupid}`;
+                });
 
                 groupList.appendChild(groupItem);
             });
