@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const notifications = document.getElementById('notificationList');
             //const notificationDetails = document.getElementById('notificationDetails');
 
-            data.forEach((notification, index) => {
+            data.forEach((notification) => {
 
                 const notificationSection = document.createElement('section');
                 notificationSection.classList.add('notificationSection');

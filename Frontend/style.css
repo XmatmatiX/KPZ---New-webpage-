@@ -399,6 +399,18 @@ input[type="checkbox"] {
     justify-items: center;
 }
 
+.borderGroupNotification {
+    background-color: #bae7f3;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 5fr 2fr 1fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+}
+
+
 .borderGroups {
     background-color: #bae7f3;
     margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
@@ -506,6 +518,32 @@ input[type="checkbox"] {
 }
 
 .notificationItem.active {
+    background-color: var(--hover2);
+    border: 2px solid #000;
+    font-weight: normal;
+}
+
+.notificationGroupItem {
+    cursor: pointer;
+    background-color: #fff;
+    /*margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    height: 55px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 5fr 2fr 1fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+    align-items: center;
+    font-weight: bold;
+    /* usuniecie pogrubienia w moemncie przeczytania powiadomienia*/
+}
+
+.notificationGroupItem:hover {
+    background-color: var(--hover2);
+}
+
+.notificationGroupItem.active {
     background-color: var(--hover2);
     border: 2px solid #000;
     font-weight: normal;
@@ -782,20 +820,25 @@ article {
 
 .headerAdmin {
     height: 40px;
-    margin-right: 40px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    margin-left: 30px;
+    margin: 20px 40px 20px 30px;
     padding: 10px;
     display: flex;
     align-items: center;
 }
 
+.headerActionHistory {
+    height: 40px;
+    margin-right: 30px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
 .addGroup {
-    margin-right: 40px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    margin-left: 30px;
+    margin: 20px 40px 20px 30px;
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -827,6 +870,15 @@ article {
     margin-left: 80px;
     height: 35px;
     width: 200px;
+}
+
+.clearButton {
+    height: 45px;
+    width: 200px;
+}
+
+.clearButton img {
+    margin-right: 8px;
 }
 
 .freeBorder2 {
