@@ -20,9 +20,11 @@ docker run --name kpz-postgres -p 5432:5432 -e POSTGRES_PASSWORD=mysecretpasswor
 pip install fastapi
 pip install uvicorn
 pip install sqlalchemy
+pip install pandas
+pip install openpyxl
 ```
 
-Opcjonalnie jesli nie działa cos:
+Opcjonalnie jesli cos nie działa:
 
 ```bash
 pip install python-multipart

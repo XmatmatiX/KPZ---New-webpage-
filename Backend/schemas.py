@@ -13,14 +13,14 @@ class ProjectBase(BaseModel):
     email: str
     phonenumber: str
     description: str
-    logopath: str = None
-    technologies: str = None
+    logopath: Optional[str] = None
+    technologies: Optional[str] = None
     mingroupsize: int
     maxgroupsize: int
     groupnumber: int
     englishgroup: bool
     remarks: str = None
-    cooperationtype: str = None
+    cooperationtype: Optional[str] = None
 
 
 class ProjectCreate(ProjectBase):
