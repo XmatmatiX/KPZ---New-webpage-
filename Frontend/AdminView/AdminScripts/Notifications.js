@@ -21,13 +21,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 // notificationDetails.classList.add('notificationDetails');
                 // notifications.appendChild(notificationDetails);
 
-                const dateTime = new Date(notification.datatime);
+                const dateTime = new Date(notification.date);
                 const formattedDateTime = `${dateTime.toLocaleDateString()} ${dateTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}`;
 
                 notificationItem.style.fontWeight = notification.displayed ? 'normal' : 'bold';
 
                 notificationItem.innerHTML = `
-                    <p>${notification.groupid}</p>
+                    <p>${notification.group}</p>
                     <p>${notification.content}</p>
                     <p>${formattedDateTime}</p>
                     <button class="searchButton"> <img src="../Images/trash.png" alt="Here should be a photo"> </button>
@@ -54,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             displayNotificationDetails(notificationDetails, details);
                             toggleNotificationDetails(notificationDetails);
                             notificationItem.classList.toggle('active');
+                            //notificationDetails.classList.toggle('activeDetails');
                         })
                         .catch(error => console.error('Błąd pobierania danych:', error));
                 });
@@ -63,12 +64,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     event.stopPropagation();
 
-                    var modal = document.getElementById('deleteModal');
+                    const modal = document.getElementById('deleteModal');
 
                     // elementy do zamykania modalu
-                    var span = document.getElementsByClassName("close")[0];
-                    var confirmBtn = document.getElementById("confirmBtn");
-                    var cancelBtn = document.getElementById("cancelBtn");
+                    const span = document.getElementsByClassName("close")[0];
+                    const confirmBtn = document.getElementById("confirmBtn");
+                    const cancelBtn = document.getElementById("cancelBtn");
 
                     function closeModal() {
                         modal.style.display = "none";
@@ -86,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 if (response.ok) {
                                     // Powiadomienie zostało pomyślnie usunięte, możesz wykonać odpowiednie akcje, np. odświeżyć listę powiadomień
                                     console.log('Powiadomienie zostało pomyślnie usunięte');
+                                    location.reload();
                                     // Tutaj możesz dodać kod do odświeżenia listy powiadomień
                                 } else {
                                     console.error('Wystąpił błąd podczas usuwania powiadomienia');
@@ -96,31 +98,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         closeModal();
                     }
                     cancelBtn.onclick = closeModal; // Zamknij modal po anulowaniu
-
-                    //const isConfirmed = confirm("Czy na pewno chcesz usunąć tę wiadomość?");
-
-                    // Jeśli użytkownik potwierdzi usunięcie
-                    // if (isConfirmed) {
-                    //     // Wywołaj zapytanie DELETE, aby usunąć powiadomienie
-                    //     fetch(`http://127.0.0.1:8000/Admin/Notification/${notification.historyid}`, {
-                    //         method: 'DELETE'
-                    //     })
-                    //         .then(response => {
-                    //             if (response.ok) {
-                    //                 // Powiadomienie zostało pomyślnie usunięte, możesz wykonać odpowiednie akcje, np. odświeżyć listę powiadomień
-                    //                 console.log('Powiadomienie zostało pomyślnie usunięte');
-                    //                 // Tutaj możesz dodać kod do odświeżenia listy powiadomień
-                    //             } else {
-                    //                 console.error('Wystąpił błąd podczas usuwania powiadomienia');
-                    //             }
-                    //         })
-                    //         .catch(error => console.error('Błąd usuwania powiadomienia:', error));
-                    // } else {
-                    //     // Jeśli użytkownik anuluje usunięcie, nie wykonujemy żadnej akcji
-                    //     console.log('Anulowano usuwanie powiadomienia');
-                    // }
-
-
 
                 });
 

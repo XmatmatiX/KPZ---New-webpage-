@@ -21,10 +21,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
             //<p>${projectData.logopath}</p>
 
-            const minGroupSize = projectData.mingroupsize;
-            const maxGroupSize = projectData.maxgroupsize;
-            const englishValue = projectData.englishgroup;
-
+            const minGroupSize = projectData.minsize;
+            const maxGroupSize = projectData.maxsize;
+            const englishValue = projectData.language;
             const language = englishValue ? "Tak" : "Nie";
 
             // Sprawdź, czy minGroupSize i maxGroupSize są takie same
@@ -32,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const topicDetails = document.getElementById('topicDetails')
             topicDetails.innerHTML = `
-                <p class="topicName">${projectData.projecttitle}</p>
+                <p class="topicName">${projectData.title}</p>
                 <p class="topicDescription">${projectData.description}</p>
                  ${projectData.cooperationtype ? `
                     <p class="topicLabel">Planowane formy współpracy:</p>
@@ -41,16 +40,21 @@ document.addEventListener("DOMContentLoaded", function() {
                     <p class="topicLabel2">Akceptowana wielkość grup:</p>
                     <p class="details2">${groupSizeText}</p>
                 </div>
+                <div class="someDetails">
+                    <p class="topicLabel2">Liczba grup:</p>
+                    <p class="details2">${projectData.groupnumber}</p>
+                </div>
+                <div class="someDetails">
+                    <p class="topicLabel2">Ilość zajętych grup:</p>
+                    <p class="details2">${projectData.numertaken}</p>
+                </div>
                 
                 ${englishValue !== null ? `
                 <div class="someDetails">
                     <p class="topicLabel2">Język angielski jako dopuszczalny język:</p>
                     <p class="details2">${language}</p>
                 </div>` : ''}
-                <div class="someDetails">
-                    <p class="topicLabel2">Liczba grup:</p>
-                    <p class="details2">${projectData.groupnumber}</p>
-                </div>
+                
                 ${projectData.technologies ? `
                     <p class="topicLabel">Technologie:</p>
                     <p class="details">${projectData.technologies}</p>` : ''}

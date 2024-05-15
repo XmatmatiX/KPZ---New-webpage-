@@ -519,7 +519,6 @@ input[type="checkbox"] {
 
 .notificationItem.active {
     background-color: var(--hover2);
-    border: 2px solid #000;
     font-weight: normal;
 }
 
