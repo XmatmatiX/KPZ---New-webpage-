@@ -411,11 +411,11 @@ def get_group_action_history(group_id: int, db: Session = Depends(get_db)):
     return history
 
 @app.delete("/Admin/Notification/{id}")
-def delete_notification_by_id(notificaton_id: int, db: Session = Depends(get_db)):
+def delete_notification_by_id(id: int, db: Session = Depends(get_db)):
     """
     Usuwa konkretne action history
     """
-    action = CRUD.get_action_history_id(db, notificaton_id)
+    action = CRUD.get_action_history_id(db, id)
     if action is None:
         return {"message": "Action doesn't exist"}
     CRUD.delete_action_history(db, action)
