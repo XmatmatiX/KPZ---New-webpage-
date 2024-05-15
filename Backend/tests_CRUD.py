@@ -566,3 +566,7 @@ def test_group_functionality():
     group = CRUD.get_group(db, gid)
     assert group is None
 
+
+def test_bool():
+    db= SessionLocal()
+    print(CRUD.histories_whole_info(db))
