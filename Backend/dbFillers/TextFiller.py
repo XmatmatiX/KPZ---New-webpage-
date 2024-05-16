@@ -3,7 +3,7 @@ import random
 names=['Anna', 'Karol', 'Genofewa', 'Radoslaw', 'Laura', 'Edek', 'Jan', 'Maria']
 surnames=['Kowalski', 'Nowak', 'Zarowka', 'Niebieski']
 email_end='@example.com'
-passwords=['123', 'haslo']
+keycloakid=['123', 'haslo']
 rolename='student'
 
 def randomUsers():
@@ -11,9 +11,14 @@ def randomUsers():
     for i in range(20):
         name = random.choice(names)
         surname = random.choice(surnames)
-        password = random.choice(passwords)
+        password = random.choice(keycloakid)
         email = name.lower() + '.' + surname.lower() + email_end
         file.write(name+" "+surname+" "+email+" "+password+" student\n")
+    name = random.choice(names)
+    surname = random.choice(surnames)
+    password = random.choice(keycloakid)
+    email = name.lower() + '.' + surname.lower() + email_end
+    file.write(name+" "+surname+" "+email+" "+password+" admin\n")
     file.close()
 
 def randomGuardian():

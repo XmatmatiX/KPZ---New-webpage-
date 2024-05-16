@@ -280,7 +280,7 @@ def admin_groups(db: Session = Depends(get_db)):
     """
         Zwraca wszystkie grupy
     """
-    groups = CRUD.get_all_groups(db)
+    groups = CRUD.get_all_groups_info(db)
     return {"groups:": groups}
 
 @app.get("/Admin/FreeStudents")
@@ -318,24 +318,50 @@ def search_students(parameter: str, db: Session = Depends(get_db)):
     surnames = []
     groups = []
     roles = []
+    emails =[]
     for student in students:
         names.append(student.name)
         surnames.append(student.surname)
         groups.append(student.groupid)
         roles.append(student.rolename)
-    return {"names": names, "surnames": surnames, "groups": groups, "roles": roles}
+        emails.append(student.email)
+    return {"names": names, "surnames": surnames, "groups": groups, "roles": roles, "emails":emails}
+
+@app.get("/Admin/Students}")
+def get_students(db: Session = Depends(get_db)):
+    students = CRUD.get_all_students(db)
+    ids=[]
+    names = []
+    surnames = []
+    groups = []
+    emails=[]
+    for student in students:
+        ids.append(student.userid)
+        names.append(student.name)
+        surnames.append(student.surname)
+        groups.append(student.groupid)
+        emails.append(student.email)
+    return {"ids":ids,"names": names, "surnames": surnames, "groups": groups, "emails":emails}
 
 @app.get("/Admin/Student/{id}")
 def get_student(id:int, db:Session=Depends(get_db)):
     """
-            Szczegoly studenta
+            Szczegoly studenta - UWAGA ZMIANA W ZWRACANIU - zeby nie zwracac poufnych informacji
 
     """
     student=CRUD.get_user_by_id(db,id)
     if not student:
         raise HTTPException(status_code=404, detail="User not found")
+    #return {"student":student}
+    return {"name": student.name, "surname": student.surname, "email": student.email, "group": student.groupid }
 
-    return {"student": student }
+@app.get("/Admin/Guardian/{id}")
+def get_guardian(id:int, db: Session=Depends(get_db)):
+    guardian=CRUD.get_guardian(db, id)
+    if not guardian:
+        raise HTTPException(status_code=404, detail="Guardian not found")
+    return {"name": guardian.name, "surname": guardian.surname, "email": guardian.email}
+
 @app.put("/Admin/AdminCreate/{email}")
 def put_admin_create(email:str, db:Session=Depends(get_db)):
     """
@@ -352,7 +378,21 @@ def put_admin_create(email:str, db:Session=Depends(get_db)):
     CRUD.update_to_admin(db,email)
     return {"message": " Admin changed succesfully"}
 
-
+@app.get("/Admin/AdminList}")
+def get_admins(db: Session = Depends(get_db)):
+    admins = CRUD.get_admins(db)
+    ids=[]
+    names = []
+    surnames = []
+    groups = []
+    emails=[]
+    for admin in admins:
+        ids.append(admin.userid)
+        names.append(admin.name)
+        surnames.append(admin.surname)
+        groups.append(admin.groupid)
+        emails.append(admin.email)
+    return {"ids":ids,"names": names, "surnames": surnames, "email": emails}
 
 @app.post("/Admin/SignToGroup/{user_id}{groupId}")
 def post_sign_to_group(user_id:int, groupId:int,db:Session=Depends(get_db)):
@@ -468,6 +508,68 @@ def confirm_realization(group_id: int, db: Session = Depends(get_db)):
     reservation = CRUD.get_project_reservation_by_group(db, group_id)
     CRUD.update_project_reservation_isConfirmed(db, reservation)
     return {"message": "The group's reservation confirmed succesfully"}
+
+@app.delete("/Admin/DeleteProject/{id}")
+def delete_project(id:int, db: Session = Depends(get_db)):
+    project = CRUD.get_project_by_id(db, id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    CRUD.delete_project(db, project)
+    return {"message": "Project deleted successfully"}
+
+@app.post("/Admin/ExcelFile")
+def post_excel(pdf_file: UploadFile = File(...),db: Session = Depends(get_db)):
+    """
+    Dodawanie pliku excel z forms
+    Plik musi byc nazwany KPZ_FORMS.xlsx!!!!
+    """
+    try:
+        # Określ ścieżkę, gdzie chcesz zapisać plik PDF
+        save_path = os.path.join("docs","forms")
+
+        os.makedirs(save_path, exist_ok=True)
+
+        # Połącz ścieżkę i nazwę pliku
+        file_path = os.path.join(save_path, pdf_file.filename)
+
+        # Sprawdź, czy plik już istnieje w katalogu
+        if os.path.exists(file_path):
+            raise HTTPException(status_code=409,
+                                detail="File already exists. If you want to replace it, please delete and upload a new one.")
+
+        # Zapisz przesłany plik na dysku
+        with open(file_path, "wb") as buffer:
+            buffer.write(pdf_file.file.read())
+
+        return JSONResponse(status_code=200, content={"message": "File uploaded successfully", "file_path": file_path})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"message": "An error occurred", "error": str(e)})
+
+@app.delete("/Admin/ExcelFile")
+def delete_excel(db: Session = Depends(get_db)):
+    """
+    Usuwanie pliku excel
+    """
+    try:
+        directory_path = os.path.join("docs", "forms")
+
+        # Sprawdź czy katalog istnieje
+        if not os.path.exists(directory_path):
+            raise HTTPException(status_code=404, detail="Directory not found")
+
+        # Usuń wszystkie pliki w katalogu
+        for filename in os.listdir(directory_path):
+            file_path = os.path.join(directory_path, filename)
+            os.remove(file_path)
+
+        # Usuń pusty katalog
+        os.rmdir(directory_path)
+
+        return {"message": f"All files in directory deleted successfully"}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
 
 ########### SEKCJA STUDENT ################
 
@@ -598,6 +700,26 @@ def enroll_student_to_project( user_id: int, project_id: int, db: Session = Depe
 
     return {"message": "Enrollment successful", "group_id": user.groupid, "project_name": project.projecttitle}
 
+@app.delete("/Student/{user_id}/QuitProject")
+def delete_reservation(user_id: int, db: Session = Depends(get_db)):
+    user = CRUD.get_user_by_id(db, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.groupid is None:
+        raise HTTPException(status_code=404, detail="User is not in any group")
+    if user.rolename != "leader":
+        raise HTTPException(status_code=403, detail="You must be a leader to delete reservation")
+    group = CRUD.get_group(db, user.groupid)
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+    if not CRUD.has_group_reservation(db, user.groupid):
+        raise HTTPException(status_code=404, detail="Reservation not found")
+    reservation = CRUD.get_project_reservation_by_group(db, group.groupid)
+    if reservation is None:
+        raise HTTPException(status_code=404, detail="Reservation not found")
+    CRUD.delete_project_reservation(db,reservation)
+    return {"message": "Reservation deleted successfully"}
+
 @app.post("/Student/unsubscribe/{id}")
 def unsubscribe_from_group(id: int, db: Session = Depends(get_db)):
     # Pobierz użytkownika
@@ -631,6 +753,45 @@ def unsubscribe_from_group(id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "User unsubscribed from the group successfully"}
+
+@app.post("/Student/{my_id}/unsubscribeSomeone/{someone_id}")
+def unsubscribe_from_group(my_id: int, someone_id: int,  db: Session = Depends(get_db)):
+    # Pobierz użytkownika
+    user = CRUD.get_user_by_id(db, my_id)
+    other_user = CRUD.get_user_by_id(db, someone_id)
+    if not other_user or not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    # Sprawdź, czy użytkownik należy do jakiejkolwiek grupy
+    if not user.groupid or  not other_user.groupid:
+        raise HTTPException(status_code=400, detail="User is not in any group")
+    if user.groupid != other_user.groupid:
+        raise HTTPException(status_code=400, detail="The other user is not in your group")
+    # Pobierz grupę użytkownika
+    group = CRUD.get_group(db, user.groupid)
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+
+    # Jeśli użytkownik jest liderem grupy, nie pozwól mu opuścić grupy
+    #TO JUZ JEST SPRAWDZANE I PRZEWIDZIANE W CRUD <- zmiana jest mozliwa nawet jesli jest liderem jesli jest jedynym w groupi - patrz CRUD
+    #if user.rolename == RoleEnum.leader.value:
+    #    raise HTTPException(status_code=400, detail="You cannot leave the group because you are the leader")
+
+    if user.rolename != RoleEnum.leader.value:
+        raise HTTPException(status_code=400, detail="You must be a leader to delete other students from group")
+
+    # Jeśli użytkownik jest zwykłym członkiem grupy, usuń go z grupy
+    try:
+        CRUD.update_user_group_id(db, other_user, None)
+    except exceptions.LeaderException:
+        raise HTTPException(status_code=400, detail="Chosen student cannot leave the group because of being the leader")
+    except exceptions.GroupWithReservation:
+        raise HTTPException(status_code=400, detail="the group with reservation can not change quad")
+
+    # Zapisz zmiany w bazie danych
+    db.commit()
+
+    return {"message": "User unsubscribed from the group successfully"}
+
 
 @app.post("/Student/{user_id}/JoinGroup/{inviteCode}")
 def join_group(user_id: int, inviteCode: str, db: Session = Depends(get_db)):
@@ -688,7 +849,7 @@ def set_guardian(user_id: int, name: str, surname: str, email: str, db: Session 
         return {"message": "The guardian of group was changed successfully"}
     raise HTTPException(status_code=404, detail="Lack of required information")
 
-@app.put("/Student/{user_id}/Group/GuardianAdd/{name}/{surname}/{email}")
+@app.put("/Student/{user_id}/Group/GuardianChange/{name}/{surname}/{email}")
 def change_guardian(user_id: int, name: str, surname: str, email: str, db: Session = Depends(get_db)):
     user = CRUD.get_user_by_id(db, user_id)
     print(name)
