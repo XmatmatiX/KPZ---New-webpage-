@@ -268,6 +268,11 @@ def get_user_by_email (db: Session, email: str):
 def get_free_students(db):
     return db.query(models.Users).filter(models.Users.groupid == None).all()
 
+def get_all_students(db):
+    return db.query(models.Users).filter(models.Users.rolename!="admin").all()
+
+def get_admins(db):
+    return db.query(models.Users).filter(models.Users.rolename == "admin").all()
 
 def get_project_by_id(db: Session, project_id: int):
     return db.query(models.Project).filter(models.Project.projectid == project_id).first()
@@ -336,9 +341,20 @@ def get_group(db: Session, groupid: int):
 def get_group_members(db: Session, groupid: int) -> list[models.Users] | None:
     return db.query(models.Users).filter(models.Users.groupid == groupid).all()
 
-def get_all_groups(db):
-    return db.query(models.ProjectGroup).all()
-
+def get_all_groups_info(db):
+    groups=db.query(models.ProjectGroup).all()
+    ids=[]
+    leaders=[]
+    groupsizes=[]
+    guardians=[]
+    projects=[]
+    for group in groups:
+        ids.append(group.groupid)
+        leaders.append(get_group_leader(db, group.groupid))
+        groupsizes.append(group.groupsize)
+        guardians.append(group.guardianid)
+        projects.append(get_project_reservation_by_group(db, group.groupid))
+    return {"groupids":ids, "leaders":leaders, "groupsize":groupsizes, "guardians":guardians, "projects":projects}
 
 def get_group_leader(db: Session, groupid: int) -> models.Users | None:
     members = get_group_members(db, groupid)
@@ -388,6 +404,7 @@ def update_group_group_size(db: Session, gid: int, increase: bool):
     raise Exception if the group size would be invalid because if the operation (max group size is for now 6, min is 1)
     """
     group = get_group(db, gid)
+    deleted = group==None
     if group is not None:
         if increase:
             if group.groupsize + 1 > maximumgroupsize:
@@ -398,8 +415,10 @@ def update_group_group_size(db: Session, gid: int, increase: bool):
             if group.groupsize == 1:
              #   raise exceptions.MinimumSizeGroupException
                 delete_group(db, group)
+                deleted = True
             else:
                 group.groupsize -= 1
+    if not deleted:
         db.commit()
         db.refresh(group)
 
@@ -506,7 +525,7 @@ def update_project_reservation_isConfirmed(db: Session, reservation: schemas.Pro
     # reservation.isconfirmed = True // NIE MAMY ISCONFIRMED
     db.commit()
     db.refresh(reservation)
-    create_action_history(db, reservation.groupid, contentA="Zatwierdzono")
+    create_action_history(db, reservation.groupid, contentA="Zatwierdzono realizacje tematu")
     return reservation
 
 

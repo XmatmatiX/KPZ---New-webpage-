@@ -2,11 +2,11 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from Backend import CRUD, models, schemas, dbFiller
+from Backend import CRUD, models, schemas
 from database import SessionLocal
 import exceptions
 
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:mysecretpassword@localhost:5432/postgres"
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:mysecretkeycloackid@localhost:5432/postgres"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -17,7 +17,7 @@ def test_user_CRUD():
         name="Test",
         surname="User",
         email="test@example.com",
-        # password="password123",
+        keycloackid="keycloackid123",
         rolename="student"
     )
     db = SessionLocal()
@@ -132,7 +132,7 @@ def test_project_CRUD():
         mingroupsize=1,
         maxgroupsize=5,
         groupnumber=2,
-        englishgroup=False
+        englishgroup="Polski, angielski"
     )
     db = SessionLocal()
     """
@@ -177,7 +177,7 @@ def test_update_user_role():
         name="Test",
         surname="User",
         email="test@example.com",
-        # password="password123",
+        keycloackid="keycloackid123",
         rolename="student"
     )
     user = CRUD.create_user(db, user_data)
@@ -187,6 +187,7 @@ def test_update_user_role():
     assert changed_user.surname == user.surname
     assert changed_user.email == user.email
     assert changed_user.rolename == "leader"
+    assert changed_user.keycloackid == user.keycloackid
     changed_user = CRUD.update_user_role(db, user, "student")
     assert changed_user is not None
     assert changed_user.name == user.name
@@ -209,7 +210,7 @@ def test_update_user_group_id():
         name="Test",
         surname="User",
         email="test@example.com",
-        # password="password123",
+        keycloackid="keycloackid123",
         rolename="student"
     )
     group_data = schemas.ProjectGroupCreate()
@@ -238,41 +239,41 @@ def test_project_reservation_CRUD():
         mingroupsize=3,
         maxgroupsize=5,
         groupnumber=2,
-        englishgroup=False
+        englishgroup="Angielski, Polski"
     )
     user1 = schemas.UserCreate(
         name="user1",
         surname="User",
         email="test@example.com",
-        # password="password123",
+        keycloackid="keycloackid123",
         rolename="student"
     )
     user2 = schemas.UserCreate(
         name="user2",
         surname="User",
         email="test@example.com",
-        # password="password123",
+        keycloackid="keycloackid123",
         rolename="student"
     )
     user3 = schemas.UserCreate(
         name="user3",
         surname="User",
         email="test@example.com",
-        # password="password123",
+        keycloackid="keycloackid123",
         rolename="student"
     )
     user4 = schemas.UserCreate(
         name="user4",
         surname="User",
         email="test@example.com",
-        # password="password123",
+        keycloackid="keycloackid123",
         rolename="student"
     )
     user5 = schemas.UserCreate(
         name="user5",
         surname="User",
         email="test@example.com",
-        # password="password123",
+        keycloackid="keycloackid123",
         rolename="student"
     )
 
@@ -366,8 +367,8 @@ def test_project_reservation_CRUD():
     assert updated_reservation is not None
     assert updated_reservation.projectid == reservation.projectid
     assert updated_reservation.groupid == reservation.groupid
-    assert updated_reservation.isConfirmed
     assert updated_reservation.projectreservationid == reservation.projectreservationid
+    assert updated_reservation.status == "confirmed"
 
     history3 = CRUD.get_action_history(db, updated_reservation.groupid)
 
@@ -418,21 +419,21 @@ def test_get_group_members_and_leader():
         name="user1",
         surname="User",
         email="test@example.com",
-        # password="password123",
+        keycloackid="keycloackid123",
         rolename="sss"
     )
     user2 = schemas.UserCreate(
         name="user2",
         surname="User",
         email="test@example.com",
-        # password="password123",
+        keycloackid="keycloackid123",
         rolename="sss"
     )
     user3 = schemas.UserCreate(
         name="user3",
         surname="User",
         email="test@example.com",
-        # password="password123",
+        keycloackid="keycloackid123",
         rolename="sss"
     )
 
@@ -447,9 +448,10 @@ def test_get_group_members_and_leader():
     CRUD.update_user_group_id(db, user2, group.groupid)
     CRUD.update_user_group_id(db, user3, group.groupid)
     team = CRUD.get_group_members(db, group.groupid)
-
+    group=CRUD.get_group(db, group.groupid)
     assert team is not None
     assert len(team) == 3
+    assert len(team)== group.groupsize
 
     leader = CRUD.get_group_leader(db, group.groupid)
     assert leader is not None
@@ -470,14 +472,6 @@ def test_get_group_members_and_leader():
 
 
 
-def test_delete_all_users():
-    db = SessionLocal()
-    CRUD.delete_all_users(db)
-    users = db.query(models.Users).all()
-    assert len(users) == 0
-
-
-
 
 
 def test_delete_all():
@@ -490,6 +484,12 @@ def test_delete_all():
     assert len(db.query(models.ProjectGroup).all()) == 0
     assert len(db.query(models.Project).all()) == 0
 
+def test_admin():
+    db = SessionLocal()
+    for i in range(1000):
+        user=CRUD.get_user_by_id(db, i)
+        if user is not None:
+            CRUD.delete_user(db, user)
 
 def test_group_functionality():
     db = SessionLocal()
@@ -497,21 +497,21 @@ def test_group_functionality():
         name="user1",
         surname="User",
         email="test@example.com",
-        # password="password123",
+        keycloackid="keycloackid123",
         rolename="student"
     )
     user2 = schemas.UserCreate(
         name="user2",
         surname="User",
         email="test@example.com",
-        # password="password123",
+        keycloackid="keycloackid123",
         rolename="student"
     )
     user3 = schemas.UserCreate(
         name="user3",
         surname="User",
         email="test@example.com",
-        # password="password123",
+        keycloackid="keycloackid123",
         rolename="student"
     )
 
@@ -566,7 +566,3 @@ def test_group_functionality():
     group = CRUD.get_group(db, gid)
     assert group is None
 
-
-def test_bool():
-    db= SessionLocal()
-    print(CRUD.histories_whole_info(db))
