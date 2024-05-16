@@ -5,6 +5,8 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 import pandas as pd
 from openpyxl import load_workbook
+from fastapi import UploadFile, HTTPException
+# from magic import Magic
 
 import models
 import schemas
@@ -688,3 +690,13 @@ def has_group_reservation(db: Session, gid : int):
     """
     return get_project_reservation_by_group(db, gid) is not None
 
+# def validate_pdf(file: UploadFile):
+#     """
+#     Checks if file is in PDF format
+#     """
+#     mime = Magic(mime=True)
+#     file_type = mime.from_buffer(file.file.read(1024))
+#     if file_type != 'application/pdf':
+#         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
+#     return file
+# #
