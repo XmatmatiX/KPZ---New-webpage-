@@ -327,7 +327,7 @@ def search_students(parameter: str, db: Session = Depends(get_db)):
         emails.append(student.email)
     return {"names": names, "surnames": surnames, "groups": groups, "roles": roles, "emails":emails}
 
-@app.get("/Admin/Students}")
+@app.get("/Admin/Students")
 def get_students(db: Session = Depends(get_db)):
     students = CRUD.get_all_students(db)
     ids=[]

@@ -428,7 +428,7 @@ input[type="checkbox"] {
     padding: 10px;
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
-    grid-template-columns: 2fr 2fr 5fr 2fr 2fr;
+    grid-template-columns: 3fr 3fr 3fr 2fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
 }
@@ -624,7 +624,7 @@ input[type="checkbox"] {
     height: 55px;
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
-    grid-template-columns: 2fr 2fr 5fr 2fr 2fr;
+    grid-template-columns: 3fr 3fr 3fr 2fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
     align-items: center;
