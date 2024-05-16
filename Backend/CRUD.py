@@ -186,7 +186,7 @@ def create_project_from_forms(db: Session):
     """
     Sciagniecie rekordow z pliku excel wygenerowanego z google forms
     """
-    file_path = 'docs/KPZ_FORMS.xlsx'  # Dodaj ścieżkę do pliku
+    file_path = 'docs/forms/KPZ_FORMS.xlsx'  # Dodaj ścieżkę do pliku
 
 
     created_projects=[]

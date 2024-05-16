@@ -517,6 +517,60 @@ def delete_project(id:int, db: Session = Depends(get_db)):
     CRUD.delete_project(db, project)
     return {"message": "Project deleted successfully"}
 
+@app.post("/Admin/ExcelFile")
+def post_excel(pdf_file: UploadFile = File(...),db: Session = Depends(get_db)):
+    """
+    Dodawanie pliku excel z forms
+    Plik musi byc nazwany KPZ_FORMS.xlsx!!!!
+    """
+    try:
+        # Określ ścieżkę, gdzie chcesz zapisać plik PDF
+        save_path = os.path.join("docs","forms")
+
+        os.makedirs(save_path, exist_ok=True)
+
+        # Połącz ścieżkę i nazwę pliku
+        file_path = os.path.join(save_path, pdf_file.filename)
+
+        # Sprawdź, czy plik już istnieje w katalogu
+        if os.path.exists(file_path):
+            raise HTTPException(status_code=409,
+                                detail="File already exists. If you want to replace it, please delete and upload a new one.")
+
+        # Zapisz przesłany plik na dysku
+        with open(file_path, "wb") as buffer:
+            buffer.write(pdf_file.file.read())
+
+        return JSONResponse(status_code=200, content={"message": "File uploaded successfully", "file_path": file_path})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"message": "An error occurred", "error": str(e)})
+
+@app.delete("/Admin/ExcelFile")
+def delete_excel(db: Session = Depends(get_db)):
+    """
+    Usuwanie pliku excel
+    """
+    try:
+        directory_path = os.path.join("docs", "forms")
+
+        # Sprawdź czy katalog istnieje
+        if not os.path.exists(directory_path):
+            raise HTTPException(status_code=404, detail="Directory not found")
+
+        # Usuń wszystkie pliki w katalogu
+        for filename in os.listdir(directory_path):
+            file_path = os.path.join(directory_path, filename)
+            os.remove(file_path)
+
+        # Usuń pusty katalog
+        os.rmdir(directory_path)
+
+        return {"message": f"All files in directory deleted successfully"}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
 ########### SEKCJA STUDENT ################
 
 @app.get("/Student/Group/{id}")
