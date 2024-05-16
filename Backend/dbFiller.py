@@ -54,7 +54,7 @@ def readUsers(db: SessionLocal):
             name=name,
             surname=surname,
             email=email,
-           # password=password,
+            keycloackid="password",
             rolename="student"
         )
         created_users.append(CRUD.create_user(db, user))
@@ -93,7 +93,7 @@ def readProjects(db:SessionLocal):
         mingroupsize=3,
         maxgroupsize=4,
         groupnumber=1,
-        englishgroup=True
+        englishgroup=str("Angielski")
     )
     project2 = schemas.ProjectCreate(
         companyname="Deloitte",
@@ -104,7 +104,7 @@ def readProjects(db:SessionLocal):
         mingroupsize=3,
         maxgroupsize=4,
         groupnumber=1,
-        englishgroup=True
+        englishgroup=str("Angielski")
     )
     project3 = schemas.ProjectCreate(
         companyname="Firma",
@@ -115,7 +115,7 @@ def readProjects(db:SessionLocal):
         mingroupsize=1,
         maxgroupsize=5,
         groupnumber=3,
-        englishgroup=False
+        englishgroup=str("Angielski")
     )
     created_projects=[]
     created_projects.append(CRUD.create_project(db, project1))

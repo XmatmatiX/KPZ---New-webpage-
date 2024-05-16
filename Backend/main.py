@@ -3,7 +3,10 @@ from __future__ import annotations
 from enum import Enum
 
 from sqlalchemy.orm import Session
-from fastapi import Depends, FastAPI, HTTPException, status, Security
+from fastapi import Depends, FastAPI, HTTPException, status, Security, UploadFile, File
+from fastapi.responses import JSONResponse
+# from magic import Magic
+import os
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, SecurityScopes
 #from jose import JWTError, jwt
 # from passlib.context import CryptContext
@@ -707,7 +710,120 @@ def change_guardian(user_id: int, name: str, surname: str, email: str, db: Sessi
         return {"message": "The guardian of group was changed successfully"}
     raise HTTPException(status_code=404, detail="Lack of required information")
 
+@app.post("/Student/{user_id}/PDF_file")
+def post_pdf_file(user_id: int,pdf_file: UploadFile = File(...),db:Session =Depends((get_db))):
+    """
+    Buduje katalog o id grupy i tam wrzuca plik ( tylko format pdf ),
+    tylko lider moze to zrobic,
+    status projektu nie moze byc avaliable,
+    po poprawnym wgraniu pliku tworzone jest actionhistory
+    """
+    try:
+        # Pobierz użytkownika na podstawie jego ID
+        user = CRUD.get_user_by_id(db, user_id)
 
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        if user.rolename != "leader":
+            raise HTTPException(status_code=404, detail="Only leader can upload files")
+
+        reservation =CRUD.get_project_reservation_by_group(db,user.groupid)
+
+        if reservation is None:
+            raise HTTPException(status_code=404, detail="This group doesnt have reservation")
+        if reservation == "available":
+            raise HTTPException(status_code=404, detail="Project status is not available")
+        # Pobierz groupID użytkownika
+        groupID = user.groupid
+        # pdf_file = CRUD.validate_pdf(pdf_file)
+
+        # Określ ścieżkę, gdzie chcesz zapisać plik PDF
+        save_path = os.path.join("docs", "pdf", str(groupID))
+
+        os.makedirs(save_path, exist_ok=True)
+
+        # Połącz ścieżkę i nazwę pliku
+        file_path = os.path.join(save_path, pdf_file.filename)
+
+        # Sprawdź, czy plik już istnieje w katalogu
+        if os.path.exists(file_path):
+            raise HTTPException(status_code=409,
+                                detail="File already exists. If you want to replace it, please delete and upload a new one.")
+
+        # Zapisz przesłany plik na dysku
+        with open(file_path, "wb") as buffer:
+            buffer.write(pdf_file.file.read())
+
+        CRUD.create_action_history(db, groupID,"File uploaded successfully")
+        return JSONResponse(status_code=200, content={"message": "File uploaded successfully", "file_path": file_path})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"message": "An error occurred", "error": str(e)})
+@app.delete("/Student/{user_id}/PDF_file")
+def delete_pdf_file(user_id: int, db: Session = Depends(get_db)):
+    """
+    Usuwa wszystko w katalogu o podanym id grupy,
+    tylko lider moze to zrobic,
+    status projektu nie moze byc avaliable,
+    po poprawnym wgraniu pliku tworzone jest actionhistory
+    """
+    try:
+
+        # Pobierz użytkownika na podstawie jego ID
+        user = CRUD.get_user_by_id(db, user_id)
+
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        if user.rolename != "leader":
+            raise HTTPException(status_code=404, detail="Only leader can upload files")
+
+        groupID = user.groupid
+        # Określ ścieżkę do katalogu, który ma zostać usunięty
+        directory_path = os.path.join("docs", "pdf", str(groupID))
+
+        # Sprawdź czy katalog istnieje
+        if not os.path.exists(directory_path):
+            raise HTTPException(status_code=404, detail="Directory not found")
+
+        # Usuń wszystkie pliki w katalogu
+        for filename in os.listdir(directory_path):
+            file_path = os.path.join(directory_path, filename)
+            os.remove(file_path)
+
+        # Usuń pusty katalog
+        os.rmdir(directory_path)
+
+        CRUD.create_action_history(db, groupID,"File deleted successfully")
+        return {"message": f"All files in directory {user.groupid} deleted successfully"}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+@app.get("/Student/{user_id}/PDF_file")
+def get_pdf_file(user_id: int, db: Session = Depends(get_db)):
+    """
+    Pobieranie pliku z katalogu grupy
+    Kazdy czlonek grupy moze to zrobic
+    """
+    try:
+        user = CRUD.get_user_by_id(db, user_id)
+
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        groupID = user.groupid
+
+        # Określ ścieżkę do katalogu, z którego chcesz pobrać pliki
+        directory_path = os.path.join("docs", "pdf", str(groupID))
+
+        # Sprawdź czy katalog istnieje
+        if not os.path.exists(directory_path):
+            raise HTTPException(status_code=404, detail="Directory not found")
+
+        # Pobierz listę plików w katalogu
+        files_list = os.listdir(directory_path)
+
+        return {"message": f"List of files in directory {user.groupid}:", "files": files_list}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 # Dependency to check LDAP authentication
 # def check_ldap_auth(credentials: HTTPBasicCredentials = Depends(security)):
