@@ -378,7 +378,7 @@ def put_admin_create(email:str, db:Session=Depends(get_db)):
     CRUD.update_to_admin(db,email)
     return {"message": " Admin changed succesfully"}
 
-@app.get("/Admin/AdminList}")
+@app.get("/Admin/AdminList")
 def get_admins(db: Session = Depends(get_db)):
     admins = CRUD.get_admins(db)
     ids=[]
@@ -419,6 +419,25 @@ def post_sign_to_group(user_id:int, groupId:int,db:Session=Depends(get_db)):
     except exceptions.MinimumSizeGroupException:
         raise HTTPException(status_code=404, detail="???")
 
+@app.post("/Admin/AddProject")
+def post_add_project(
+        project:schemas.ProjectCreate,
+        groupID: int =None,
+        db: Session = Depends(get_db)):
+    """
+    Dodawanie nowego projektu przez admina
+    z dodatkowa opcja przypisania do grupy
+    """
+    try:
+        CRUD.create_project(db, project)
+        if groupID:
+            CRUD.create_project_reservation(db,project,groupID)
+        return {"message": "Project added successfully"}
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Failed to add project")
 
 
 @app.get("/Admin/Notification")
