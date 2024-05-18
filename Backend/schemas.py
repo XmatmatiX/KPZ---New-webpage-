@@ -13,14 +13,14 @@ class ProjectBase(BaseModel):
     email: str
     phonenumber: str
     description: str
-    logopath: str = None
-    technologies: str = None
+    logopath: Optional[str] = None
+    technologies: Optional[str] = None
     mingroupsize: int
     maxgroupsize: int
     groupnumber: int
-    englishgroup: bool
+    englishgroup: str
     remarks: str = None
-    cooperationtype: str = None
+    cooperationtype: Optional[str] = None
 
 
 class ProjectCreate(ProjectBase):
@@ -37,7 +37,6 @@ class Project(ProjectBase):
 class ProjectReservationBase(BaseModel):
     projectid: int
     groupid: int
-    isconfirmed: bool = None
     status: str = None
     confirmationpath: Optional[str] = None
 
@@ -65,7 +64,6 @@ class ProjectReservationReturn(ProjectReservationBase):
 
 class ProjectGroupBase(BaseModel):
     guardianid: int = None
-    name: str = None
     invitecode: str = None
     groupsize: int = None
 
@@ -86,12 +84,12 @@ class UserBase(BaseModel):
     surname: str
     email: str
     # Password: str
-    rolename: str
+    rolename: str ='student'
 
 # trzymamy haslo tutaj zeby np nie bylo dostepne podczas pobierania danych z bazy
 class UserCreate(UserBase):
-    password: str
-    # pass
+    keycloackid: str
+    pass
 
 
 class UserReturn(UserBase):
@@ -126,7 +124,8 @@ class GuardianReturn(GuardianBase):
 
 
 class ActionHistoryBase(BaseModel):
-    reservationid: int
+    # reservationid: int
+    groupid: int
     datatime: str
     content: str
     displayed: bool

@@ -4,37 +4,26 @@ document.addEventListener("DOMContentLoaded", function() {
     // Odczytanie ID projektu z adresu URL
     const urlParams = new URLSearchParams(window.location.search);
     const projectId = urlParams.get('id');
+    console.log("ID: ", projectId)
 
-    // Pobranie szczegółów projektu za pomocą endpointu /Project/{id}
-    fetch(`http://127.0.0.1:8000/Admin/Project/${projectId}`)
+    fetch(`http://127.0.0.1:8000/Project/${projectId}`)
         .then(response => response.json())
         .then(projectData => {
 
+            console.log("Project")
             console.log(projectData)
 
             const projectDetailsElement = document.getElementById('topicHeader');
             projectDetailsElement.innerHTML = `
-                <img class="logo" src="../Images/logo.png" alt="There should be a logo here">
+                <img class="logo" src="Images/logo.png" alt="There should be a logo here">
                 <p class="companyName">${projectData.companyname}</p>
             `;
 
             //<p>${projectData.logopath}</p>
 
-            const emailDetails = document.getElementById('email')
-            emailDetails.innerHTML = `
-                <p>Email</p>
-                <p class="contact">${projectData.email}</p>
-            `;
-            const phoneDetails = document.getElementById('phone')
-            phoneDetails.innerHTML = `
-                <p>Numer telefonu</p>
-                <p class="contact">${projectData.phonenumber}</p>
-            `;
-
-            const minGroupSize = projectData.mingroupsize;
-            const maxGroupSize = projectData.maxgroupsize;
-            const englishValue = projectData.englishgroup;
-
+            const minGroupSize = projectData.minsize;
+            const maxGroupSize = projectData.maxsize;
+            const englishValue = projectData.language;
             const language = englishValue ? "Tak" : "Nie";
 
             // Sprawdź, czy minGroupSize i maxGroupSize są takie same
@@ -42,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const topicDetails = document.getElementById('topicDetails')
             topicDetails.innerHTML = `
-                <p class="topicName">${projectData.projecttitle}</p>
+                <p class="topicName">${projectData.title}</p>
                 <p class="topicDescription">${projectData.description}</p>
                  ${projectData.cooperationtype ? `
                     <p class="topicLabel">Planowane formy współpracy:</p>
@@ -51,16 +40,21 @@ document.addEventListener("DOMContentLoaded", function() {
                     <p class="topicLabel2">Akceptowana wielkość grup:</p>
                     <p class="details2">${groupSizeText}</p>
                 </div>
+                <div class="someDetails">
+                    <p class="topicLabel2">Liczba grup:</p>
+                    <p class="details2">${projectData.groupnumber}</p>
+                </div>
+                <div class="someDetails">
+                    <p class="topicLabel2">Ilość zajętych grup:</p>
+                    <p class="details2">${projectData.numertaken}</p>
+                </div>
                 
                 ${englishValue !== null ? `
                 <div class="someDetails">
                     <p class="topicLabel2">Język angielski jako dopuszczalny język:</p>
                     <p class="details2">${language}</p>
                 </div>` : ''}
-                <div class="someDetails">
-                    <p class="topicLabel2">Liczba grup:</p>
-                    <p class="details2">${projectData.groupnumber}</p>
-                </div>
+                
                 ${projectData.technologies ? `
                     <p class="topicLabel">Technologie:</p>
                     <p class="details">${projectData.technologies}</p>` : ''}

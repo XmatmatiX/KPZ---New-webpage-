@@ -10,22 +10,20 @@ CREATE TABLE project (
   mingroupsize    int4 NOT NULL,
   maxgroupsize    int4 NOT NULL,
   groupnumber     int4 NOT NULL,
-  englishgroup    bool,
+  englishgroup    text,
   remarks         text,
   cooperationtype text,
   PRIMARY KEY (projectid));
 CREATE TABLE projectReservation (
   projectreservationid SERIAL NOT NULL,
   projectid            int4 NOT NULL,
-  groupv              int4 NOT NULL,
-  isconfirmed          bool,
+  groupid              int4 NOT NULL,
   status               varchar(25) NOT NULL,
   confirmationpath     varchar(255),
   PRIMARY KEY (projectreservationid));
 CREATE TABLE projectGroup (
   groupid    SERIAL NOT NULL,
   guardianid int4,
-  name       varchar(50),
   invitecode varchar(10) NOT NULL,
   groupsize     int4,
   CONSTRAINT groupid
@@ -33,10 +31,10 @@ CREATE TABLE projectGroup (
 CREATE TABLE users (
   userid   SERIAL NOT NULL,
   groupid  int4,
+  keycloackid  varchar(255),
   name     varchar(25) NOT NULL,
   surname  varchar(50) NOT NULL,
   email    varchar(50) NOT NULL,
-  password varchar(64) NOT NULL,
   rolename varchar(25) NOT NULL,
   CONSTRAINT userid
     PRIMARY KEY (userid));
@@ -49,7 +47,7 @@ CREATE TABLE guardian (
     PRIMARY KEY (guardianid));
 CREATE TABLE actionhistory (
   historyid     SERIAL NOT NULL,
-  reservationid int4 NOT NULL,
+  groupid int4 NOT NULL,
   datatime      timestamp NOT NULL,
   content       text NOT NULL,
   displayed     bool NOT NULL,
@@ -65,6 +63,6 @@ ALTER TABLE actionhistory OWNER TO postgres;
 
 ALTER TABLE projectreservation ADD CONSTRAINT FKProjectRes276242 FOREIGN KEY (projectid) REFERENCES project (projectid);
 ALTER TABLE users ADD CONSTRAINT FKUser82101 FOREIGN KEY (groupid) REFERENCES projectgroup (groupid);
-ALTER TABLE projectreservation ADD CONSTRAINT FKProjectRes901919 FOREIGN KEY (groupid) REFERENCES projectgroup (groupid); #w pierwszym groupv
-ALTER TABLE actionhistory ADD CONSTRAINT FKActionHist803780 FOREIGN KEY (reservationid) REFERENCES projectreservation (projectreservationid);
+ALTER TABLE projectreservation ADD CONSTRAINT FKProjectRes901919 FOREIGN KEY (groupid) REFERENCES projectgroup (groupid);
+ALTER TABLE actionhistory ADD CONSTRAINT FKActionHist803780 FOREIGN KEY (groupid) REFERENCES projectgroup (groupid);
 ALTER TABLE projectgroup ADD CONSTRAINT FKGroup34297 FOREIGN KEY (guardianid) REFERENCES guardian (guardianid);

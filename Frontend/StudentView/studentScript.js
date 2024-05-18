@@ -335,6 +335,12 @@ function deleteFile() {
     }
 }
 
+const logo = document.querySelector('.logoImage');
+
+logo.addEventListener('click', () => {
+    window.location.href = 'studentHome.html'; // Przenieś użytkownika na stronę główną
+});
+
 function uploadFiles() {
     var fileInput = document.getElementById('fileInput');
     var files = fileInput.files;

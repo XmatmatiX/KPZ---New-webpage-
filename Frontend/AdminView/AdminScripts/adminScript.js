@@ -57,17 +57,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 document.addEventListener("DOMContentLoaded", function() {
     // Pobierz przycisk "Wyloguj się"
-    var groupsWithoutTopic = document.getElementById("addGroup");
-
-    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
-    groupsWithoutTopic.addEventListener("click", function() {
-        // Przenieś użytkownika do strony landingPage.html
-        window.location.href = "addGroup.html";
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function() {
-    // Pobierz przycisk "Wyloguj się"
     var groupsWithoutTopic = document.getElementById("notifications");
 
     // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
@@ -108,4 +97,10 @@ document.addEventListener("DOMContentLoaded", function() {
         // Przenieś użytkownika do strony landingPage.html
         window.location.href = "addTopic.html";
     });
+});
+
+const logo = document.querySelector('.logoImage');
+
+logo.addEventListener('click', () => {
+    window.location.href = 'adminHome.html'; // Przenieś użytkownika na stronę główną
 });

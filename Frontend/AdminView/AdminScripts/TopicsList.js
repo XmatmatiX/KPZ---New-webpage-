@@ -2,7 +2,7 @@
 
 document.addEventListener("DOMContentLoaded", function() {
     // Pobranie danych z endpointa GET /ProjectList
-    fetch('http://127.0.0.1:8000/ProjectList')
+    fetch('http://127.0.0.1:8000/Admin/ProjectList')
         .then(response => response.json())
         .then(data => {
             const topicList = document.getElementById('topicList');
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 // Dodanie nasłuchiwania zdarzenia kliknięcia na każdy element topicItemAdmin
                 topicItem.addEventListener('click', function() {
-                    // Przekierowanie użytkownika do widoku reservationDetails, przekazując ID projektu jako parametr w adresie URL
+                    // Przekierowanie użytkownika do widoku topicDetails, przekazując ID projektu jako parametr w adresie URL
                     window.location.href = `topicDetails.html?id=${topic.projectid}`;
                 });
 

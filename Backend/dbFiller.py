@@ -61,7 +61,7 @@ def readUsers(db: SessionLocal):
             name=name,
             surname=surname,
             email=email,
-            #password=password,
+            password=password,
             rolename="student"
         )
         created_users.append(CRUD.create_user2(db, user))
