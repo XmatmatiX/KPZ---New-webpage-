@@ -48,20 +48,7 @@
             <button id="addAdmin" class="adminButton">Dodaj administratora</button>
         </section>
 
-        <section class="adminList">
-
-            <div class="adminItem">
-                <p>jan.kowalski@pwr.edu.pl</p>
-                <p>Jan Kowalski</p>
-                <button class="searchButton">Usuń</button>
-            </div>
-
-            <div class="adminItem">
-                <p>kamil.nowak@pwr.edu.pl</p>
-                <p>Kamil Nowak</p>
-                <button class="searchButton">Usuń</button>
-            </div>
-        </section>
+        <section id="adminList" class="adminList"></section>
 
         <div id="cleanModal" class="deleteModal">
             <div class="modal-content">
@@ -72,6 +59,19 @@
                 <div class="buttonModal">
                     <button id="confirmBtn">Potwierdź</button>
                     <button id="cancelBtn">Anuluj</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="deleteAdmin" class="deleteModal">
+            <div class="modal-content">
+                <span id="closeButton" class="close">&times;</span>
+                <div class="textModal">
+                    <p>Czy na pewno chcesz odebrać użytkownikowi prawa administratora?</p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confirmButton">Potwierdź</button>
+                    <button id="cancelButton">Anuluj</button>
                 </div>
             </div>
         </div>

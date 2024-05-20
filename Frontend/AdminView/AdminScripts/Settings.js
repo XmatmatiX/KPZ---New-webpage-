@@ -4,27 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const addButton = document.getElementById("addAdmin");
     const cleanButton = document.getElementById("cleanDatabase");
-
-    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
-    addButton.addEventListener("click", function() {
-
-        const emailInput = document.getElementById('newAdmin')
-        const email = emailInput.value;
-
-        fetch(`http://127.0.0.1:8000/Admin/AdminCreate/${email}`, {
-            method: 'PUT'
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Dodano nowego administratora:', email);
-            })
-            .catch(error => console.error('Błąd pobierania danych:', error));
-    });
+    const adminList = document.getElementById("adminList");
 
     cleanButton.addEventListener("click", function () {
 
@@ -62,4 +42,98 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         cancelBtn.onclick = closeModal;
     });
+
+    addButton.addEventListener("click", function() {
+
+        const emailInput = document.getElementById('newAdmin')
+        const email = emailInput.value;
+
+        fetch(`http://127.0.0.1:8000/Admin/AdminCreate/${email}`, {
+            method: 'PUT'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Dodano nowego administratora:', email);
+            })
+            .catch(error => console.error('Błąd pobierania danych:', error));
+
+            location.reload()
+    });
+
+    // AdminList
+
+    fetch(`http://127.0.0.1:8000/Admin/AdminList`)
+        .then(response => response.json())
+        .then(data => {
+
+            const emails = data['email'];
+            const ids = data['ids'];
+            const names = data['names'];
+            const surnames = data['surnames'];
+
+            for(let i=0; i<emails.length; i++) {
+
+                const adminItem = document.createElement('div');
+                adminItem.classList.add('adminItem');
+
+                const fullName = `${names[i]} ${surnames[i]}`;
+
+                adminItem.innerHTML = `
+                     <p>${emails[i]}</p>
+                     <p>${fullName}</p>
+                     <button class="searchButton deleteButton">Usuń</button>
+                `;
+
+                // Dodanie nasłuchiwania zdarzenia kliknięcia do przycisku "Usuń"
+                const deleteButton = adminItem.querySelector('.deleteButton');
+                deleteButton.addEventListener('click', function() {
+                    const modal = document.getElementById('deleteAdmin');
+
+                    // elementy do zamykania modalu
+                    //const span = document.getElementsByClassName("close2")[0];
+                    const span = document.getElementById("closeButton");
+                    const confirmBtn = document.getElementById("confirmButton");
+                    const cancelBtn = document.getElementById("cancelButton");
+
+                    function closeModal() {
+                        modal.style.display = "none";
+                    }
+
+                    // Przypisanie obsługi zdarzeń do przycisków
+                    modal.style.display = "block";
+                    span.onclick = closeModal;
+                    confirmBtn.onclick = function() {
+
+                        fetch(`http://127.0.0.1:8000/Admin/AdminDelete/${ids[i]}`, {
+                            method: 'PUT'
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    // Powiadomienie zostało pomyślnie usunięte, możesz wykonać odpowiednie akcje, np. odświeżyć listę powiadomień
+                                    console.log('Administrator został prawidłowo usunięty');
+                                    location.reload();
+
+                                } else {
+                                    console.error('Wystąpił błąd podczas usuwania administratora');
+                                }
+                            })
+                            .catch(error => console.error('Błąd usuwania administratora:', error));
+
+                        closeModal();
+
+                    }
+                    cancelBtn.onclick = closeModal; // Zamknij modal po anulowaniu
+                });
+
+                adminList.appendChild(adminItem);
+
+            }
+
+        })
+        .catch(error => console.error('Błąd pobierania danych projektu:', error));
 });

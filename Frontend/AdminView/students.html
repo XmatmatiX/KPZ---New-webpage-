@@ -35,8 +35,8 @@
     <div class="page">
 
         <section class="headerAdmin">
-            <input placeholder="Wyszukaj studenta">
-            <button class="searchButton">Szukaj</button>
+            <input id="student" class="studentInput" placeholder="Wyszukaj studenta">
+            <button id="findStudent" class="searchButton">Szukaj</button>
 
             <div class="freeBorder2">
                 <input type="checkbox" id="freeCheckbox">
@@ -55,11 +55,39 @@
 
         </section>
 
+        <div id="groupModal" class="deleteModal">
+            <div class="modal-groups">
+                <span id="closeButton" class="close">&times;</span>
+                <section class="groupView">
+                    <section class="headerAdmin">
+                        <input placeholder="Wyszukaj grupę">
+                        <button class="searchButton">Szukaj</button>
+
+                        <div class="freeBorder2">
+                            <input type="checkbox" id="freeCheckbox2">
+                            <label for="freeCheckbox">Grupy bez tematu</label>
+                        </div>
+                    </section>
+
+                    <section id="groupList" class="topicList">
+
+                        <div class="borderGroups2">
+                            <p>ID grupy</p>
+                            <p>Temat</p>
+                            <p>Liczba członków</p>
+                        </div>
+
+                    </section>
+                </section>
+            </div>
+        </div>
+
     </div>
 </section>
 
 <script src="AdminScripts/adminScript.js"></script>
 <script src="AdminScripts/Students.js"></script>
+<script src="AdminScripts/StudentGroups.js"></script>
 
 </body>
 </html>

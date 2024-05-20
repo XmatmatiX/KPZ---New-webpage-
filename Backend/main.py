@@ -386,7 +386,7 @@ def put_admin_create(email:str, db:Session=Depends(get_db)):
     CRUD.update_to_admin(db,email)
     return {"message": " Admin changed succesfully"}
 
-@app.get("/Admin/AdminList}")
+@app.get("/Admin/AdminList")
 def get_admins(db: Session = Depends(get_db)):
     admins = CRUD.get_admins(db)
     ids=[]

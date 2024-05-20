@@ -422,6 +422,17 @@ input[type="checkbox"] {
     justify-items: center;
 }
 
+.borderGroups2 {
+    background-color: #bae7f3;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 1fr 4fr 1fr 2fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+}
+
 .borderStudents2 {
     background-color: #bae7f3;
     margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
@@ -571,6 +582,15 @@ input[type="checkbox"] {
     height: 200px;
 }
 
+.modal-groups {
+    background-color: #fefefe;
+    margin: 5% auto; /* Centralizuj modal */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 1000px;
+    height: 580px;
+}
+
 .textModal {
     margin: 40px 0;
     text-align: center;
@@ -599,6 +619,13 @@ input[type="checkbox"] {
     cursor: pointer;
 }
 
+.groupView {
+    margin: 30px 0;
+    height: 500px;
+    background-color: var(--primary-dark);
+    padding: 20px 0;
+}
+
 .groupItem {
     cursor: pointer;
     background-color: #fff;
@@ -608,6 +635,19 @@ input[type="checkbox"] {
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
     grid-template-columns: 1fr 2fr 4fr 1fr 2fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+    align-items: center;
+}
+
+.groupItem2 {
+    background-color: #fff;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    height: 55px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 1fr 4fr 1fr 2fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
     align-items: center;
@@ -672,6 +712,10 @@ input {
     align-items: center;
     border-radius: var(--radius-medium);
     border: none;
+}
+
+.studentInput {
+    width: 400px;
 }
 
 .loginSection {

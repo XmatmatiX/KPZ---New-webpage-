@@ -64,7 +64,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const minsizes = data['minsizes'];
             const maxsizes = data['maxsizes'];
             const status = data['status'];
-            //const group = data['group'];
 
             function translateStatus(status) {
                 switch(status) {
@@ -90,7 +89,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     groupSizeText += ` - ${maxsizes[i]}`;
                 }
 
-                // <p>${group[i] ? group[i] : 'Brak'}</p>
                 const translatedStatus = translateStatus(status[i]);
 
                 // Utworzenie HTML dla pojedynczego projektu
