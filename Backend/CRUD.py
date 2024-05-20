@@ -347,14 +347,22 @@ def get_all_groups_info(db):
     leaders=[]
     groupsizes=[]
     guardians=[]
-    projects=[]
+    themas=[]
+    firms=[]
     for group in groups:
         ids.append(group.groupid)
         leaders.append(get_group_leader(db, group.groupid))
         groupsizes.append(group.groupsize)
         guardians.append(group.guardianid)
-        projects.append(get_project_reservation_by_group(db, group.groupid))
-    return {"groupids":ids, "leaders":leaders, "groupsize":groupsizes, "guardians":guardians, "projects":projects}
+        reservation=get_project_reservation_by_group(db, group.groupid)
+        if reservation is None:
+            themas.append(None)
+            firms.append(None)
+        else:
+            project=get_project_by_id(reservation.projectid)
+            themas.append(project.projecttitle)
+            firms.append(project.companyname)
+    return {"groupids":ids, "leaders":leaders, "groupsize":groupsizes, "guardians":guardians, "project_titles": themas, "companys":firms}
 
 def get_group_leader(db: Session, groupid: int) -> models.Users | None:
     members = get_group_members(db, groupid)

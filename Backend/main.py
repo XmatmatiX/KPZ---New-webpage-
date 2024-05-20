@@ -269,6 +269,9 @@ def admin_group(id: int, db: Session = Depends(get_db)):
     """
     Do poprawy - zawezic to co o uzytkowniku widac
     """
+    group= CRUD.get_group(db, id)
+    if group is None:
+        raise HTTPException(status_code=404, detail="Group not found")
     members = CRUD.get_group_members(db, id)
     reservation = CRUD.get_project_reservation_by_group(db, id)
     if reservation is not None:
@@ -281,7 +284,7 @@ def admin_group(id: int, db: Session = Depends(get_db)):
         company=None
         status=None
     return {"id": id, "members": members, "thema": thema, "company": company,
-            "state": status}
+            "state": status, "guardian": group.guardianid}
 
 @app.get("/Admin/Groups")
 def admin_groups(db: Session = Depends(get_db)):
