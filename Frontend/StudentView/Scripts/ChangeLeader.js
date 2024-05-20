@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const baseUrl = 'http://127.0.0.1:8000';  // Zaktualizuj, jeśli masz inną bazę URL
     const usersContainer = document.querySelector('.group-members');
 
-    fetch(`${baseUrl}/api/users`) // Zaktualizuj ścieżkę do odpowiedniego endpointu API
+    fetch(`${baseUrl}/Student/ChangeLeader/${userId}`)
         .then(response => {
             if (!response.ok) throw new Error('Failed to fetch users');
             return response.json();

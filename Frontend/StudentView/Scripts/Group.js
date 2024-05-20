@@ -1,10 +1,25 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Pobierz ID studenta z URL lub ustaw domyślnie
-    const studentId = new URLSearchParams(window.location.search).get('id') || 'default_student_id';
+    const form = document.getElementById('searchForm');
 
-    // Funkcja do pobierania danych o grupie studenta
-    function fetchGroupDetails(studentId) {
-        fetch(`http://127.0.0.1:8000/Student/Group/${studentId}`)
+    if (!form) {
+        console.error('Form element not found');
+        return;
+    }
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const groupId = document.getElementById('groupId').value;
+
+        if (!groupId) {
+            alert('Proszę wpisać ID grupy.');
+            return;
+        }
+
+        fetchGroupDetails(groupId);
+    });
+
+    function fetchGroupDetails(groupId) {
+        fetch(`http://127.0.0.1:8000/Student/Group/${groupId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -12,35 +27,39 @@ document.addEventListener("DOMContentLoaded", function() {
                 return response.json();
             })
             .then(data => {
-                displayGroupDetails(data);
+                const groupInfo = document.getElementById('group-info');
+                if (!groupInfo) {
+                    console.error('Element #group-info nie istnieje w DOM');
+                    return;
+                }
+
+                console.log("Dane");
+                console.log(data);
+
+                const { contact_info, guardian_info, members, invite_code, group_size } = data;
+                let membersHtml = members.map(member =>
+                    `<p>${member.name} ${member.surname} - ${member.role}</p>`
+                ).join('');
+
+                groupInfo.innerHTML = `
+                    <h1>Informacje o grupie</h1>
+                    <p><strong>Kod zaproszenia:</strong> ${invite_code}</p>
+                    <p><strong>Rozmiar grupy:</strong> ${group_size}</p>
+                    <h3>Opiekun grupy</h3>
+                    <p><strong>Imię i nazwisko:</strong> ${guardian_info.guardian_name || 'Brak'}</p>
+                    <p><strong>Email:</strong> ${guardian_info.guardian_email || 'Brak'}</p>
+                    <h3>Członkowie grupy</h3>
+                    ${membersHtml}
+                    <h3>Projekt</h3>
+                    <p><strong>Firma:</strong> ${contact_info.company || 'Brak'}</p>
+                    <p><strong>Status projektu:</strong> ${contact_info.status || 'Brak'}</p>
+                    <p><strong>Email kontaktowy:</strong> ${contact_info.contact_email || 'Brak'}</p>
+                    <p><strong>Telefon kontaktowy:</strong> ${contact_info.contact_phone || 'Brak'}</p>
+                `;
             })
             .catch(error => {
-                console.error('Error fetching group details:', error);
-                document.getElementById('group-info').innerHTML = '<p>Nie udało się pobrać danych grupy.</p>';
+                console.error('Błąd pobierania danych:', error);
+                groupInfo.innerHTML = `<p>Nie udało się pobrać danych grupy: ${error.message}</p>`;
             });
     }
-
-    // Funkcja do wyświetlania szczegółów grupy na stronie
-    function displayGroupDetails(data) {
-        const groupInfo = document.getElementById('group-info');
-        groupInfo.innerHTML = `
-            <h2>Informacje o grupie</h2>
-            <p><strong>Kod zaproszenia:</strong> ${data.invite_code}</p>
-            <p><strong>Rozmiar grupy:</strong> ${data.group_size}</p>
-            <h3>Opiekun grupy</h3>
-            <p><strong>Imię i nazwisko:</strong> ${data.guardian_info.guardian_name || 'Brak'}</p>
-            <p><strong>Email:</strong> ${data.guardian_info.guardian_email || 'Brak'}</p>
-            <h3>Członkowie grupy</h3>
-            ${data.members.map(member => `<p>${member.name} ${member.surname} - ${member.role}</p>`).join('')}
-            <h3>Projekt</h3>
-            <p><strong>Firma:</strong> ${data.contact_info.company || 'Brak'}</p>
-            <p><strong>Status:</strong> ${data.contact_info.status || 'Brak'}</p>
-            <p><strong>Email kontaktowy:</strong> ${data.contact_info.contact_email || 'Brak'}</p>
-            <p><strong>Telefon kontaktowy:</strong> ${data.contact_info.contact_phone || 'Brak'}</p>
-            <p><strong>Jesteś liderem:</strong> ${data.is_leader ? 'Tak' : 'Nie'}</p>
-        `;
-    }
-
-    // Wywołanie funkcji do pobrania danych
-    fetchGroupDetails(studentId);
 });
