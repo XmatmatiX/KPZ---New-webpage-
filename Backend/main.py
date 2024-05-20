@@ -271,9 +271,17 @@ def admin_group(id: int, db: Session = Depends(get_db)):
     """
     members = CRUD.get_group_members(db, id)
     reservation = CRUD.get_project_reservation_by_group(db, id)
-    project = CRUD.get_project_by_id(db, reservation.projectid)
-    return {"id": id, "members": members, "thema": project.projecttitle, "company": project.companyname,
-            "state": reservation.status}
+    if reservation is not None:
+        project = CRUD.get_project_by_id(db, reservation.projectid)
+        thema=project.projecttitle
+        company= project.companyname
+        status=reservation.status
+    else:
+        thema=None
+        company=None
+        status=None
+    return {"id": id, "members": members, "thema": thema, "company": company,
+            "state": status}
 
 @app.get("/Admin/Groups")
 def admin_groups(db: Session = Depends(get_db)):
