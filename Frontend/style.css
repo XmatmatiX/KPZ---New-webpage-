@@ -965,7 +965,7 @@ article {
 
 h7 {
     color: #333;
-    font-size: 40px;
+    font-size: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1304,5 +1304,18 @@ h3 {
      color: #666;
      margin: 5px 0;
     padding: 5px 0;
+}
+.details-container {
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 45%; /* Adjust based on your layout needs */
+    margin: 10px;
+}
+
+.details-container h2 {
+    color: #333;
+    margin-bottom: 20px;
 }
 
