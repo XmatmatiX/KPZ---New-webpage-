@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a416934d-c641-4f15-b555-640989b9d843" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/StudentView/Scripts/ChangeLeader.js" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/StudentView/Scripts/ChangeLeader.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/StudentView/yourGroup.html" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/StudentView/yourGroup.html" afterDir="false" />
-    </list>
+    <list default="true" id="a416934d-c641-4f15-b555-640989b9d843" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -64,7 +59,7 @@
       <workItem from="1715688257188" duration="426000" />
       <workItem from="1715688719722" duration="1446000" />
       <workItem from="1715690857468" duration="874000" />
-      <workItem from="1716033175454" duration="39296000" />
+      <workItem from="1716033175454" duration="39608000" />
     </task>
     <servers />
   </component>
