@@ -177,9 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 document.addEventListener('DOMContentLoaded', function() {
     const enrollButton = document.getElementById('idTopic'); // the button for topic ID input
-    const signInButton = document.querySelector('button[onclick="id()"]'); // the sign-in button
+    //const signInButton = document.querySelector('button[onclick="id()"]'); // the sign-in button
+    const signInButton = document.getElementById('EnrollButton'); // the sign-in button
     const errorMessage = document.getElementById('errorId');
     const successMessage = document.getElementById('successId');
+
+    const userId=822; // NA STALE NA RAZIE JEST <- KEYCLOAK zmieni
 
     // Initially hide messages
     errorMessage.style.display = 'Nie udało się zapisac na ten temat';
@@ -188,15 +191,44 @@ document.addEventListener('DOMContentLoaded', function() {
     signInButton.addEventListener('click', function() {
         // Mock condition: check if the input value is "123"
         const topicId = enrollButton.value;
-        if (topicId === '123') {
-            // Display success message if topic ID is '123'
-            successMessage.style.display = 'block';
-            errorMessage.style.display = 'none';
-        } else {
-            // Display error message if topic ID is not '123'
-            errorMessage.style.display = 'block';
-            successMessage.style.display = 'none';
-        }
+        console.log(topicId);
+        const input=`http://127.0.0.1:8000/Student/${userId}/Enroll/${topicId}`;
+        console.log(input);
+        let status=200;
+        fetch(`http://127.0.0.1:8000/Student/${userId}/Enroll/${topicId}`,{method: 'POST'})
+            .then(response => {
+                status=response.status;
+                // if (!response.ok) {
+                //     errorMessage.style.display = 'block';
+                //     successMessage.style.display = 'none';
+                // }
+                return response.json();
+            })
+            .then(data => {
+                if (status!==200)
+                {
+                    console.log(data.detail);
+                    errorMessage.textContent=data.detail;
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+                }
+                else
+                {
+                    successMessage.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                }
+
+
+        });
+        // if (topicId === '123') {
+        //     // Display success message if topic ID is '123'
+        //     successMessage.style.display = 'block';
+        //     errorMessage.style.display = 'none';
+        // } else {
+        //     // Display error message if topic ID is not '123'
+        //     errorMessage.style.display = 'block';
+        //     successMessage.style.display = 'none';
+        // }
     });
 });
 /*student in group*/
@@ -207,10 +239,11 @@ document.addEventListener('DOMContentLoaded', function() {
     leaveButton.addEventListener('click', function() {
         const confirmation = confirm('Czy na pewno chcesz opuścić grupę?');
         if (confirmation) {
+
             // Tu wpisz logikę potrzebną do opuszczenia grupy, np. zapytanie AJAX do serwera
             console.log('Użytkownik opuścił grupę.');
             window.location.href = "enrollment.html";
-            //location.reload(); // Odświeżenie bieżącej strony
+            location.reload(); // Odświeżenie bieżącej strony
         }
     });
 });

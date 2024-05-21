@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="a416934d-c641-4f15-b555-640989b9d843" name="Changes" comment="">
+<<<<<<< HEAD
       <change afterPath="$PROJECT_DIR$/Frontend/StudentView/Scripts/yourGroup.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Frontend/StudentView/Scripts/ChangeLeader.js" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/StudentView/Scripts/ChangeLeader.js" afterDir="false" />
@@ -9,6 +13,17 @@
       <change beforePath="$PROJECT_DIR$/Frontend/StudentView/studentWithoutGroup.html" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/StudentView/studentWithoutGroup.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Frontend/StudentView/yourGroup.html" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/StudentView/yourGroup.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Frontend/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/style.css" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/8644f276-bfaf-4ed5-99eb-ae72f1692f1c.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/8644f276-bfaf-4ed5-99eb-ae72f1692f1c.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/8644f276-bfaf-4ed5-99eb-ae72f1692f1c/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/8644f276-bfaf-4ed5-99eb-ae72f1692f1c/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_14_05_2024_14_17__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_14_05_2024_14_17__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/StudentView/enrollment.html" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/StudentView/enrollment.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/StudentView/studentScript.js" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/StudentView/studentScript.js" afterDir="false" />
+>>>>>>> 3fc01a37e624670136b630254916bb875e075f79
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +38,18 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;bParz156&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/XmatmatiX/KPZ---New-webpage-.git&quot;,
+    &quot;accountId&quot;: &quot;dd7ce157-aa7e-4de6-b279-f635e2417bb6&quot;
+  }
+}</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Frontend/style.css" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -32,6 +59,10 @@
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2gCEaKwFhYaWJyXDboBLdMdgMeg" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -45,7 +76,14 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+    &quot;git-widget-placeholder&quot;: &quot;frontend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
     &quot;DatabaseDriversLRU&quot;: [
@@ -53,6 +91,14 @@
     ]
   }
 }</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-PY-241.14494.241" />
+        <option value="bundled-python-sdk-0509580d9d50-28c9f5db9ffe-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.14494.241" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -67,7 +113,13 @@
       <workItem from="1715688257188" duration="426000" />
       <workItem from="1715688719722" duration="1446000" />
       <workItem from="1715690857468" duration="874000" />
+<<<<<<< HEAD
       <workItem from="1716033175454" duration="46702000" />
+=======
+      <workItem from="1716033175454" duration="39608000" />
+      <workItem from="1716286975241" duration="845000" />
+      <workItem from="1716288035311" duration="5624000" />
+>>>>>>> 3fc01a37e624670136b630254916bb875e075f79
     </task>
     <servers />
   </component>
