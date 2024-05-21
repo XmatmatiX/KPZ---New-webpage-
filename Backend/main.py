@@ -690,6 +690,8 @@ def enroll_student_to_project( user_id: int, project_id: int, db: Session = Depe
         raise HTTPException(status_code=404, detail="Project not found")
 
     group = CRUD.get_group(db, user.groupid)
+    if CRUD.has_group_reservation(db, group.groupid):
+        raise HTTPException(status_code=404, detail="You already have reservation!")
     try:
         # Spróbuj utworzyć rezerwację projektu
         new_reservation = CRUD.create_project_reservation(db, project, group)
