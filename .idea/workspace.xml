@@ -2,13 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a416934d-c641-4f15-b555-640989b9d843" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Frontend/StudentView/Scripts/JoinGroupStudent.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Frontend/StudentView/Scripts/ChangeLeader.js" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/StudentView/Scripts/ChangeLeader.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/StudentView/Scripts/Group.js" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/StudentView/Scripts/Group.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/StudentView/changeLeader.html" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/StudentView/changeLeader.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Frontend/StudentView/yourGroup.html" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/StudentView/yourGroup.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +64,7 @@
       <workItem from="1715688257188" duration="426000" />
       <workItem from="1715688719722" duration="1446000" />
       <workItem from="1715690857468" duration="874000" />
-      <workItem from="1716033175454" duration="37111000" />
+      <workItem from="1716033175454" duration="39296000" />
     </task>
     <servers />
   </component>

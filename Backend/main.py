@@ -585,7 +585,7 @@ def get_student_group(id: int, db: Session = Depends(get_db)):
 
     # Get the group of the student
     group = CRUD.get_group(db, student.groupid)
-    if not group:
+    if group is None:
         raise HTTPException(status_code=404, detail="Group not found")
 
     # Initialize lists for member details
