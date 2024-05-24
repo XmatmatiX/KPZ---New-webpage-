@@ -34,9 +34,33 @@
     </div>
     <div class="page">
 
+        <h1>Załadowanie pliku Excel</h1>
+        <article>
+            <p class="pp">Dodawanie pliku excel z Google Forms</p>
+            <p class="pp">Plik musi byc nazwany KPZ_FORMS.xlsx!!!!</p>
+        </article>
+        <div class="uploadFiles">
+            <div class="file-input-container">
+                <label class="file-label">WYBIERZ</label>
+                <input type="file" id="pdf-upload" accept="application/pdf" style="display: none;">
+                <span class="file-name" id="file-name">Nie wybrano pliku</span>
+                <button class="file-remove" id="remove-file" style="display: none;">
+                    <img src="../Images/blackTrash.png">
+                </button>
+            </div>
+            <button id="excelFiles" class="fileButton">Załaduj EXCEL</button>
+        </div>
+
+        <h1>Załadowanie tematów projektowych</h1>
+        <article>
+            <p class="pp">Załadowanie tematów z arkusza kalkulacyjnego</p>
+            <p class="pp"></p>
+        </article>
+        <button id="uploadFiles" class="uploadButton">Załaduj tematy</button>
+
         <h1>Wyczyszczenie bazy danych</h1>
         <article>
-            <p class="pp">Uwaga, ta funkcja usunie wszystkie tematy projektów, które zostały zaprezentowane przez firmy w bieżącym roku akademickim. Niemniej jednak, nie wpłynie ona na żadne dane dotyczące grup lub studentów.</p>
+            <p class="pp">Uwaga, ta funkcja usunie wszystkie tematy projektów, które zostały zaprezentowane przez firmy w bieżącym roku akademickim. Ponadto doprowadzi do usunięcia wszystkich studentów oraz grup biorących udział w zapisach tego roku akademickiego. W bazie danych pozostaną tylko informacje na temat administratorów.</p>
             <p class="pp">Prosimy o zachowanie ostrożności podczas korzystania z tej funkcji, ponieważ jej wykonanie jest nieodwracalne. Po wyczyszczeniu danych, tematy projektów nie będą już dostępne w systemie, a wszelkie powiązane informacje zostaną trwale usunięte.</p>
         </article>
         <button id="cleanDatabase" class="cleanButton">Wyczyść bazę danych</button>

@@ -4,7 +4,34 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const addButton = document.getElementById("addAdmin");
     const cleanButton = document.getElementById("cleanDatabase");
+    const uploadButton = document.getElementById("uploadFiles");
+    const excelButton = document.getElementById("excelFiles");
     const adminList = document.getElementById("adminList");
+
+    const pdfUpload = document.getElementById('pdf-upload');
+    const fileName = document.getElementById('file-name');
+    const fileLabel = document.querySelector('.file-label');
+    const removeFileButton = document.getElementById('remove-file');
+
+    fileLabel.addEventListener('click', () => {
+        pdfUpload.click();
+    });
+
+    pdfUpload.addEventListener('change', () => {
+        if (pdfUpload.files.length > 0) {
+            fileName.textContent = pdfUpload.files[0].name;
+            removeFileButton.style.display = 'inline';
+        } else {
+            fileName.textContent = 'Nie wybrano pliku';
+            removeFileButton.style.display = 'none';
+        }
+    });
+
+    removeFileButton.addEventListener('click', () => {
+        pdfUpload.value = '';
+        fileName.textContent = 'Nie wybrano pliku';
+        removeFileButton.style.display = 'none';
+    })
 
     cleanButton.addEventListener("click", function () {
 
@@ -41,6 +68,42 @@ document.addEventListener("DOMContentLoaded", function() {
             closeModal();
         }
         cancelBtn.onclick = closeModal;
+    });
+
+    excelButton.addEventListener("click", function() {
+
+        fetch(`http://127.0.0.1:8000/Admin/ExcelFile`, {
+            method: 'POST'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Prawidłowo załadowano pliki Excel");
+            })
+            .catch(error => console.error('Błąd pobierania danych:', error));
+
+    });
+
+    uploadButton.addEventListener("click", function() {
+
+        fetch(`http://127.0.0.1:8000/Admin/UploadProjects`, {
+            method: 'POST'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Prawidłowo załadowano pliki");
+            })
+            .catch(error => console.error('Błąd pobierania danych:', error));
+
     });
 
     addButton.addEventListener("click", function() {

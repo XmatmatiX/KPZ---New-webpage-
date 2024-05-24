@@ -298,6 +298,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     return response.json();
                 })
                 .then(data => {
+                    console.log(data)
                     displaySearchedStudents(students, data);
                 })
                 .catch(error => console.error('Błąd pobierania danych:', error));
