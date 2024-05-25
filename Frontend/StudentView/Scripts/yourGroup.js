@@ -60,12 +60,12 @@ document.addEventListener("DOMContentLoaded", function() {
         const projectDetailsContainer = document.getElementById('project-details');
         if (projectDetailsContainer) {
             projectDetailsContainer.innerHTML = `
+                <h7>Opiekun grupy</h7>
                 <p><strong>Kod zaproszenia:</strong> ${data.invite_code || 'Brak'}</p>
                 <p><strong>Rozmiar grupy:</strong> ${data.group_size || 'Brak'}</p>
-                <h3>Opiekun grupy</h3>
                 <p><strong>Imię i nazwisko:</strong> ${data.guardian_info?.guardian_name || 'Brak'}</p>
                 <p><strong>Email:</strong> ${data.guardian_info?.guardian_email || 'Brak'}</p>
-                <h3>Projekt</h3>
+                <h7>Projekt</h7>
                 <p><strong>Firma:</strong> ${data.contact_info?.company || 'Brak'}</p>
                 <p><strong>Status projektu:</strong> ${data.contact_info?.status || 'Brak'}</p>
                 <p><strong>Email kontaktowy:</strong> ${data.contact_info?.contact_email || 'Brak'}</p>
@@ -75,4 +75,37 @@ document.addEventListener("DOMContentLoaded", function() {
             console.error('Project details container not found');
         }
     }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    const unsubscribeButton = document.getElementById('unsubscribeButton');
+
+    // Funkcja do rezygnacji z grupy
+    function unsubscribeFromGroup() {
+        const studentId = '1';
+
+        fetch(`http://127.0.0.1:8000/Student/unsubscribe/${studentId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message);
+              window.location.href = 'enrollment.html';
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            alert('Failed to unsubscribe from the group');
+        });
+    }
+
+    // Dodaj nasłuchiwacz zdarzeń do przycisku "Opuść grupę"
+    unsubscribeButton.addEventListener('click', unsubscribeFromGroup);
 });

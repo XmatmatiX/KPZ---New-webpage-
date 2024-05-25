@@ -1118,28 +1118,24 @@ input[type="text"] {
     box-sizing: border-box; /* Dla zapewnienia, że padding nie zmienia szerokości */
 }
 /*yourGroupLeader*/
-.container {
-    display: flex; /* Ustawia flexbox na kontenerze */
-    align-items: flex-start;
-    /*justify-content: space-between; /* Rozdziela elementy równomiernie w poziomie */
-    align-items: start; /* Wyrównuje elementy do góry kontenera */
-    flex-wrap: wrap; /* Zapewnia przenoszenie na nową linię, jeżeli brakuje miejsca */
+.container-leader{
+    display: flex;
+    justify-content: space-between;
 }
 
-.group-info{
+.group-info-leader, .rest-info {
     background-color: #bbdefb;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    margin-bottom: 30px; /* Zwiększony margines dolny dla większej przestrzeni */
-    border-radius: 8px; /* Zaokrąglone rogi */
-    margin-right: 20px; /* Dodaje odstęp po prawej stronie każdego boxu */
-    margin-left: 20px;  /* Dodaje odstęp po lewej stronie każdego boxu */
+    width: 50%; /* Adjust based on your layout needs */
+    margin: 40px;
 }
 
 .group-info p {
     margin: 10px 0;
     font-size: 16px;
 }
-
 h3 {
     font-weight: normal;
     font-size: large;
@@ -1166,18 +1162,8 @@ h3 {
 .button-container button:hover {
     background-color: #555;
 }
-.rest-info{
-    background-color: #bbdefb;
-    padding: 15px;
-    /* Odstęp między kontenerami */
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    /* Dodaje odstęp po prawej stronie każdego boxu */
-    /* Dodaje odstęp po lewej stronie każdego boxu */
-    margin: 20px 40px 20px 800px;
-}
 
-.modal {
+.modalData {
     display: none;
     position: fixed;
     z-index: 100;
@@ -1189,7 +1175,7 @@ h3 {
     background-color: rgba(0,0,0,0.4);
 }
 
-.modal-content {
+.modal-content-data {
     background-color: #fefefe;
     margin: 15% auto;
     padding: 20px;
@@ -1197,7 +1183,7 @@ h3 {
     width: 50%;
 }
 
-.modal-content input[type="email"] {
+.modal-content-data input[type="email"] {
     width: 100%;
     padding: 10px;
     margin-top: 8px;
@@ -1233,7 +1219,7 @@ h3 {
     border-radius: 8px; /* zaokrąglone rogi */
 }
 
-.modal-content {
+.modal-content-file {
     background-color: #f0f0f0;
     margin: 10% auto;
     padding: 20px;
@@ -1242,12 +1228,6 @@ h3 {
     min-width: 300px;
     position: relative;
 }
-.modal-content input [type="file"] {
-    display: block;
-    margin: 40px 0; /* marginesy dla oddzielenia od innych elementów */
-    width: 90%; /* mniejsza szerokość, aby nie wychodził poza obręb modalu */
-}
-
 .close {
     color: #aaa;
     float: right;
@@ -1259,9 +1239,7 @@ h3 {
 .close:hover {
     color: black;
 }
-
-
-.button-upl {
+.button-upl-file, .deleteButtonFile {
     display: block;
     width: 100%;
     padding: 10px;
@@ -1273,7 +1251,7 @@ h3 {
     cursor: pointer;
 }
 
-.button-upl:hover {
+.button-upl-file:hover {
     background-color: #aaa;
 }
 
@@ -1305,17 +1283,20 @@ h3 {
      margin: 5px 0;
     padding: 5px 0;
 }
-.details-container {
+.page-c{
+    display: flex;
+    justify-content: space-between;
+}
+.details-container-member, .details-container {
     background-color: #f4f4f4;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    width: 45%; /* Adjust based on your layout needs */
-    margin: 10px;
+    width: 50%; /* Adjust based on your layout needs */
+    margin: 40px;
 }
 
 .details-container h2 {
     color: #333;
     margin-bottom: 20px;
 }
-

@@ -31,20 +31,21 @@
   <div class="page">
     <section class="main-content">
       <div class="info-box">
+         <section class="headerAdmin">
+            <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">
+            <button id="searchGroupButton" class="searchButton">Szukaj</button>
+        </section>
         <div class="alert-box">
           <p><strong>Nie możesz opuścić grupy, dopóki jesteś jej liderem.</strong> Aby opuścić grupę, która oprócz Ciebie ma innych członków, musisz nominować innego członka na lidera. <em>Nominowany/a musi wyrazić zgodę na zostanie liderem.</em> Opuszczenie grupy, której jesteś jedynym członkiem, spowoduje usunięcie grupy.</p>
         </div>
-
-        <div class="group-members">
-
-      </div>
+        <form id="leader-form">
+        </form>
          <button id = "nominate" class="nominate-button">Nominuj lidera</button>
-        <button class="delete-group">Usuń grupę</button>
+        <button id="unsubscribeButton" class="delete-group">Usuń grupę</button>
       </div>
     </section>
   </div>
 </section>
 <script src="Scripts/ChangeLeader.js"></script>
-<script src="studentScript.js"></script>
 </body>
 </html>
