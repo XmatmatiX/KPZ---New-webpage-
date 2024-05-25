@@ -201,21 +201,21 @@ def create_project_from_forms(db: Session):
 
         # Iteracja przez wiersze w DataFrame
         # for index, row in df.iterrows():
-        for cell_e,cell_f,cell_b,cell_d,cell_g,cell_h,cell_i,cell_j,cell_k,cell_l,cell_m in \
+        for cell_e,cell_f,cell_b,cell_d,cell_g,cell_i,cell_j,cell_l in \
                 zip(sheet['E'][1:],sheet['F'][1:],sheet['B'][1:],
-                    sheet['D'][1:],sheet['G'][1:],sheet['H'][1:],sheet['I'][1:],sheet['J'][1:],sheet['K'][1:],sheet['L'][1:],sheet['M'][1:]):
+                    sheet['D'][1:],sheet['G'][1:],sheet['I'][1:],sheet['J'][1:],sheet['L'][1:]):
             project = schemas.ProjectCreate(
                 companyname=str(cell_e.value),
                 projecttitle=str(cell_f.value),
                 email=str(cell_b.value),
                 phonenumber=str(cell_d.value),
                 description=str(cell_g.value),
-                cooperationtype=str(cell_h.value),
                 mingroupsize=(cell_i.value),
                 maxgroupsize=(cell_j.value),
-                groupnumber=(cell_k.value),
+                groupnumber=3,
                 englishgroup=str(cell_l.value),
-                remarks=str(cell_m.value),
+                # remarks=row["Dodatkowe uwagi"],
+                # cooperationtype = row["Planowane formy współpracy"]
 
             )
             created= create_project(db, project)
@@ -307,8 +307,6 @@ def get_project_reservation_by_group(db: Session, group_id: int) -> models.Proje
 def get_project_reservation_by_project(db:Session, pid: int) -> list[models.ProjectReservation]|None :
     return db.query(models.ProjectReservation).filter(models.ProjectReservation.projectid == pid).all()
 
-def get_all_reservations(db: Session):
-    return db.query(models.ProjectReservation).all()
 
 def get_action_history(db: Session, group_id: int) -> list[models.ActionHistory] | None:
     return db.query(models.ActionHistory).filter(models.ActionHistory.groupid == group_id).all()
@@ -361,7 +359,7 @@ def get_all_groups_info(db):
             themas.append(None)
             firms.append(None)
         else:
-            project=get_project_by_id(db,reservation.projectid)
+            project=get_project_by_id(reservation.projectid)
             themas.append(project.projecttitle)
             firms.append(project.companyname)
     return {"groupids":ids, "leaders":leaders, "groupsize":groupsizes, "guardians":guardians, "project_titles": themas, "companys":firms}
@@ -729,3 +727,14 @@ def has_group_reservation(db: Session, gid : int):
 #         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
 #     return file
 # #
+
+#######################
+#Sekcja do autoryzacji#
+#######################
+
+def check_user(db: Session, email: str, keycloackid: str):
+    db_user = db.query(models.Users).filter(models.Users.email == email).first()
+    if db_user.keycloackid != keycloackid:
+        return None
+    else:
+        return db_user

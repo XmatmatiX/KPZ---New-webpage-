@@ -1,5 +1,33 @@
 "use strict"
 
+function checkRole()
+{
+    const token = sessionStorage.getItem("JWT");
+            fetch("http://127.0.0.1:8000/User/Role", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                 },
+                }).then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401)
+                        {
+                            window.location.href = "../LoginPage.html";
+                            throw new Error('Not authorized');
+                        }
+                        else
+                            throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                }).then(data => {
+                    if (data !== "admin")
+                        window.location.href = "../landingPage.html";
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     // Pobierz przycisk "Wyloguj się"
     var logoutButton = document.getElementById("logout");
@@ -7,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
     logoutButton.addEventListener("click", function() {
         // Przenieś użytkownika do strony landingPage.html
-        window.location.href = "../../landingPage.html";
+        window.location.href = "../../Logout.html";
     });
 });
 

@@ -117,15 +117,6 @@ button:hover {
     background-color: var(--red);
 }
 
-.uploadButton {
-    margin: 20px auto;
-    width: 200px;
-}
-
-.fileButton {
-    width: 200px;
-}
-
 .cleanButton:hover {
     background-color: #961313;
 }
@@ -145,46 +136,6 @@ button:hover {
     background-color: #FFFFFF;
     padding: 30px;
     border-radius: 0 0 var(--radius-small) var(--radius-small);
-}
-
-.uploadFiles {
-    display: flex;
-    align-items: center;
-    gap: 100px;
-    margin: 20px 20px;
-}
-
-.file-input-container {
-    display: flex;
-    align-items: center;
-}
-
-.file-label {
-    background-color: #ffffff;
-    color: #000;
-    padding: 8px 12px;
-    border-radius: 4px;
-    border: solid 1px;
-    cursor: pointer;
-}
-
-.file-label:hover {
-    background-color: #d3d3d3; /* Szary kolor po najechaniu kursorem */
-}
-
-.file-name {
-    margin-left: 10px;
-    font-weight: normal;
-}
-
-.file-remove {
-    background-color: var(--primary-dark);
-    width: 50px;
-    padding: 0;
-}
-
-.file-remove:hover {
-    background-color: var(--primary-dark);
 }
 
 .freeBorder {

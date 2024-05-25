@@ -89,7 +89,6 @@ class UserBase(BaseModel):
 # trzymamy haslo tutaj zeby np nie bylo dostepne podczas pobierania danych z bazy
 class UserCreate(UserBase):
     keycloackid: str
-    pass
 
 
 class UserReturn(UserBase):
@@ -148,5 +147,12 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    name: str | None = None
-    scopes: list[str] = []
+    email: str | None = None
+    role: str | None = None
+
+
+class UserRegister(BaseModel):
+    name: str
+    surname: str
+    email: str
+    keycloackid: str

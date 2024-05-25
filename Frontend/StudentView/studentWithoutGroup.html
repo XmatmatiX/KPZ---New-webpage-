@@ -10,7 +10,7 @@
 
     <title>KPZ</title>
 </head>
-<body>
+<body onload="checkRole()">
 
 <section class="header">
     <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
@@ -44,7 +44,6 @@
             <div class="option">
                 <h3>Opcja 2. Utwórz nową grupę</h3>
                 <p>Utwórz nową grupę - zostaniesz liderem tej grupy, generowane jest hasło grupy, które podajesz studentom, z którymi chcesz tworzyć grupę, by mogli się oni do niej zapisać.</p>
-                <input type="text" placeholder="Podaj nazwę grupy">
                 <button class="create-btn">Utwórz</button>
             </div>
             <div id="joinGroupModal" class="modal">

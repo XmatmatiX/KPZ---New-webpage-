@@ -2,25 +2,31 @@ from __future__ import annotations
 
 from enum import Enum
 
+from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from fastapi import Depends, FastAPI, HTTPException, status, Security, UploadFile, File
 from fastapi.responses import JSONResponse
 # from magic import Magic
 import os
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, SecurityScopes
-#from jose import JWTError, jwt
-# from passlib.context import CryptContext
+from jose import JWTError, jwt
+from passlib.context import CryptContext
 #from pydantic import parse_obj_as, ValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
 import models, schemas, CRUD, exceptions
 from database import SessionLocal, engine
 
-from config import ALGORITHM, SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ORIGINS
+from config import ORIGINS
 
 # pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login", scopes={"user": "Zwykly user", "arbiter": "Arbiter"})
+SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 class RoleEnum(str, Enum):
@@ -53,6 +59,107 @@ def get_db():
     finally:
         db.close()
 
+
+# funkcja sprawdzająca, czy istnieje użytkownik o podanym email oraz keycloackid
+def authenticate_user(db: Session, email: str, keycloackid: str):
+    valid_user = CRUD.check_user(db, email, keycloackid)
+    return valid_user
+
+
+# funkcja odpowiadajaca za tworzenie tokenow JWT
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+######################################
+# funkcje odpowiadajace za autoryzacje
+######################################
+
+# funkcja sprawdzajaca czy uzytkownik jest adminem
+def is_admin(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                          detail="Could not validate credentials",
+                                          headers={"WWW-Authenticate": "Bearer"})
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        role: str = payload.get("role")
+        if role is None:
+            raise credentials_exception
+
+        token_data = schemas.TokenData(role=role)
+    except JWTError:
+        raise credentials_exception
+
+    if token_data.role != RoleEnum.admin:
+        raise credentials_exception
+
+    return token_data
+
+# funkcja pobierająca aktualnego uzytkownika
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                          detail="Could not validate credentials",
+                                          headers={"WWW-Authenticate": "Bearer"})
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+
+        token_data = schemas.TokenData(email=email)
+
+    except JWTError:
+        raise credentials_exception
+
+    user = CRUD.get_user_by_email(db, email=token_data.email)
+    if user is None:
+        raise credentials_exception
+
+    return user
+
+
+@app.post("/login", response_model= schemas.Token)
+def login(user_data: schemas.UserRegister = None, db: Session = Depends(get_db)):
+    print(user_data.keycloackid)
+    user_exist = CRUD.get_user_by_email(db, user_data.email)
+    if not user_exist:
+        new_user = schemas.UserCreate(
+            name=user_data.name,
+            surname=user_data.surname,
+            email=user_data.email,
+            rolename=RoleEnum.student,
+            keycloackid=user_data.keycloackid
+        )
+        CRUD.create_user(db, new_user)
+
+    user = authenticate_user(db, user_data.email, user_data.keycloackid)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    user_role = user.rolename
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email, "role": user_role}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@app.get("/User/Role")
+def authTest(current_user = Depends(get_current_user)):
+    """
+        Zwraca rolę zalogowanego użytkownika
+    """
+    return current_user.rolename;
 
 """
 def verify_password(plain_password, hashed_password):
@@ -253,35 +360,6 @@ def admin_project_list(db: Session = Depends(get_db)):
 @app.get("/Admin/Project/{id}")
 def admin_project(id: int, db: Session = Depends(get_db)):
     return CRUD.get_project_by_id(db, id)
-@app.get("/Admin/Reservations")
-def admin_reservation(db: Session = Depends(get_db)):
-    """
-            lista rezerwacji
-    """
-    reservations = CRUD.get_all_reservations(db)
-
-    logos = []
-    company = []
-    topic = []
-    project_group = []
-    status = []
-
-    for reservation in reservations:
-        project = CRUD.get_project_by_id(db, reservation.projectid)
-
-        logos.append(project.logopath)
-        company.append(project.companyname)
-        topic.append(project.projecttitle)
-        project_group.append(reservation.groupid)
-        status.append(reservation.status)
-
-    return {
-        "logos": logos,
-        "company": company,
-        "topic": topic,
-        "project_group": project_group,
-        "status": status
-    }
 
 @app.get("/Admin/Reservation/{project_id}")
 def admin_reservation(project_id: int, db: Session = Depends(get_db)):
@@ -354,20 +432,18 @@ def admin_free_students(db: Session = Depends(get_db)):
 @app.post("/Admin/SearchStudent/{parameter}")
 def search_students(parameter: str, db: Session = Depends(get_db)):
     students = CRUD.get_user_by_something(db, parameter)
-    ids=[]
     names = []
     surnames = []
     groups = []
     roles = []
     emails =[]
     for student in students:
-        ids.append(student.userid)
         names.append(student.name)
         surnames.append(student.surname)
         groups.append(student.groupid)
         roles.append(student.rolename)
         emails.append(student.email)
-    return {"ids": ids,"names": names, "surnames": surnames, "groups": groups, "roles": roles, "emails":emails}
+    return {"names": names, "surnames": surnames, "groups": groups, "roles": roles, "emails":emails}
 
 @app.get("/Admin/Students")
 def get_students(db: Session = Depends(get_db)):

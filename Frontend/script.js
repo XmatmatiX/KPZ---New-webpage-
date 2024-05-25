@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
     logoutButton.addEventListener("click", function() {
         // Przenieś użytkownika do strony landingPage.html
-        window.location.href = "../landingPage.html";
+        window.location.href = "../Logout.html";
     });
 });
 

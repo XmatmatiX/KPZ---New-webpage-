@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../style.css"/>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Roboto+Flex:opsz,wght@8..144,300&display=swap" rel="stylesheet">
-
     <title>KPZ</title>
 </head>
-<body>
+<body onload="checkRole()">
 
 <section class="header">
     <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
@@ -25,17 +23,35 @@
 <section class="grid">
     <div class="menu">
         <p>Przeglądaj</p>
-        <button id="homeButton" class="menuButton"><img src="../Images/home.png" alt="There should be home photo"> Strona główna </button>
-        <button id="searchButton" class="menuButton"><img src="../Images/loupe.png" alt="There should be home photo"> Wolne grupy </button>
-        <button id="groupButton" class="pageButton"><img src="../Images/people.png" alt="There should be home photo"> Twoja grupa </button>
-        <button id="enrollmentButton" class="menuButton"><img src="../Images/home.png" alt="There should be home photo"> Zapisy </button>
+        <button id="homeButton" class="menuButton"><img src="../Images/home.png" alt="Home icon"> Strona główna </button>
+        <button id="searchButton" class="menuButton"><img src="../Images/loupe.png" alt="Search icon"> Wolne grupy </button>
+        <button id="groupButton" class="pageButton"><img src="../Images/people.png" alt="Group icon"> Twoja grupa </button>
+        <button id="enrollmentButton" class="menuButton"><img src="../Images/home.png" alt="Enrollment icon"> Zapisy </button>
     </div>
     <div class="page">
-
+        <section class="headerAdmin">
+            <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">
+            <button id="searchGroupButton" class="searchButton">Szukaj</button>
+        </section>
+        <section id="group-info" class="topicList">
+            <h1>Informacje o grupie</h1>
+        </section>
+        <div id="member-details" class="details-container">
+                <h7>Członkowie grupy</h7>
+                <!-- Dynamic content will be loaded here -->
+            </div>
+         <section id="project-details" class="details-container">
+               <h7>Stan rezerwacji</h7>
+                <!-- Dynamic content will be loaded here -->
+                <h7>Kontakt z firmą</h7>
+                <!-- Dynamic content will be loaded here -->
+                <button id="leaveButton" class="leave-group" onclick="leaveGroup()">Opuść grupę</button>
+         </section>
     </div>
 </section>
 
 <script src="studentScript.js"></script>
+<script src="Scripts/yourGroup.js"></script>
 
 </body>
 </html>
