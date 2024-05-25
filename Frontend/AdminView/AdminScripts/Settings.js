@@ -1,7 +1,7 @@
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
-
+    const token = sessionStorage.getItem("JWT");
     const addButton = document.getElementById("addAdmin");
     const cleanButton = document.getElementById("cleanDatabase");
     const uploadButton = document.getElementById("uploadFiles");
@@ -52,7 +52,10 @@ document.addEventListener("DOMContentLoaded", function() {
         confirmBtn.onclick = function() {
 
             fetch(`http://127.0.0.1:8000/Admin/database-clear`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                                "Authorization": `Bearer ${token}`
+                            }
             })
                 .then(response => {
                     if (response.ok) {
@@ -73,7 +76,10 @@ document.addEventListener("DOMContentLoaded", function() {
     excelButton.addEventListener("click", function() {
 
         fetch(`http://127.0.0.1:8000/Admin/ExcelFile`, {
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
         })
             .then(response => {
                 if (!response.ok) {
@@ -91,7 +97,10 @@ document.addEventListener("DOMContentLoaded", function() {
     uploadButton.addEventListener("click", function() {
 
         fetch(`http://127.0.0.1:8000/Admin/UploadProjects`, {
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
         })
             .then(response => {
                 if (!response.ok) {
@@ -112,7 +121,10 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = emailInput.value;
 
         fetch(`http://127.0.0.1:8000/Admin/AdminCreate/${email}`, {
-            method: 'PUT'
+            method: 'PUT',
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
         })
             .then(response => {
                 if (!response.ok) {
@@ -130,7 +142,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // AdminList
 
-    fetch(`http://127.0.0.1:8000/Admin/AdminList`)
+    fetch(`http://127.0.0.1:8000/Admin/AdminList`,{
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
         .then(response => response.json())
         .then(data => {
 
@@ -173,7 +189,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     confirmBtn.onclick = function() {
 
                         fetch(`http://127.0.0.1:8000/Admin/AdminDelete/${ids[i]}`, {
-                            method: 'PUT'
+                            method: 'PUT',
+                            headers: {
+                                "Authorization": `Bearer ${token}`
+                            }
                         })
                             .then(response => {
                                 if (response.ok) {

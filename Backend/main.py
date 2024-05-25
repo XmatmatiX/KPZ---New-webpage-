@@ -86,6 +86,11 @@ def is_admin(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                           detail="Could not validate credentials",
                                           headers={"WWW-Authenticate": "Bearer"})
+
+    role_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                          detail="You don't have Admin role",
+                                          headers={"WWW-Authenticate": "Bearer"})
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         role: str = payload.get("role")
@@ -96,8 +101,8 @@ def is_admin(token: str = Depends(oauth2_scheme)):
     except JWTError:
         raise credentials_exception
 
-    if token_data.role != RoleEnum.admin:
-        raise credentials_exception
+    if token_data.role != RoleEnum.admin.value:
+        raise role_exception
 
     return token_data
 
@@ -127,7 +132,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
 
 @app.post("/login", response_model= schemas.Token)
 def login(user_data: schemas.UserRegister = None, db: Session = Depends(get_db)):
-    print(user_data.keycloackid)
+    #print(user_data.keycloackid)
     user_exist = CRUD.get_user_by_email(db, user_data.email)
     if not user_exist:
         new_user = schemas.UserCreate(
@@ -372,10 +377,11 @@ def admin_reservation(project_id: int, db: Session = Depends(get_db)):
             "state": reservation.status}
 
 @app.get("/Admin/Group/{id}")
-def admin_group(id: int, db: Session = Depends(get_db)):
+def admin_group(id: int,role = Depends(is_admin), db: Session = Depends(get_db)):
     """
     Do poprawy - zawezic to co o uzytkowniku widac
     """
+
     group= CRUD.get_group(db, id)
     if group is None:
         raise HTTPException(status_code=404, detail="Group not found")

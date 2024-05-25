@@ -22,7 +22,7 @@ function checkRole()
                     return response.json();
                 }).then(data => {
                     if (data === "admin" )
-                        window.location.href = "../landingPage.html";
+                        window.location.href = "../accessDenied.html";
                 }).catch(error => {
                     console.error('Error:', error);
                 });

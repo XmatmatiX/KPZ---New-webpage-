@@ -18,8 +18,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const groupId = urlParams.get('id');
-
-    fetch(`http://127.0.0.1:8000/Admin/Group/${groupId}`)
+    const token = sessionStorage.getItem("JWT");
+    fetch(`http://127.0.0.1:8000/Admin/Group/${groupId}`, {
+        headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+    })
         .then(response => response.json())
         .then(data => {
 

@@ -23,9 +23,12 @@ document.addEventListener("DOMContentLoaded", function() {
         modal.style.display = "block";
         span.onclick = closeModal;
         confirmBtn.onclick = function() {
-
+            const token = sessionStorage.getItem("JWT");
             fetch(`http://127.0.0.1:8000/Admin/${groupId}/Notification`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
             })
                 .then(response => {
                     if (response.ok) {
@@ -48,8 +51,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const groupId = urlParams.get('id');
-
-    fetch(`http://127.0.0.1:8000/Admin/${groupId}/Notification`)
+    const token = sessionStorage.getItem("JWT");
+    fetch(`http://127.0.0.1:8000/Admin/${groupId}/Notification`,{
+        headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+    })
         .then(response => response.json())
         .then(data => {
 
@@ -93,7 +100,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     event.stopPropagation();
 
-                    fetch(`http://127.0.0.1:8000/Admin/Notification/${notification.historyid}`)
+                    fetch(`http://127.0.0.1:8000/Admin/Notification/${notification.historyid}`,{
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
+                    })
                         .then(response => response.json())
                         .then(details => {
                             console.log("Szczegoly")
@@ -130,7 +141,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     confirmBtn.onclick = function() {
 
                         fetch(`http://127.0.0.1:8000/Admin/Notification/${notification.historyid}`, {
-                            method: 'DELETE'
+                            method: 'DELETE',
+                            headers: {
+                                "Authorization": `Bearer ${token}`
+                            }
                         })
                             .then(response => {
                                 if (response.ok) {

@@ -3,7 +3,12 @@
 // Admin Project List
 document.addEventListener("DOMContentLoaded", function() {
     // Pobranie danych z endpointa GET /ProjectList
-    fetch('http://127.0.0.1:8000/ProjectList')
+    const token = sessionStorage.getItem("JWT");
+    fetch('http://127.0.0.1:8000/ProjectList', {
+        headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+    })
         .then(response => response.json())
         .then(data => {
             const topicList = document.getElementById('adminTopics');

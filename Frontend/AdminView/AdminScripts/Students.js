@@ -9,7 +9,7 @@ function addButtonListener(studentItem, userId) {
 }
 
 function openModal(userID) {
-
+    const token = sessionStorage.getItem("JWT");
     const modal = document.getElementById('groupModal');
     const span = document.getElementById("closeButton");
     const groupList = document.getElementById('groupList');
@@ -22,7 +22,11 @@ function openModal(userID) {
     modal.style.display = "block";
     span.onclick = closeModal;
 
-    fetch('http://127.0.0.1:8000/Admin/Groups')
+    fetch('http://127.0.0.1:8000/Admin/Groups',{
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
         .then(response => response.json())
         .then(data => {
             const groups = data['groups:']; // Pobranie tablicy projektów
@@ -34,7 +38,11 @@ function openModal(userID) {
             const projects = groups['projects'];
 
             const fetchProjectPromises = projects.map(project => {
-                return fetch(`http://127.0.0.1:8000/Admin/Project/${project.projectid}`)
+                return fetch(`http://127.0.0.1:8000/Admin/Project/${project.projectid}`,{
+                    headers: {
+                                "Authorization": `Bearer ${token}`
+                            }
+                })
                     .then(response => response.json())
                     .then(data => {
                         return {
@@ -74,7 +82,10 @@ function openModal(userID) {
                             console.log('Wybrano grupę:', groupids[i]);
 
                             fetch(`http://127.0.0.1:8000/Admin/SignToGroup/${userID}/${groupids[i]}`, {
-                                method: 'POST'
+                                method: 'POST',
+                                headers: {
+                                    "Authorization": `Bearer ${token}`
+                                }
                             })
                                 .then(response => {
                                     if (!response.ok) {
@@ -102,7 +113,12 @@ function openModal(userID) {
 }
 
 function allStudents(students) {
-    fetch(`http://127.0.0.1:8000/Admin/Students`)
+    const token = sessionStorage.getItem("JWT");
+    fetch(`http://127.0.0.1:8000/Admin/Students`,{
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
         .then(response => response.json())
         .then(data => {
 
@@ -149,7 +165,12 @@ function allStudents(students) {
 }
 
 function freeStudents(students) {
-    fetch(`http://127.0.0.1:8000/Admin/FreeStudents`)
+    const token = sessionStorage.getItem("JWT");
+    fetch(`http://127.0.0.1:8000/Admin/FreeStudents`,{
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
         .then(response => response.json())
         .then(details => {
 
@@ -240,7 +261,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const students = document.getElementById('studentList');
     const freeCheckbox = document.getElementById('freeCheckbox');
     const searchStudent = document.getElementById('findStudent');
-
+    const token = sessionStorage.getItem("JWT");
     allStudents(students)
 
     freeCheckbox.addEventListener('change', function() {
@@ -289,7 +310,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         else {
             fetch(`http://127.0.0.1:8000/Admin/SearchStudent/${student}`, {
-                method: 'POST'
+                method: 'POST',
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
             })
                 .then(response => {
                     if (!response.ok) {

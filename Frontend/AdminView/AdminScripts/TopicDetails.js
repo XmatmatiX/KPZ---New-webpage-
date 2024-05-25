@@ -4,9 +4,13 @@ document.addEventListener("DOMContentLoaded", function() {
     // Odczytanie ID projektu z adresu URL
     const urlParams = new URLSearchParams(window.location.search);
     const projectId = urlParams.get('id');
-
+    const token = sessionStorage.getItem("JWT");
     // Pobranie szczegółów projektu za pomocą endpointu /Project/{id}
-    fetch(`http://127.0.0.1:8000/Admin/Project/${projectId}`)
+    fetch(`http://127.0.0.1:8000/Admin/Project/${projectId}`,{
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
         .then(response => response.json())
         .then(projectData => {
 

@@ -2,7 +2,12 @@
 
 document.addEventListener("DOMContentLoaded", function() {
     // Pobranie danych z endpointa GET /ProjectList
-    fetch('http://127.0.0.1:8000/Admin/Groups')
+    const token = sessionStorage.getItem("JWT");
+    fetch('http://127.0.0.1:8000/Admin/Groups',{
+        headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+    })
         .then(response => response.json())
         .then(data => {
             const groupList = document.getElementById('groupList');
@@ -17,7 +22,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Tworzenie tablicy obietnic fetch
             const fetchGuardianPromises  = guardians.map(guardianId => {
-                return fetch(`http://127.0.0.1:8000/Admin/Guardian/${guardianId}`)
+                return fetch(`http://127.0.0.1:8000/Admin/Guardian/${guardianId}`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
                     .then(response => response.json())
                     .then(data => `${data.name} ${data.surname}`)
                     .catch(error => {
@@ -27,7 +36,11 @@ document.addEventListener("DOMContentLoaded", function() {
             });
 
             const fetchProjectPromises = projects.map(project => {
-                return fetch(`http://127.0.0.1:8000/Admin/Project/${project.projectid}`)
+                return fetch(`http://127.0.0.1:8000/Admin/Project/${project.projectid}`,{
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
                     .then(response => {
                         if(response.ok)
                         {
