@@ -2,7 +2,7 @@
 
 ## BACKEND
 
-Backend aplikacji Nazwa_Projektu, oparty na FastAPI, bazie danych PostgreSQL oraz bibliotece SQLAlchemy. 
+Backend aplikacji KPZ, oparty na FastAPI, bazie danych PostgreSQL oraz bibliotece SQLAlchemy. 
 Dokumentacja -> https://fastapi.tiangolo.com/tutorial/sql-databases/
 
 

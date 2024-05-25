@@ -253,6 +253,35 @@ def admin_project_list(db: Session = Depends(get_db)):
 @app.get("/Admin/Project/{id}")
 def admin_project(id: int, db: Session = Depends(get_db)):
     return CRUD.get_project_by_id(db, id)
+@app.get("/Admin/Reservations")
+def admin_reservation(db: Session = Depends(get_db)):
+    """
+            lista rezerwacji
+    """
+    reservations = CRUD.get_all_reservations(db)
+
+    logos = []
+    company = []
+    topic = []
+    project_group = []
+    status = []
+
+    for reservation in reservations:
+        project = CRUD.get_project_by_id(db, reservation.projectid)
+
+        logos.append(project.logopath)
+        company.append(project.companyname)
+        topic.append(project.projecttitle)
+        project_group.append(reservation.groupid)
+        status.append(reservation.status)
+
+    return {
+        "logos": logos,
+        "company": company,
+        "topic": topic,
+        "project_group": project_group,
+        "status": status
+    }
 
 @app.get("/Admin/Reservation/{project_id}")
 def admin_reservation(project_id: int, db: Session = Depends(get_db)):

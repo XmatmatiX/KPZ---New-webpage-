@@ -307,6 +307,8 @@ def get_project_reservation_by_group(db: Session, group_id: int) -> models.Proje
 def get_project_reservation_by_project(db:Session, pid: int) -> list[models.ProjectReservation]|None :
     return db.query(models.ProjectReservation).filter(models.ProjectReservation.projectid == pid).all()
 
+def get_all_reservations(db: Session):
+    return db.query(models.ProjectReservation).all()
 
 def get_action_history(db: Session, group_id: int) -> list[models.ActionHistory] | None:
     return db.query(models.ActionHistory).filter(models.ActionHistory.groupid == group_id).all()
