@@ -201,21 +201,21 @@ def create_project_from_forms(db: Session):
 
         # Iteracja przez wiersze w DataFrame
         # for index, row in df.iterrows():
-        for cell_e,cell_f,cell_b,cell_d,cell_g,cell_i,cell_j,cell_l in \
+        for cell_e,cell_f,cell_b,cell_d,cell_g,cell_h,cell_i,cell_j,cell_k,cell_l,cell_m in \
                 zip(sheet['E'][1:],sheet['F'][1:],sheet['B'][1:],
-                    sheet['D'][1:],sheet['G'][1:],sheet['I'][1:],sheet['J'][1:],sheet['L'][1:]):
+                    sheet['D'][1:],sheet['G'][1:],sheet['H'][1:],sheet['I'][1:],sheet['J'][1:],sheet['K'][1:],sheet['L'][1:],sheet['M'][1:]):
             project = schemas.ProjectCreate(
                 companyname=str(cell_e.value),
                 projecttitle=str(cell_f.value),
                 email=str(cell_b.value),
                 phonenumber=str(cell_d.value),
                 description=str(cell_g.value),
+                cooperationtype=str(cell_h.value),
                 mingroupsize=(cell_i.value),
                 maxgroupsize=(cell_j.value),
-                groupnumber=3,
+                groupnumber=(cell_k.value),
                 englishgroup=str(cell_l.value),
-                # remarks=row["Dodatkowe uwagi"],
-                # cooperationtype = row["Planowane formy współpracy"]
+                remarks=str(cell_m.value),
 
             )
             created= create_project(db, project)
