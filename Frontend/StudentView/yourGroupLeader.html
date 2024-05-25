@@ -82,12 +82,14 @@
         </div>
         <div id="fileModal" class="modalFile">
             <div class="modal-content-file">
-                <span class="close">&times;</span>
-                <form id="uploadForm">
-                    <input type="file" id="fileInput" multiple>
-                    <button id="deleteButton" class="deleteButtonFile" onclick="deleteFile()">🗑️</button>
-                    <button id="button-upl-file" class="button-upl-file" onclick="uploadFiles()">Upload</button>
-                </form>
+            <span class="close" onclick="closeFileModal()">&times;</span>
+            <form id="uploadForm">
+                <input type="file" id="fileInput" accept="application/pdf">
+                <button class="button-upl-file" onclick="uploadFiles()">Upload</button>
+                <button class="deleteButtonFile" onclick="deleteFile()">🗑️ Usuń wszystkie pliki</button>
+            </form>
+            <div id="fileList"></div>
+            <button class="button-get" onclick="getPDFList()">Pokaż listę plików</button>
             </div>
         </div>
     </div>
@@ -95,6 +97,5 @@
 </section>
 
 <script src="Scripts/YourGroupLeader.js"></script>
-<script src="studentScript.js"></script>
 </body>
 </html>

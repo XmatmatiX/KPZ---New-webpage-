@@ -1239,9 +1239,9 @@ h3 {
 .close:hover {
     color: black;
 }
-.button-upl-file, .deleteButtonFile {
+.button-upl-file, .deleteButtonFile, .button-get {
     display: block;
-    width: 100%;
+    width: 40%;
     padding: 10px;
     margin-top: 20px;
     background-color: #2f3fbb;
@@ -1249,6 +1249,7 @@ h3 {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    text-align: center;
 }
 
 .button-upl-file:hover {
