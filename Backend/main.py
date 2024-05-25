@@ -354,18 +354,20 @@ def admin_free_students(db: Session = Depends(get_db)):
 @app.post("/Admin/SearchStudent/{parameter}")
 def search_students(parameter: str, db: Session = Depends(get_db)):
     students = CRUD.get_user_by_something(db, parameter)
+    ids=[]
     names = []
     surnames = []
     groups = []
     roles = []
     emails =[]
     for student in students:
+        ids.append(student.userid)
         names.append(student.name)
         surnames.append(student.surname)
         groups.append(student.groupid)
         roles.append(student.rolename)
         emails.append(student.email)
-    return {"names": names, "surnames": surnames, "groups": groups, "roles": roles, "emails":emails}
+    return {"ids": ids,"names": names, "surnames": surnames, "groups": groups, "roles": roles, "emails":emails}
 
 @app.get("/Admin/Students")
 def get_students(db: Session = Depends(get_db)):
