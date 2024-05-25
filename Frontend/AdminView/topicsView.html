@@ -26,7 +26,7 @@
     <div class="menu">
         <p>Przeglądaj</p>
         <button id="homeAdmin" class="menuButton"><img src="../Images/home.png" alt="There should be a photo"> Rezerwacje </button>
-        <button id="searchStudent" class="pageButton"><img src="../Images/loupe.png" alt="There should be a photo"> Studenci </button>
+        <button id="searchStudent" class="menuButton"><img src="../Images/loupe.png" alt="There should be a photo"> Studenci </button>
         <button id="groups" class="menuButton"><img src="../Images/loupe.png" alt="There should be a photo"> Grupy </button>
         <button id="addTopic" class="menuButton"><img src="../Images/plus.png" alt="There should be a photo"> Dodaj temat </button>
         <button id="notifications" class="menuButton"><img src="../Images/notification.png" alt="There should be a photo"> Powiadomienia </button>
@@ -35,59 +35,25 @@
     <div class="page">
 
         <section class="headerAdmin">
-            <input id="student" class="studentInput" placeholder="Wyszukaj studenta">
-            <button id="findStudent" class="searchButton">Szukaj</button>
-
-            <div class="freeBorder2">
-                <input type="checkbox" id="freeCheckbox">
-                <label for="freeCheckbox">Studenci bez grupy</label>
-            </div>
+            <input id="search" class="searchInput" placeholder="Wyszukaj firmę">
+            <button class="searchButton">Szukaj</button>
         </section>
 
-        <section id="studentList" class="studentList">
-
-            <div class="borderStudents2">
-                <p>Email</p>
-                <p>Imię</p>
-                <p>Nazwisko</p>
-                <p>Grupa</p>
+        <section id="topicList" class="topicList">
+            <div class="borderItem">
+                <p>Logo</p>
+                <p>Firma</p>
+                <p>Temat</p>
+                <p>Rozmiar grupy</p>
+                <p>Ilość grup</p>
             </div>
-
         </section>
-
-        <div id="groupModal" class="deleteModal">
-            <div class="modal-groups">
-                <span id="closeButton" class="close">&times;</span>
-                <section class="groupView">
-                    <section class="headerAdmin">
-                        <input placeholder="Wyszukaj grupę">
-                        <button class="searchButton">Szukaj</button>
-
-                        <div class="freeBorder2">
-                            <input type="checkbox" id="freeCheckbox2">
-                            <label for="freeCheckbox">Grupy bez tematu</label>
-                        </div>
-                    </section>
-
-                    <section id="groupList" class="topicList">
-
-                        <div class="borderGroups2">
-                            <p>ID grupy</p>
-                            <p>Temat</p>
-                            <p>Liczba członków</p>
-                        </div>
-
-                    </section>
-                </section>
-            </div>
-        </div>
 
     </div>
 </section>
 
 <script src="AdminScripts/adminScript.js"></script>
-<script src="AdminScripts/Students.js"></script>
-<script src="AdminScripts/StudentGroups.js"></script>
+<script src="AdminScripts/TopicsList.js"></script>
 
 </body>
 </html>

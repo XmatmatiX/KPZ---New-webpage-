@@ -35,3 +35,7 @@ class GuardianAssignedException(Exception):
     "The guardian is assigned to a group and cannot be deleted"
     pass
 
+class GroupSizeNotValidForProjectException(Exception):
+    "The group size is not valid for project"
+    pass
+

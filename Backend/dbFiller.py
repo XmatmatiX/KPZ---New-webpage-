@@ -1,6 +1,6 @@
 from Backend import CRUD, models
 from Backend import schemas
-from database import SessionLocal
+from Backend.database import SessionLocal
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -15,6 +15,11 @@ def fill_database():
     """
     db = SessionLocal()
     CRUD.delete_all(db)
+    db = SessionLocal()
+    for i in range(1000):
+        user = CRUD.get_user_by_id(db, i)
+        if user is not None:
+            CRUD.delete_user(db, user)
 
     users = readUsers(db)
     guards = readGuardians(db)
@@ -24,20 +29,15 @@ def fill_database():
     CRUD.update_user_group_id(db, users[15], group.groupid)
     CRUD.update_user_group_id(db, users[17], group.groupid)
     CRUD.update_project_group_guardian(db, group.groupid,guards[2].guardianid)
-    reservation = schemas.ProjectReservationCreate(
-        projectid=projects[0].projectid,
-        groupid=group.groupid,
-    )
-    CRUD.create_project_reservation(db, reservation)
+    group = CRUD.get_group(db, group.groupid)
+    CRUD.create_project_reservation(db, projects[0], group)
+
     group = CRUD.create_project_group_short(db, users[4])
     CRUD.update_user_group_id(db, users[6], group.groupid)
     CRUD.update_user_group_id(db, users[10], group.groupid)
     CRUD.update_project_group_guardian(db, group.groupid,guards[0].guardianid)
-    reservation = schemas.ProjectReservationCreate(
-        projectid=projects[1].projectid,
-        groupid=group.groupid,
-    )
-    CRUD.create_project_reservation(db, reservation)
+    group = CRUD.get_group(db, group.groupid)
+    CRUD.create_project_reservation(db, projects[1], group)
 
 
 
@@ -55,16 +55,22 @@ def readUsers(db: SessionLocal):
         name = vals[0]
         surname = vals[1]
         email = vals[2]
-        password = vals[3]
-        role = vals[4]
         user = schemas.UserCreate(
             name=name,
             surname=surname,
             email=email,
-            password=password,
+            keycloackid="password",
             rolename="student"
         )
-        created_users.append(CRUD.create_user2(db, user))
+        created_users.append(CRUD.create_user(db, user))
+    admin=schemas.UserCreate(
+        name="Admin",
+        surname="Adminowicz",
+        email="admin.adminowicz@pwr.edu.pl",
+        keycloackid="password",
+        rolename="admin"
+    )
+    created_users.append(CRUD.create_user(db, admin))
     return created_users
 
 def readGuardians(db: SessionLocal):
@@ -100,7 +106,7 @@ def readProjects(db:SessionLocal):
         mingroupsize=3,
         maxgroupsize=4,
         groupnumber=1,
-        englishgroup=True
+        englishgroup=str("Angielski")
     )
     project2 = schemas.ProjectCreate(
         companyname="Deloitte",
@@ -111,7 +117,7 @@ def readProjects(db:SessionLocal):
         mingroupsize=3,
         maxgroupsize=4,
         groupnumber=1,
-        englishgroup=True
+        englishgroup=str("Angielski")
     )
     project3 = schemas.ProjectCreate(
         companyname="Firma",
@@ -122,7 +128,7 @@ def readProjects(db:SessionLocal):
         mingroupsize=1,
         maxgroupsize=5,
         groupnumber=3,
-        englishgroup=False
+        englishgroup=str("Angielski")
     )
     created_projects=[]
     created_projects.append(CRUD.create_project(db, project1))
