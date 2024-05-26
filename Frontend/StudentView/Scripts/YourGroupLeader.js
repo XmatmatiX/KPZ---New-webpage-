@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const formModal = document.getElementById('formModal');
     const fileModal = document.getElementById('fileModal');
     const tutorButton = document.getElementById('tutor');
-    const leaveButton = document.getElementById('leaveButton');
     const closeButtons = document.querySelectorAll('.close');
 
     // Show the tutor modal
@@ -56,6 +55,42 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+        function fetchGroupDetails(groupId) {
+        fetch(`http://127.0.0.1:8000/Student/Group/${groupId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data); // Log data to see its structure
+                updateMemberDetails(data.members); // Assume `members` is directly under `data`
+            })
+            .catch(error => {
+                console.error('Błąd pobierania danych:', error);
+                alert(`Nie udało się pobrać danych grupy: ${error.message}`);
+            });
+    }
+        function updateMemberDetails(members) {
+        const memberDetailsContainer = document.getElementById('member-details');
+        if (memberDetailsContainer) {
+            let membersHtml = '<h7>Członkowie grupy</h7>';
+            members.forEach(member => {
+                membersHtml += `
+                    <div class="member">
+                        <img src="../Images/Vector.jpg" alt="Avatar studenta">
+                        <p>${member.name} ${member.surname} - ${member.role}</p>
+                    </div>
+                `;
+            });
+            memberDetailsContainer.innerHTML = membersHtml;
+        } else {
+            console.error('Member details container not found');
+        }
+    }
+    fetchGroupDetails(1);
+
     // Add more JavaScript code here if needed for file upload or other functionalities
 });
 
@@ -64,7 +99,7 @@ document.getElementById('file').addEventListener('click', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const userId = 1; // Replace with the actual user ID
+    const userId = 62; // Replace with the actual user ID
 
     // Function to upload PDF
     async function uploadFiles() {
@@ -141,4 +176,29 @@ document.addEventListener('DOMContentLoaded', function() {
     window.uploadFiles = uploadFiles;
     window.deleteFile = deleteFile;
     window.getPDFList = getPDFList;
+});
+document.addEventListener('DOMContentLoaded', function() {
+    const changeButton = document.getElementById('change');
+
+    if (changeButton) {
+        changeButton.addEventListener('click', function() {
+            window.location.href = 'changeLeader.html';
+        });
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    const leaveGroupButton = document.querySelector('.leave-group');
+    const leaveButton = document.getElementById('leaveButton');
+
+    leaveButton.addEventListener('click', function() {
+        const confirmation = confirm('Czy na pewno chcesz opuścić grupę?');
+        if (confirmation) {
+            console.log('Użytkownik opuścił grupę.');
+            window.location.href = "enrollment.html";
+            location.reload(); // Odświeżenie bieżącej strony
+        }
+    });
+});
+document.getElementById('send').addEventListener('click', function() {
+    alert('Plik został wysłany do zatwierdzenia.');
 });

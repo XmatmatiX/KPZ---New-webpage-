@@ -239,8 +239,6 @@ document.addEventListener('DOMContentLoaded', function() {
     leaveButton.addEventListener('click', function() {
         const confirmation = confirm('Czy na pewno chcesz opuścić grupę?');
         if (confirmation) {
-
-            // Tu wpisz logikę potrzebną do opuszczenia grupy, np. zapytanie AJAX do serwera
             console.log('Użytkownik opuścił grupę.');
             window.location.href = "enrollment.html";
             location.reload(); // Odświeżenie bieżącej strony
