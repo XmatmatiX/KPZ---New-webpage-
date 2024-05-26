@@ -8,6 +8,69 @@ function addButtonListener(studentItem, userId) {
     });
 }
 
+function updateGroupSize(groupId) {
+    const groupSizeElement = document.querySelector(`#groupSize_${groupId}`);
+    const currentGroupSize = parseInt(groupSizeElement.textContent);
+    const updatedGroupSize = currentGroupSize + 1; // Dodaj 1
+    groupSizeElement.textContent = updatedGroupSize.toString();
+}
+
+function displayGroups(userID) {
+
+    const groupList = document.getElementById('groupList');
+    groupList.innerHTML = '';
+
+    fetch('http://127.0.0.1:8000/Admin/Groups')
+        .then(response => response.json())
+        .then(data => {
+            const groups = data['groups:']; // Pobranie tablicy projektów
+
+            const groupids = groups['groupids'];
+            const groupsize = groups['groupsize'];
+            const projectTitles = groups['project_titles'];
+
+            for (let i = 0; i < groupids.length; i++) {
+
+                const groupItem = document.createElement('div');
+                groupItem.classList.add('groupItem2');
+
+                groupItem.innerHTML = `
+                            <p>${groupids[i]}</p>
+                            <p>${projectTitles[i]}</p>
+                            <p>${groupsize[i]}</p>
+                            <button class="searchButton">Wybierz</button>
+                        `;
+
+                const selectButton = groupItem.querySelector('.searchButton');
+                selectButton.addEventListener('click', function() {
+
+                    console.log('Wybrano user:', userID);
+                    console.log('Wybrano grupę:', groupids[i]);
+
+                    fetch(`http://127.0.0.1:8000/Admin/SignToGroup/${userID}${groupids[i]}`, {
+                        method: 'POST'
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('The squad of a group with reservation can not be changed');
+                            }
+
+                            console.log('Student został pomyślnie przypisany do grupy');
+
+                            displayGroups(userID);
+                            return response.json();
+
+                        })
+                        .catch(error => console.error('Błąd pobierania danych:', error));
+                });
+
+                groupList.appendChild(groupItem);
+            }
+
+        })
+        .catch(error => console.error('Błąd pobierania danych:', error));
+}
+
 function openModal(userID) {
 
     const modal = document.getElementById('groupModal');
@@ -17,87 +80,13 @@ function openModal(userID) {
     function closeModal() {
         modal.style.display = "none";
         groupList.innerHTML = '';
+        location.reload();
     }
 
     modal.style.display = "block";
     span.onclick = closeModal;
 
-    fetch('http://127.0.0.1:8000/Admin/Groups')
-        .then(response => response.json())
-        .then(data => {
-            const groups = data['groups:']; // Pobranie tablicy projektów
-
-            const groupids = groups['groupids'];
-            const leaders = groups['leaders'];
-            const groupsize = groups['groupsize'];
-            const guardians = groups['guardians'];
-            const projects = groups['projects'];
-
-            const fetchProjectPromises = projects.map(project => {
-                return fetch(`http://127.0.0.1:8000/Admin/Project/${project.projectid}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        return {
-                            projectTitle: data.projecttitle
-                        };
-                    })
-                    .catch(error => {
-                        console.error('Błąd pobierania danych projektu:', error);
-                        return {}; // Zwrócenie pustego obiektu w przypadku błędu
-                    });
-            });
-
-            // Oczekiwanie na zakończenie wszystkich żądań fetch
-            Promise.all(fetchProjectPromises)
-                .then(projectsData  => {
-
-                    //const guardiansData = dataArray.slice(0, guardians.length);
-                    //const projectsData = dataArray.slice(guardians.length);
-                    for (let i = 0; i < groupids.length; i++) {
-
-                        const groupItem = document.createElement('div');
-                        groupItem.classList.add('groupItem2');
-
-                        const project = projectsData[i];
-
-                        groupItem.innerHTML = `
-                            <p>${groupids[i]}</p>
-                            <p>${project.projectTitle}</p>
-                            <p>${groupsize[i]}</p>
-                            <button class="searchButton">Wybierz</button>
-                        `;
-
-                        const selectButton = groupItem.querySelector('.searchButton');
-                        selectButton.addEventListener('click', function() {
-
-                            console.log('Wybrano user:', userID);
-                            console.log('Wybrano grupę:', groupids[i]);
-
-                            fetch(`http://127.0.0.1:8000/Admin/SignToGroup/${userID}/${groupids[i]}`, {
-                                method: 'POST'
-                            })
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error('The squad of a group with reservation can not be changed');
-                                    }
-
-                                    console.log('Student został pomyślnie przypisany do grupy.');
-                                    return response.json();
-                                })
-                                .then(data => {
-
-                                    closeModal();
-                                    location.reload();
-
-                                })
-                                .catch(error => console.error('Błąd pobierania danych:', error));
-                        });
-
-                        groupList.appendChild(groupItem);
-                    }
-                });
-        })
-        .catch(error => console.error('Błąd pobierania danych:', error));
+    displayGroups(userID);
 
 }
 

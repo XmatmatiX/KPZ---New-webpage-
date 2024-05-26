@@ -23,9 +23,6 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(response => response.json())
         .then(data => {
 
-            console.log("Dane")
-            console.log(data)
-
             function translateRole(role) {
                 switch(role) {
                     case 'leader':
@@ -50,6 +47,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             }
 
+            const guardianId = data.guardian;
+
             const groupid = document.getElementById('groupid')
             groupid.textContent = 'Grupa ' + data.id;
 
@@ -63,11 +62,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 <p>Firma</p>
                 <p class="group">${data.company}</p>
             `;
-            const guardianDetails = document.getElementById('guardian')
-            guardianDetails.innerHTML = `
-                <p>Prowadzący</p>
-                <p class="group"></p>
-            `;
+
+            fetch(`http://127.0.0.1:8000/Admin/Guardian/${guardianId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const guardianName = `${data.name} ${data.surname}`;
+                    // Tutaj możesz kontynuować z wyświetlaniem danych opiekuna na stronie
+                    const guardianDetails = document.getElementById('guardian');
+                    guardianDetails.innerHTML = `
+                        <p>Prowadzący</p>
+                        <p class="group">${guardianName}</p>
+                    `;
+                })
+                .catch(error => console.error('Błąd pobierania danych opiekuna:', error));
 
             const stateDetails = document.getElementById('state')
             const translatdeStatus = translateStatus(data.state);
@@ -100,6 +107,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 students.appendChild(memberItem)
             });
+
         })
         .catch(error => console.error('Błąd pobierania danych:', error));
 });

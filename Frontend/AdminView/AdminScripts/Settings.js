@@ -72,8 +72,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
     excelButton.addEventListener("click", function() {
 
+        const fileInput = document.getElementById('pdf-upload');
+        const file = fileInput.files[0];
+
+        // Sprawdź, czy plik został wybrany
+        if (!file) {
+            console.error('Nie wybrano pliku');
+            return;
+        }
+
+        // Utwórz obiekt FormData
+        const formData = new FormData();
+        formData.append('pdf_file', file);
+
         fetch(`http://127.0.0.1:8000/Admin/ExcelFile`, {
-            method: 'POST'
+            method: 'POST',
+            body: formData
         })
             .then(response => {
                 if (!response.ok) {
