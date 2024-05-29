@@ -7,17 +7,17 @@ import pandas as pd
 from openpyxl import load_workbook
 from fastapi import UploadFile, HTTPException
 # from magic import Magic
-
+from datetime import datetime
 import models
 import schemas
 import exceptions
+import re
 
 """
 Create
 """
 
 maximumgroupsize = 6
-
 
 """
 Statusy rezerwacji: "reserved"  -zarezerwowano
@@ -26,7 +26,8 @@ Statusy rezerwacji: "reserved"  -zarezerwowano
 """
 
 
-def create_project_reservation(db: Session, project : models.Project , group : models.ProjectGroup) -> models.ProjectReservation | exceptions.ProjectNotAvailableException:
+def create_project_reservation(db: Session, project: models.Project,
+                               group: models.ProjectGroup) -> models.ProjectReservation | exceptions.ProjectNotAvailableException:
     """
     Checks if project can be reserved and if yes, checks if group's size is adecuate for this project creates new project reservation,
     if not returns None
@@ -35,16 +36,21 @@ def create_project_reservation(db: Session, project : models.Project , group : m
     :return: return the reservation
     :raise exceptions.ProjectNotAvailableException : if project cannot be reserved - all the group projects were taken
     """
-    if is_project_available(db, project.projectid):
-        if is_size_valid(project, group):
-            db_reservation = models.ProjectReservation(projectid=project.projectid, groupid=group.groupid, status="reserved")
-            db.add(db_reservation)
-            db.commit()
-            db.refresh(db_reservation)
-            create_action_history(db, group.groupid, "Zarezerwowano projekt")
-            return db_reservation
-        raise exceptions.GroupSizeNotValidForProjectException
-    raise exceptions.ProjectNotAvailableException
+    if isTimeValid():
+        if is_project_available(db, project.projectid):
+            if is_size_valid(project, group):
+                db_reservation = models.ProjectReservation(projectid=project.projectid, groupid=group.groupid,
+                                                           status="reserved")
+                db.add(db_reservation)
+                db.commit()
+                db.refresh(db_reservation)
+                create_action_history(db, group.groupid,
+                                      f"Zarezerwowano projekt id {project.projectid}: {project.projecttitle} zgloszony przez {project.companyname}")
+                return db_reservation
+            raise exceptions.GroupSizeNotValidForProjectException
+        raise exceptions.ProjectNotAvailableException
+    raise exceptions.NotTimeForReservationException
+
 
 """def create_project_reservation(db: Session,
                            reservation: schemas.ProjectReservationCreate) -> models.ProjectReservation | exceptions.ProjectNotAvailableException:
@@ -66,7 +72,6 @@ if is_project_available(db, reservation.projectid):
     return db_reservation
 raise exceptions.ProjectNotAvailableException"""
 
-
 """
 Schemas Action Hisotry nakazuje podanie kazdorazowo czasu, ktory i tak jest przypisywany w create
 def create_action_history(db: Session, action_history: schemas.ActionHistoryCreate):
@@ -77,6 +82,7 @@ def create_action_history(db: Session, action_history: schemas.ActionHistoryCrea
     db.refresh(db_action_history)
     return db_action_history
 """
+
 
 def create_action_history(db: Session, gid: int, contentA: str) -> models.ActionHistory:
     """
@@ -94,10 +100,6 @@ def create_action_history(db: Session, gid: int, contentA: str) -> models.Action
     return db_action_history
 
 
-
-
-
-
 def create_user(db: Session, user: schemas.UserCreate) -> models.Users:
     """
     Creates an user with a role 'student'
@@ -106,7 +108,8 @@ def create_user(db: Session, user: schemas.UserCreate) -> models.Users:
     :return:
     """
     db_user = models.Users(name=user.name, surname=user.surname, email=user.email,
-                           rolename=user.rolename, keycloackid=user.keycloackid)  # przepisanie roli ZAWSZE JEST STUDENTEM
+                           rolename=user.rolename,
+                           keycloackid=user.keycloackid)  # przepisanie roli ZAWSZE JEST STUDENTEM
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -118,7 +121,7 @@ def create_guardian(db: Session, guardian: schemas.GuardianCreate):
     Creates guardian if one doesnt yet exist (based on email)
     or returns one guardian with such email
     """
-    guard= get_guardian_byEmail(db, guardian.email)
+    guard = get_guardian_byEmail(db, guardian.email)
     if guard is None:
         db_guardian = models.Guardian(name=guardian.name, surname=guardian.surname, email=guardian.email)
         db.add(db_guardian)
@@ -188,8 +191,7 @@ def create_project_from_forms(db: Session):
     """
     file_path = 'docs/forms/KPZ_FORMS.xlsx'  # Dodaj ścieżkę do pliku
 
-
-    created_projects=[]
+    created_projects = []
 
     try:
         # Wczytaj plik Excel
@@ -201,9 +203,10 @@ def create_project_from_forms(db: Session):
 
         # Iteracja przez wiersze w DataFrame
         # for index, row in df.iterrows():
-        for cell_e,cell_f,cell_b,cell_d,cell_g,cell_h,cell_i,cell_j,cell_k,cell_l,cell_m in \
-                zip(sheet['E'][1:],sheet['F'][1:],sheet['B'][1:],
-                    sheet['D'][1:],sheet['G'][1:],sheet['H'][1:],sheet['I'][1:],sheet['J'][1:],sheet['K'][1:],sheet['L'][1:],sheet['M'][1:]):
+        for cell_e, cell_f, cell_b, cell_d, cell_g, cell_h, cell_i, cell_j, cell_k, cell_l, cell_m in \
+                zip(sheet['E'][1:], sheet['F'][1:], sheet['B'][1:],
+                    sheet['D'][1:], sheet['G'][1:], sheet['H'][1:], sheet['I'][1:], sheet['J'][1:], sheet['K'][1:],
+                    sheet['L'][1:], sheet['M'][1:]):
             project = schemas.ProjectCreate(
                 companyname=str(cell_e.value),
                 projecttitle=str(cell_f.value),
@@ -218,16 +221,13 @@ def create_project_from_forms(db: Session):
                 remarks=str(cell_m.value),
 
             )
-            created= create_project(db, project)
+            created = create_project(db, project)
             print(f"Creating project: {project}")
             created_projects.append(created)
         return created_projects
     except Exception as e:
         # Złapanie i obsługa błędów
         print(f"An error occurred: {str(e)}")
-
-
-
 
 
 """
@@ -243,15 +243,27 @@ def get_user_by_name(db: Session, name: str):
     db_user = db.query(models.Users).filter(models.Users.name == name).all()
     return db_user
 
-def get_user_by_something(db: Session, text:str) -> list[models.Users] | None:
+
+def get_user_by_something(db: Session, text: str) -> list[models.Users] | None:
     """
     Return user whose name, surname or email contains that something
     """
+    members = []
+    array = getNumbers(text)
+    if len(array) > 0:
+        for a in array:
+            print(a)
+            group = get_group(db, a)
+            if group:
+                memb = get_group_members(db, a)
+                for user in memb:
+                    members.append(user)
 
-    match = db.query(models.Users).filter(models.Users.name.icontains(text), models.Users.rolename!="admin").all()
-    match2 = db.query(models.Users).filter(models.Users.surname.icontains(text), models.Users.rolename!="admin").all()
-    match3 = db.query(models.Users).filter(models.Users.email.icontains(text), models.Users.rolename!="admin").all()
-    result = match +match2 + match3
+    match = db.query(models.Users).filter(models.Users.name.icontains(text), models.Users.rolename != "admin").all()
+    match2 = db.query(models.Users).filter(models.Users.surname.icontains(text), models.Users.rolename != "admin").all()
+    match3 = db.query(models.Users).filter(models.Users.email.icontains(text), models.Users.rolename != "admin").all()
+    result = match + match2 + match3 + members
+    result.sort(key=lambda x: x.surname)
     return result
 
 
@@ -259,37 +271,50 @@ def get_user_by_id(db: Session, id: int):
     db_user = db.query(models.Users).filter(models.Users.userid == id).first()
     return db_user
 
-def get_user_by_surname(db: Session, surname: str):
-    return db.query(models.Users).filter(models.Users.surname == surname).all()
 
-def get_user_by_email (db: Session, email: str):
+def get_user_by_surname(db: Session, surname: str):
+    users = db.query(models.Users).filter(models.Users.surname == surname).all()
+    users.sort(key=lambda x: x.name)
+    return users
+
+
+def get_user_by_email(db: Session, email: str):
     return db.query(models.Users).filter(models.Users.email == email).first()
 
+
 def get_free_students(db):
-    return db.query(models.Users).filter(models.Users.groupid == None).all()
+    users = db.query(models.Users).filter(models.Users.groupid == None, models.Users.rolename != "admin").all()
+    users.sort(key=lambda x: x.surname)
+    return users
+
 
 def get_all_students(db):
-    return db.query(models.Users).filter(models.Users.rolename!="admin").all()
+    return db.query(models.Users).filter(models.Users.rolename != "admin").all()
+
 
 def get_admins(db):
     return db.query(models.Users).filter(models.Users.rolename == "admin").all()
+
 
 def get_project_by_id(db: Session, project_id: int):
     return db.query(models.Project).filter(models.Project.projectid == project_id).first()
 
 
-def get_project_by_company(db: Session, project_name: str) -> list[models.Project] |None:
+def get_project_by_company(db: Session, project_name: str) -> list[models.Project] | None:
     return db.query(models.Project).filter(models.Project.companyname == project_name).all()
+
 
 def get_all_projects(db):
     return db.query(models.Project).all()
+
 
 def get_groups_assigned_to_projects(db, project):
     """
     Returns list of groupid realising the project
     """
-    reservations=db.query(models.ProjectReservation).filter(models.ProjectReservation.projectid==project.projectid).all()
-    groups= []
+    reservations = db.query(models.ProjectReservation).filter(
+        models.ProjectReservation.projectid == project.projectid).all()
+    groups = []
     for reservation in reservations:
         groups.append(reservation.groupid)
     return groups
@@ -304,11 +329,14 @@ def get_project_reservation_by_group(db: Session, group_id: int) -> models.Proje
     return db.query(models.ProjectReservation).filter(
         models.ProjectReservation.groupid == group_id).first()
 
-def get_project_reservation_by_project(db:Session, pid: int) -> list[models.ProjectReservation]|None :
+
+def get_project_reservation_by_project(db: Session, pid: int) -> list[models.ProjectReservation] | None:
     return db.query(models.ProjectReservation).filter(models.ProjectReservation.projectid == pid).all()
+
 
 def get_all_reservations(db: Session):
     return db.query(models.ProjectReservation).all()
+
 
 def get_action_history(db: Session, group_id: int) -> list[models.ActionHistory] | None:
     return db.query(models.ActionHistory).filter(models.ActionHistory.groupid == group_id).all()
@@ -317,20 +345,24 @@ def get_action_history(db: Session, group_id: int) -> list[models.ActionHistory]
 def get_action_history_id(db: Session, id: int):
     return db.query(models.ActionHistory).filter(models.ActionHistory.historyid == id).first()
 
-def get_all_history(db:Session):
+
+def get_all_history(db: Session):
     return db.query(models.ActionHistory).all()
 
-def histories_whole_info(db:Session):
+
+def histories_whole_info(db: Session):
     histories = get_all_history(db)
     complexHistory = []
     for history in histories:
         project = get_project_reservation_by_group(db, history.groupid)
         if project is not None:
-            proj=project.projectid
+            proj = project.projectid
         else:
-            proj=None
-        complexHistory.append({"group": history.groupid,"historyid": history.historyid ,"content": history.content, "date":history.datatime, "project": proj })
+            proj = None
+        complexHistory.append({"group": history.groupid, "historyid": history.historyid, "content": history.content,
+                               "date": history.datatime, "project": proj})
     return complexHistory
+
 
 def get_group_by_invite_code(db: Session, invite_code: str) -> models.ProjectGroup | None:
     return db.query(models.ProjectGroup).filter(models.ProjectGroup.invitecode == invite_code).first()
@@ -343,28 +375,31 @@ def get_group(db: Session, groupid: int):
 def get_group_members(db: Session, groupid: int) -> list[models.Users] | None:
     return db.query(models.Users).filter(models.Users.groupid == groupid).all()
 
+
 def get_all_groups_info(db):
-    groups=db.query(models.ProjectGroup).all()
-    ids=[]
-    leaders=[]
-    groupsizes=[]
-    guardians=[]
-    themas=[]
-    firms=[]
+    groups = db.query(models.ProjectGroup).all()
+    ids = []
+    leaders = []
+    groupsizes = []
+    guardians = []
+    themas = []
+    firms = []
     for group in groups:
         ids.append(group.groupid)
         leaders.append(get_group_leader(db, group.groupid))
         groupsizes.append(group.groupsize)
         guardians.append(group.guardianid)
-        reservation=get_project_reservation_by_group(db, group.groupid)
+        reservation = get_project_reservation_by_group(db, group.groupid)
         if reservation is None:
             themas.append(None)
             firms.append(None)
         else:
-            project=get_project_by_id(db,reservation.projectid)
+            project = get_project_by_id(db, reservation.projectid)
             themas.append(project.projecttitle)
             firms.append(project.companyname)
-    return {"groupids":ids, "leaders":leaders, "groupsize":groupsizes, "guardians":guardians, "project_titles": themas, "companys":firms}
+    return {"groupids": ids, "leaders": leaders, "groupsize": groupsizes, "guardians": guardians,
+            "project_titles": themas, "companys": firms}
+
 
 def get_group_leader(db: Session, groupid: int) -> models.Users | None:
     members = get_group_members(db, groupid)
@@ -393,13 +428,14 @@ def update_user_role(db: Session, user: schemas.UserBase, role: str) -> schemas.
     db.refresh(user)
     return user
 
-def update_to_admin(db:Session, email:str):
+
+def update_to_admin(db: Session, email: str):
     """
     Change user role from "student to "admin
     """
-    user=get_user_by_email(db,email)
+    user = get_user_by_email(db, email)
     if user.groupid is None:
-        user.rolename= "admin"
+        user.rolename = "admin"
         db.commit()
         db.refresh(user)
 
@@ -414,7 +450,7 @@ def update_group_group_size(db: Session, gid: int, increase: bool):
     raise Exception if the group size would be invalid because if the operation (max group size is for now 6, min is 1)
     """
     group = get_group(db, gid)
-    deleted = group==None
+    deleted = group == None
     if group is not None:
         if increase:
             if group.groupsize + 1 > maximumgroupsize:
@@ -423,7 +459,7 @@ def update_group_group_size(db: Session, gid: int, increase: bool):
                 group.groupsize += 1
         else:
             if group.groupsize == 1:
-             #   raise exceptions.MinimumSizeGroupException
+                #   raise exceptions.MinimumSizeGroupException
                 delete_group(db, group)
                 deleted = True
             else:
@@ -523,7 +559,8 @@ def update_project_reservation_files(db: Session, reservation: schemas.ProjectRe
     reservation.status = "waiting"
     db.commit()
     db.refresh(reservation)
-    create_action_history(db, reservation.groupid, contentA="Dodano pliki")
+    create_action_history(db, reservation.groupid,
+                          contentA=f"Dodano pliki. Znajduja sie w lokalizacji {reservation.confirmationpath}")
     return reservation
 
 
@@ -535,7 +572,7 @@ def update_project_reservation_isConfirmed(db: Session, reservation: schemas.Pro
     # reservation.isconfirmed = True // NIE MAMY ISCONFIRMED
     db.commit()
     db.refresh(reservation)
-    create_action_history(db, reservation.groupid, contentA="Zatwierdzono realizacje tematu")
+    create_action_history(db, reservation.groupid, contentA=f"Zatwierdzono realizacje tematu {reservation.projectid}.")
     return reservation
 
 
@@ -554,7 +591,7 @@ def delete_user(db: Session, user: schemas.UserReturn):
         group = get_group(db, group_id)
     else:
         group = None
-    if user.rolename == "leader" and group.groupsize >1:
+    if user.rolename == "leader" and group.groupsize > 1:
         raise exceptions.LeaderException
     try:
         if group is not None:
@@ -566,8 +603,7 @@ def delete_user(db: Session, user: schemas.UserReturn):
 
 
 def delete_all_users(db: Session):
-
-    db.query(models.Users).filter(models.Users.groupid is not None, models.Users.rolename!="admin").delete()
+    db.query(models.Users).filter(models.Users.groupid is not None, models.Users.rolename != "admin").delete()
     db.commit()
 
 
@@ -605,7 +641,7 @@ def delete_group(db: Session, group: schemas.ProjectGroupReturn):
         raise exceptions.GroupWithReservation
 
 
-def delete_group_admin(db: Session, group:schemas.ProjectGroupReturn):
+def delete_group_admin(db: Session, group: schemas.ProjectGroupReturn):
     """
     Delete a group from database - admin version - can delete a group even if it has members or reservation
     If user was in a group, his group is changed to None
@@ -630,7 +666,7 @@ def delete_project_reservation(db: Session, reservation: schemas.ProjectReservat
     :return:
     """
     #delete_ALL_action_history(db, reservation.groupid)
-    create_action_history(db, reservation.groupid, "Usunieto rezerwacje projektu")
+    create_action_history(db, reservation.groupid, f"Usunieto rezerwacje projektu {reservation.projectid}")
     db.delete(reservation)
     db.commit()
 
@@ -692,7 +728,8 @@ def is_project_available(db: Session, pid: int) -> bool:
     """
     return number_project_reserved(db, pid) < (get_project_by_id(db, pid)).groupnumber
 
-def is_size_valid(project: models.Project , group: models.ProjectGroup) -> bool:
+
+def is_size_valid(project: models.Project, group: models.ProjectGroup) -> bool:
     """
     Checks if the group size is valid for the project
     """
@@ -713,11 +750,39 @@ def generate_invite_code(size=6, chars=string.ascii_uppercase + string.digits) -
     """
     return ''.join(random.choice(chars) for _ in range(size))
 
-def has_group_reservation(db: Session, gid : int):
+
+def has_group_reservation(db: Session, gid: int):
     """
     Checks if group has made a project rseesrvation
     """
     return get_project_reservation_by_group(db, gid) is not None
+
+
+def getNumbers(str):
+    array = re.findall(r'[0-9]+', str)
+    return array
+
+
+def readTimeOfSubscribtion():
+    """
+    Data zapisow jest wprowadzana do pliku, PAMIETAC O SCIEZCE DO NIEGO jak damy na serwer
+    """
+    file = open('docs/zapisy.txt', 'r')
+    date_str = file.readline()
+    date_format = '%d.%m.%Y %H:%M:%S'
+    date_obj = datetime.strptime(date_str, date_format)
+    file.close()
+    return date_obj
+
+
+def setTimeOfSubscribtion(data:str):
+    file = open('docs/zapisy.txt', 'w')
+    file.write(data)
+    file.close()
+
+
+def isTimeValid() -> bool:
+    return datetime.now() > readTimeOfSubscribtion()
 
 # def validate_pdf(file: UploadFile):
 #     """

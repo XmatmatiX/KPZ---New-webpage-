@@ -217,6 +217,10 @@ def project_detail(id: int, db: Session = Depends(get_db)):
             "groupnumber": project.groupnumber, "remarks": project.remarks, "cooperationtype": project.cooperationtype,
             "numertaken": num_taken, "language": project.englishgroup}
 
+@app.get("/TimeReservation")
+def get_time_for_resrvation():
+    return {"datatime": CRUD.readTimeOfSubscribtion()}
+
 ########### SEKCJA ADMIN ################
 @app.get("/Admin/ProjectList")
 def admin_project_list(db: Session = Depends(get_db)):
@@ -632,12 +636,20 @@ def delete_excel(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 
+@app.post("/Admin/setTime/{year}:{month}:{day}:{hour}:{minute}:{second}")
+def set_time_subscribtion(year:int, month:int, day:int, hour:int, minute:int, second:int, db: Session = Depends(get_db)):
+    data=f"{day}.{month}.{year} {hour}:{minute}:{second}"
+    CRUD.setTimeOfSubscribtion(data)
+    return {"message": f"ustawiono czas rezerwacji na {data}"}
+
+
 ########### SEKCJA STUDENT ################
 
 @app.get("/Student/Group/{id}")
 def get_student_group(id: int, db: Session = Depends(get_db)):
     """
     Returns information about a group to which student with id belong
+    id jest studenta!
     """
     # Get the student by their id
     student = CRUD.get_user_by_id(db, id)
@@ -657,14 +669,32 @@ def get_student_group(id: int, db: Session = Depends(get_db)):
 
     # Check if the project is reserved
     reservation = CRUD.get_project_reservation_by_group(db, group.groupid)
-    if reservation:
-        # Project is reserved, get contact information
-        contact_info = {
-            "company": reservation.project.companyname,
-            "contact_email": reservation.project.email,
-            "contact_phone": reservation.project.phonenumber
+    if reservation :
+        project=CRUD.get_project_by_id(db, reservation.projectid)
+        project_info = {
+            "project_id": project.projectid,
+            "project_title": project.projecttitle
         }
+        status=reservation.status
+        if status=="confirmed":
+            # Project is reserved, get contact information
+            contact_info = {
+                "company": reservation.project.companyname,
+                "contact_email": reservation.project.email,
+                "contact_phone": reservation.project.phonenumber
+            }
+        else:
+            contact_info = {
+                "company": reservation.project.companyname,
+                "contact_email": None,
+                "contact_phone": None
+            }
     else:
+        status="None"
+        project_info = {
+            "project_id": None,
+            "project_title": None
+        }
         # Project is not reserved, set contact information to null
         contact_info = {
             "company": None,
@@ -701,7 +731,9 @@ def get_student_group(id: int, db: Session = Depends(get_db)):
         "guardian_info": guardian_info,
         "members": member_details,
         "invite_code": group.invitecode,
-        "group_size": group.groupsize
+        "group_size": group.groupsize,
+        "reservation-status": status,
+        "project-info":project_info,
     }
 
 @app.put("/Student/ChangeLeader/{id}")
@@ -754,8 +786,10 @@ def enroll_student_to_project( user_id: int, project_id: int, db: Session = Depe
     try:
         # Spróbuj utworzyć rezerwację projektu
         new_reservation = CRUD.create_project_reservation(db, project, group)
-    except exceptions.ProjectNotAvailableException:
+    except exceptions.NotTimeForReservationException:
         raise HTTPException(status_code=400, detail="Project cannot be reserved at the moment")
+    except exceptions.ProjectNotAvailableException:
+        raise HTTPException(status_code=400, detail="Project is already reserved")
     except exceptions.GroupSizeNotValidForProjectException:
         raise HTTPException(status_code=400, detail="Group size doesnt meet requirements")
 
