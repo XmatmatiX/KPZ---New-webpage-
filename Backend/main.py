@@ -263,7 +263,7 @@ def admin_reservation(db: Session = Depends(get_db)):
             lista rezerwacji
     """
     reservations = CRUD.get_all_reservations(db)
-
+    rid=[]
     logos = []
     company = []
     topic = []
@@ -272,7 +272,7 @@ def admin_reservation(db: Session = Depends(get_db)):
 
     for reservation in reservations:
         project = CRUD.get_project_by_id(db, reservation.projectid)
-
+        rid.append(reservation.projectreservationid)
         logos.append(project.logopath)
         company.append(project.companyname)
         topic.append(project.projecttitle)
@@ -280,6 +280,7 @@ def admin_reservation(db: Session = Depends(get_db)):
         status.append(reservation.status)
 
     return {
+        "reservations_id": rid,
         "logos": logos,
         "company": company,
         "topic": topic,
@@ -681,13 +682,15 @@ def get_student_group(id: int, db: Session = Depends(get_db)):
             contact_info = {
                 "company": reservation.project.companyname,
                 "contact_email": reservation.project.email,
-                "contact_phone": reservation.project.phonenumber
+                "contact_phone": reservation.project.phonenumber,
+                "person": project.person
             }
         else:
             contact_info = {
                 "company": reservation.project.companyname,
                 "contact_email": None,
-                "contact_phone": None
+                "contact_phone": None,
+                "person": None
             }
     else:
         status="None"
@@ -699,7 +702,8 @@ def get_student_group(id: int, db: Session = Depends(get_db)):
         contact_info = {
             "company": None,
             "contact_email": None,
-            "contact_phone": None
+            "contact_phone": None,
+            "person": None
         }
 
     # Check if the group has a guardian

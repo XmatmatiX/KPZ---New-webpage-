@@ -139,7 +139,7 @@ def create_project(db: Session, project: schemas.ProjectCreate):
                                 mingroupsize=project.mingroupsize, maxgroupsize=project.maxgroupsize,
                                 groupnumber=project.groupnumber,
                                 englishgroup=project.englishgroup, remarks=project.remarks,
-                                cooperationtype=project.cooperationtype
+                                cooperationtype=project.cooperationtype, person=project.person
                                 )
     db.add(db_project)
     db.commit()
@@ -203,10 +203,10 @@ def create_project_from_forms(db: Session):
 
         # Iteracja przez wiersze w DataFrame
         # for index, row in df.iterrows():
-        for cell_e, cell_f, cell_b, cell_d, cell_g, cell_h, cell_i, cell_j, cell_k, cell_l, cell_m in \
+        for cell_e, cell_f, cell_b, cell_d, cell_g, cell_h, cell_i, cell_j, cell_k, cell_l, cell_m, cell_c in \
                 zip(sheet['E'][1:], sheet['F'][1:], sheet['B'][1:],
                     sheet['D'][1:], sheet['G'][1:], sheet['H'][1:], sheet['I'][1:], sheet['J'][1:], sheet['K'][1:],
-                    sheet['L'][1:], sheet['M'][1:]):
+                    sheet['L'][1:], sheet['M'][1:], sheet['C'][1:]):
             project = schemas.ProjectCreate(
                 companyname=str(cell_e.value),
                 projecttitle=str(cell_f.value),
@@ -219,6 +219,7 @@ def create_project_from_forms(db: Session):
                 groupnumber=(cell_k.value),
                 englishgroup=str(cell_l.value),
                 remarks=str(cell_m.value),
+                person=str(cell_c.value)
 
             )
             created = create_project(db, project)
@@ -334,7 +335,7 @@ def get_project_reservation_by_project(db: Session, pid: int) -> list[models.Pro
     return db.query(models.ProjectReservation).filter(models.ProjectReservation.projectid == pid).all()
 
 
-def get_all_reservations(db: Session):
+def get_all_reservations(db: Session) -> list[models.ProjectReservation] | None:
     return db.query(models.ProjectReservation).all()
 
 

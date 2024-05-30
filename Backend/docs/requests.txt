@@ -13,6 +13,7 @@ CREATE TABLE project (
   englishgroup    text,
   remarks         text,
   cooperationtype text,
+  person varchar(255) NOT NULL,
   PRIMARY KEY (projectid));
 CREATE TABLE projectReservation (
   projectreservationid SERIAL NOT NULL,
