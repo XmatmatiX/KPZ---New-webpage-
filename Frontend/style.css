@@ -791,24 +791,6 @@ h2 {
     font-size: 20px;
 }
 
-/*p {*/
-/*    color: #323232;*/
-/*    line-height: 1.6;*/
-/*    !*font-size: large;*!*/
-/*}*/
-
-/*.buttonStudent {*/
-/*    background-color: #1c1c1c;*/
-/*    color: white;*/
-/*    border: none;*/
-/*    padding: 10px 20px;*/
-/*    margin: 10px 5px;*/
-/*    cursor: pointer;*/
-/*    border-radius: 10px;*/
-/*    font-size: 1rem;*/
-/*    transition: background-color 0.3s;*/
-/*}*/
-
 article {
     margin: 30px 24px;
     display: flex;
@@ -1299,5 +1281,26 @@ h3 {
 
 .details-container h2 {
     color: #333;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
+}
+.details-container p{
+    font-size: 16px; /* Rozmiar czcionki */
+    color: #333; /* Kolor tekstu */
+    margin-bottom: 10px; /* Odległość między paragrafami */
+    line-height: 1.5; /* Wysokość linii */
+}
+.info-box p{
+    margin: 0; /* Brak domyślnego marginesu */
+    font-size: 16px; /* Rozmiar czcionki */
+    color: #333; /* Kolor tekstu */
+    margin-bottom: 40px;
+}
+.info-box img {
+    width: 40px;
+    height: 40px;
+    margin-right: 20px;
+}
+.group-info-leader p{
+    font-size: 16px; /* Rozmiar czcionki */
+    color: #333; /* Kolor tekstu */
 }

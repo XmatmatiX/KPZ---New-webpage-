@@ -23,13 +23,10 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Pobierz przycisk "Wyloguj się"
     var searchButton = document.getElementById("searchButton");
 
-    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
     searchButton.addEventListener("click", function() {
-        // Przenieś użytkownika do strony landingPage.html
-        window.location.href = "freeGroups.html";
+        window.location.href = "topicsView.html.html";
     });
 });
 
@@ -68,12 +65,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Pobierz przycisk "Wyloguj się"
     var topics = document.getElementById("topicsStudent");
 
-    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
     topics.addEventListener("click", function() {
-        // Przenieś użytkownika do strony landingPage.html
         window.location.href = "topicsView.html";
     });
 });
@@ -83,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (groupButton) {
         groupButton.addEventListener('click', function() {
-            window.location.href = 'studentInGroup.html'; // Przekierowanie do strony changeLider.html
+            window.location.href = 'yourGroup.html';
         });
     }
 });
@@ -434,7 +428,6 @@ function closeModal() {
 
 document.querySelector('.modal .close').addEventListener('click', closeModal);
 
-/*studentGroup*/
 
 
 

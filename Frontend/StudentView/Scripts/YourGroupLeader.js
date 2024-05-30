@@ -90,8 +90,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     fetchGroupDetails(1);
-
-    // Add more JavaScript code here if needed for file upload or other functionalities
 });
 
 document.getElementById('file').addEventListener('click', function() {
