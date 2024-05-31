@@ -1,24 +1,18 @@
 "use strict"
 
-// Admin Project List
 document.addEventListener("DOMContentLoaded", function() {
     // Pobranie danych z endpointa GET /ProjectList
-    fetch('http://127.0.0.1:8000/ProjectList')
+    fetch('http://127.0.0.1:8000/Admin/Reservations')
         .then(response => response.json())
         .then(data => {
             const topicList = document.getElementById('adminTopics');
 
-            console.log("Dane")
-            console.log(data)
-
+            const ids = data['reservations_id'];
             const logos = data['logos'];
-            const companynames = data['companynames'];
-            const titles = data['titles'];
-            const projecstid = data['projecstid'];
-            const minsizes = data['minsizes'];
-            const maxsizes = data['maxsizes'];
+            const company = data['company'];
+            const topic = data['topic'];
+            const project_group = data['project_group'];
             const status = data['status'];
-            //const group = data['group'];
 
             function translateStatus(status) {
                 switch(status) {
@@ -28,37 +22,32 @@ document.addEventListener("DOMContentLoaded", function() {
                         return 'Zarezerwowany';
                     case 'taken':
                         return 'Zajęty';
+                    case 'confirmed':
+                        return 'Zatwierdzony';
                     default:
                         return 'Nieznany';
                 }
             }
 
             // Iteracja przez wszystkie projekty
-            for (let i = 0; i < titles.length; i++) {
+            for (let i = 0; i < topic.length; i++) {
                 const topicItem = document.createElement('div');
-                topicItem.classList.add('topicItemAdmin');
-
-                // Ustalenie tekstu dla groupSize
-                let groupSizeText = minsizes[i];
-                if (minsizes[i] !== maxsizes[i]) {
-                    groupSizeText += ` - ${maxsizes[i]}`;
-                }
+                topicItem.classList.add('topicItemAdmin2');
 
                 const translatedStatus = translateStatus(status[i]);
 
                 topicItem.innerHTML = `
                     <p>${logos[i] ? logos[i] : 'Brak'}</p>
-                    <p>${companynames[i]}</p>
-                    <p>${titles[i]}</p>
-                    <p>GRUPA</p>
-                    <p>${groupSizeText}</p>
+                    <p>${company[i]}</p>
+                    <p>${topic[i]}</p>
+                    <p>${project_group[i]}</p>
                     <p>${translatedStatus}</p>
                 `;
 
                 // Dodanie nasłuchiwania zdarzenia kliknięcia na każdy element topicItemAdmin
                 topicItem.addEventListener('click', function () {
                     // Przekierowanie użytkownika do widoku reservationDetails, przekazując ID projektu jako parametr w adresie URL
-                    window.location.href = `reservationDetails.html?id=${projecstid[i]}`;
+                    window.location.href = `reservationDetails.html?id=${ids[i]}`;
                 });
 
                 // Dodanie pojedynczego projektu do listy

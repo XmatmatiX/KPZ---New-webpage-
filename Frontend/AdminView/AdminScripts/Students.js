@@ -41,6 +41,20 @@ function displayGroups(userID) {
                             <button class="searchButton">Wybierz</button>
                         `;
 
+                const warningModal = document.getElementById('warningModal');
+                const errorModal = document.getElementById('errorModal');
+                const modalText = errorModal.querySelector('.textModal p');
+                const closeButton = document.querySelector('#errorModal .close');
+                const confirmButton = document.getElementById('confirmButton');
+
+                closeButton.addEventListener('click', function() {
+                    errorModal.style.display = 'none';
+                });
+
+                confirmButton.addEventListener('click', function() {
+                    errorModal.style.display = 'none';
+                });
+
                 const selectButton = groupItem.querySelector('.searchButton');
                 selectButton.addEventListener('click', function() {
 
@@ -55,13 +69,16 @@ function displayGroups(userID) {
                                 throw new Error('The squad of a group with reservation can not be changed');
                             }
 
-                            console.log('Student został pomyślnie przypisany do grupy');
+                            warningModal.style.display = 'block';
 
                             displayGroups(userID);
                             return response.json();
 
                         })
-                        .catch(error => console.error('Błąd pobierania danych:', error));
+                        .catch(error => {
+                            errorModal.style.display = 'block';
+                            modalText.textContent = `Wystąpił błąd: ${error.message}`;
+                        });
                 });
 
                 groupList.appendChild(groupItem);
@@ -73,8 +90,11 @@ function displayGroups(userID) {
 
 function openModal(userID) {
 
-    const modal = document.getElementById('groupModal');
     const span = document.getElementById("closeButton");
+
+    const modal = document.getElementById('groupModal');
+    const closeButton = document.querySelector('#warningModal .close');
+    const confirmButton = document.getElementById('confirmBtn');
     const groupList = document.getElementById('groupList');
 
     function closeModal() {
@@ -83,8 +103,16 @@ function openModal(userID) {
         location.reload();
     }
 
+    function close() {
+        modal.style.display = "none";
+        groupList.innerHTML = '';
+    }
+
+    span.onclick = close;
+
     modal.style.display = "block";
-    span.onclick = closeModal;
+    closeButton.onclick = closeModal;
+    confirmButton.onclick = closeModal;
 
     displayGroups(userID);
 
@@ -100,9 +128,6 @@ function allStudents(students) {
             const ids = data['ids'];
             const names = data['names'];
             const surnames = data['surnames'];
-
-            console.log("Wszyscy")
-            console.log(data)
 
             // Iteracja przez wszystkich studentów
             for (let i = 0; i < emails.length; i++) {
@@ -287,7 +312,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data)
                     displaySearchedStudents(students, data);
                 })
                 .catch(error => console.error('Błąd pobierania danych:', error));

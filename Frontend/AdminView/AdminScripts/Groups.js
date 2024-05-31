@@ -16,15 +16,20 @@ document.addEventListener("DOMContentLoaded", function() {
             const projectTitles = groups['project_titles'];
             const companys = groups['companys'];
 
-            // Tworzenie tablicy obietnic fetch
             const fetchGuardianPromises  = guardians.map(guardianId => {
-                return fetch(`http://127.0.0.1:8000/Admin/Guardian/${guardianId}`)
-                    .then(response => response.json())
-                    .then(data => `${data.name} ${data.surname}`)
-                    .catch(error => {
-                        console.error('Błąd pobierania danych:', error);
-                        return ''; // Zwrócenie pustego ciągu w przypadku błędu
-                    });
+                if(guardianId) {
+                    return fetch(`http://127.0.0.1:8000/Admin/Guardian/${guardianId}`)
+                        .then(response => response.json())
+                        .then(data => `${data.name} ${data.surname}`)
+                        .catch(error => {
+                            console.error('Błąd pobierania danych:', error);
+                            return '';
+                        });
+                }
+                else {
+                    return 'Brak';
+                }
+
             });
 
             // Oczekiwanie na zakończenie wszystkich żądań fetch
@@ -49,7 +54,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         `;
 
                         groupItem.addEventListener('click', function() {
-                            // Przekierowanie użytkownika do widoku reservationDetails, przekazując ID projektu jako parametr w adresie URL
                             window.location.href = `groupDetails.html?id=${groupids[i]}`;
                         });
 

@@ -1,13 +1,25 @@
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Pobranie danych z endpointa GET /ProjectList
+
+    const errorModal = document.getElementById('errorModal');
+    const modalText = errorModal.querySelector('.textModal p');
+    const closeButton = document.querySelector('#errorModal .close');
+    const confirmButton = document.getElementById('confButton');
+
+    closeButton.addEventListener('click', function() {
+        errorModal.style.display = 'none';
+    });
+
+    confirmButton.addEventListener('click', function() {
+        errorModal.style.display = 'none';
+    });
+
     fetch('http://127.0.0.1:8000/Admin/Notification')
         .then(response => response.json())
         .then(data => {
 
             const notifications = document.getElementById('notificationList');
-            //const notificationDetails = document.getElementById('notificationDetails');
 
             data.forEach((notification) => {
 
@@ -17,14 +29,20 @@ document.addEventListener("DOMContentLoaded", function() {
                 const notificationItem = document.createElement('div');
                 notificationItem.classList.add('notificationItem');
 
-                // const notificationDetails = document.createElement('div');
-                // notificationDetails.classList.add('notificationDetails');
-                // notifications.appendChild(notificationDetails);
-
                 const dateTime = new Date(notification.date);
                 const formattedDateTime = `${dateTime.toLocaleDateString()} ${dateTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}`;
 
-                notificationItem.style.fontWeight = notification.displayed ? 'normal' : 'bold';
+                //notificationItem.style.fontWeight = notification.displayed ? 'normal' : 'bold';
+
+                //console.log("Not disp")
+                //console.log(notification.displayed)
+
+                if (!notification.displayed) {
+                    notificationItem.style.fontWeight = 'bold';
+                }
+                else {
+                    notificationItem.style.fontWeight = 'normal';
+                }
 
                 notificationItem.innerHTML = `
                     <p>${notification.group}</p>
@@ -47,8 +65,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     fetch(`http://127.0.0.1:8000/Admin/Notification/${notification.historyid}`)
                         .then(response => response.json())
                         .then(details => {
-                            console.log("Szczegoly")
-                            console.log(details)
+
+                            if (!notification.displayed) {
+                                notificationItem.style.fontWeight = 'normal';
+                            }
 
                             // Wyświetl szczegóły powiadomienia w elemencie notificationDetails
                             displayNotificationDetails(notificationDetails, details);
@@ -56,7 +76,10 @@ document.addEventListener("DOMContentLoaded", function() {
                             notificationItem.classList.toggle('active');
                             //notificationDetails.classList.toggle('activeDetails');
                         })
-                        .catch(error => console.error('Błąd pobierania danych:', error));
+                        .catch(error => {
+                            errorModal.style.display = 'block';
+                            modalText.textContent = `Błąd pobierania danych: ${error.message}`;
+                        });
                 });
 
                 // Dodaj obsługę zdarzenia kliknięcia na przycisku smietnika
@@ -93,7 +116,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                     console.error('Wystąpił błąd podczas usuwania powiadomienia');
                                 }
                             })
-                            .catch(error => console.error('Błąd usuwania powiadomienia:', error));
+                            .catch(error => {
+                                errorModal.style.display = 'block';
+                                modalText.textContent = `Błąd usuwania powiadomienia: ${error.message}`;
+                            });
 
                         closeModal();
                     }
@@ -120,5 +146,8 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
         })
-        .catch(error => console.error('Błąd pobierania danych:', error));
+        .catch(error => {
+            errorModal.style.display = 'block';
+            modalText.textContent = `Błąd pobierania danych: ${error.message}`;
+        });
 });

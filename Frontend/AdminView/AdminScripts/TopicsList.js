@@ -7,12 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
             const topicList = document.getElementById('topicList');
 
-            console.log("Dane")
-            console.log(data)
-
             const projects = data['projects:']; // Pobranie tablicy projektów
-            console.log("Projects")
-            console.log(projects)
 
             // Generowanie nowych elementów HTML na podstawie danych z tokena
             projects.forEach(topic => {
@@ -34,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 else {
                     topicItem.innerHTML = `
-                        <p>${topic.logopath}</p>
+                        <p>${topic.logopath ? topic.logopath : 'Brak'}</p>
                         <p>${topic.companyname}</p>
                         <p>${topic.projecttitle}</p>
                         <p>${topic.mingroupsize} - ${topic.maxgroupsize}</p>

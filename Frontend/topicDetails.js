@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const topicDetails = document.getElementById('topicDetails')
             topicDetails.innerHTML = `
                 <p class="topicName">${projectData.title}</p>
-                <p class="topicDescription">${projectData.description}</p>
+                <pre class="topicDescription">${projectData.description}</pre>
                  ${projectData.cooperationtype ? `
                     <p class="topicLabel">Planowane formy współpracy:</p>
                     <p class="details">${projectData.cooperationtype}</p>` : ''}

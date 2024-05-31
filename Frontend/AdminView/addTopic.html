@@ -34,51 +34,109 @@
     </div>
     <div class="page">
 
-
-
-        <h1>Studenci</h1>
-
+        <h2 class="color">Dodawanie nowego tematu</h2>
         <section class="addGroup">
-            <div class="inputWithButton">
-                <input class="groupInput" list="studentList" placeholder="Student">
-                <datalist id="studentList">
-                    <option value="Jan Kowalski">
-                    <option value="Ela Nowak">
-                    <option value="Szymon Szymański">
-                </datalist>
-                <button class="searchButton">Dodaj</button>
+            <div class="topicData">
+                <p>Firma</p>
+                <input class="groupInput" id="companyname" placeholder="Podaj nazwę firmy">
+            </div>
+            <div class="topicData">
+                <p>Temat</p>
+                <input class="groupInput" id="projecttitle" placeholder="Podaj temat">
+            </div>
+        </section>
+        <h1>Dane kontaktowe</h1>
+        <section class="addGroup">
+            <div class="topicData">
+                <p>Imię i Nazwisko</p>
+                <input class="groupInput" id="person" placeholder="Podaj imię i nazwisko osoby zgłaszającej temat">
+            </div>
+            <div class="topicData">
+                <p>Email</p>
+                <input class="groupInput" id="email" placeholder="Podaj adres email">
+            </div>
+            <div class="topicData">
+                <p>Numer telefonu</p>
+                <input class="groupInput" id="phonenumber" placeholder="Podaj telefon kontaktowy">
+            </div>
+        </section>
+        <h1>Szczegóły</h1>
+        <section class="addGroup">
+
+            <div class="topicData2">
+                <p>Opis</p>
+                <textarea class="groupDescription" id="description" placeholder="Dodaj opis tematu"></textarea>
+            </div>
+            <div class="topicData">
+                <p>Logo</p>
+                <input class="groupInput" id="logopath" placeholder="Podaj ścieżkę do logo">
+            </div>
+            <div class="topicData">
+                <p>Technologie</p>
+                <input class="groupInput" id="technologies" placeholder="Podaj wymagane technologie">
+            </div>
+            <div class="topicData">
+                <p>Rozmiar grupy</p>
+                <div class="topics3">
+                    <input class="smallGroupInput" id="mingroupsize" placeholder="Minimum">
+                    <input class="smallGroupInput" id="maxgroupsize" placeholder="Maksimum">
+                </div>
+            </div>
+            <div class="topicData">
+                <p>Ilość grup</p>
+                <input class="groupInput" id="groupnumber" placeholder="Podaj ilość grup możliwych do realizacji tematu">
+            </div>
+            <div class="topicData">
+                <p>Języki projektu</p>
+                <input class="groupInput" id="englishgroup" placeholder="Podaj dopuszczalne języki projektu">
+            </div>
+            <div class="topicData">
+                <p>Formy współpracy</p>
+                <input class="groupInput" id="cooperationtype" placeholder="Podaj planowane formy współpracy">
+            </div>
+            <div class="topicData2">
+                <p>Dodatkowe uwagi</p>
+                <textarea class="groupDescription" id="remarks" placeholder="Tutaj możesz podać dodatkowe uwagi"></textarea>
             </div>
 
-            <section class="studentGroupList">
 
-                <div class="borderStudent">
-                    <p>Indeks</p>
-                    <p>Imię</p>
-                    <p>Nazwisko</p>
-                </div>
+<!--            <input class="groupInput" list="guardian" placeholder="Opiekun grupy">-->
+<!--            <datalist id="guardian">-->
+<!--                <option value="mg inż. Jan Kowalski">-->
+<!--                <option value="inż. Dariusz Siodło">-->
+<!--                <option value="inż. Bogdan Mądralski">-->
+<!--            </datalist>-->
 
-                <div class="studentGroupItem">
-                    <p>263548</p>
-                    <p>Iwona</p>
-                    <p>Przykładna</p>
-                </div>
-
-                <div class="studentGroupItem">
-                    <p>263548</p>
-                    <p>Kacper</p>
-                    <p>Przykładny</p>
-                </div>
-
-            </section>
-
-            <button class="addButton">Dodaj grupę</button>
-
+<!--            <div class="inputWithButton">-->
+<!--                <input class="groupInput" list="topicList" placeholder="Temat">-->
+<!--                <datalist id="topicList">-->
+<!--                    <option value="Car Tinder">-->
+<!--                    <option value="System do zarządzania tematami projektowymi">-->
+<!--                    <option value="Dzieje sie">-->
+<!--                        &lt;!&ndash; LISTA ROZWIJANA TEMATÓW &ndash;&gt;-->
+<!--                </datalist>-->
+<!--&lt;!&ndash;                <button id="addNewTopic" class="newTopicButton">Dodaj nowy temat</button>&ndash;&gt;-->
+<!--            </div>-->
+            <button id="addTopicButton" class="notificationButton">Dodaj nowy temat</button>
         </section>
+
+        <div id="warningModal" class="deleteModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="textModal">
+                    <p>Pola liczbowe (rozmiar grupy oraz ilość grup) muszą zawierać poprawne wartości liczbowe</p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confirmBtn">Potwierdź</button>
+                </div>
+            </div>
+        </div>
 
     </div>
 </section>
 
 <script src="AdminScripts/adminScript.js"></script>
+<script src="AdminScripts/addTopic.js"></script>
 
 </body>
 </html>
