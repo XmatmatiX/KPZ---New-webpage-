@@ -5,6 +5,34 @@ document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const groupId = urlParams.get('id');
 
+    const errorModal = document.getElementById('errorModal');
+    const modalText = errorModal.querySelector('.textModal p');
+    const closeButton = document.querySelector('#errorModal .close');
+    const confirmButton = document.getElementById('confButton');
+
+    const warningModal = document.getElementById('warningModal');
+    const modalText1 = warningModal.querySelector('.textModal p');
+    const closeButton1 = document.querySelector('#warningModal .close');
+    const confirmButton1 = document.getElementById('confButton1');
+
+    closeButton.addEventListener('click', function() {
+        errorModal.style.display = 'none';
+    });
+
+    confirmButton.addEventListener('click', function() {
+        errorModal.style.display = 'none';
+    });
+
+    closeButton1.addEventListener('click', function() {
+        warningModal.style.display = 'none';
+        location.reload();
+    });
+
+    confirmButton1.addEventListener('click', function() {
+        warningModal.style.display = 'none';
+        location.reload();
+    });
+
     var clearButton = document.getElementById("clearButton");
 
     clearButton.addEventListener("click", function() {
@@ -31,12 +59,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (response.ok) {
                         // Powiadomienie zostało pomyślnie usunięte, możesz wykonać odpowiednie akcje, np. odświeżyć listę powiadomień
                         console.log('Historia powiadomień została pomyślnie usunięta');
-                        location.reload();
+                        warningModal.style.display = 'block';
+                        modalText1.textContent = `Historia powiadomień została pomyślnie usunięta`;
                     } else {
                         console.error('Wystąpił błąd podczas usuwania historii powiadomień');
                     }
                 })
-                .catch(error => console.error('Błąd usuwania historii powiadomień:', error));
+                .catch(error => {
+                    errorModal.style.display = 'block';
+                    modalText.textContent = `Wystąpił błąd: ${error.message}`;
+                });
 
             closeModal();
         }
@@ -49,12 +81,37 @@ document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const groupId = urlParams.get('id');
 
+    const errorModal = document.getElementById('errorModal');
+    const modalText = errorModal.querySelector('.textModal p');
+    const closeButton = document.querySelector('#errorModal .close');
+    const confirmButton = document.getElementById('confButton');
+
+    const warningModal = document.getElementById('warningModal');
+    const modalText1 = warningModal.querySelector('.textModal p');
+    const closeButton1 = document.querySelector('#warningModal .close');
+    const confirmButton1 = document.getElementById('confButton1');
+
+    closeButton.addEventListener('click', function() {
+        errorModal.style.display = 'none';
+    });
+
+    confirmButton.addEventListener('click', function() {
+        errorModal.style.display = 'none';
+    });
+
+    closeButton1.addEventListener('click', function() {
+        warningModal.style.display = 'none';
+        location.reload();
+    });
+
+    confirmButton1.addEventListener('click', function() {
+        warningModal.style.display = 'none';
+        location.reload();
+    });
+
     fetch(`http://127.0.0.1:8000/Admin/${groupId}/Notification`)
         .then(response => response.json())
         .then(data => {
-
-            console.log("Szczegoly")
-            console.log(data)
 
             const notifications = document.getElementById('notificationList');
             //const notificationDetails = document.getElementById('notificationDetails');
@@ -96,9 +153,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     fetch(`http://127.0.0.1:8000/Admin/Notification/${notification.historyid}`)
                         .then(response => response.json())
                         .then(details => {
-                            console.log("Szczegoly")
-                            console.log(details)
-
                             // Wyświetl szczegóły powiadomienia w elemencie notificationDetails
                             displayNotificationDetails(notificationDetails, details);
                             toggleNotificationDetails(notificationDetails);
@@ -136,12 +190,19 @@ document.addEventListener("DOMContentLoaded", function() {
                                 if (response.ok) {
                                     // Powiadomienie zostało pomyślnie usunięte, możesz wykonać odpowiednie akcje, np. odświeżyć listę powiadomień
                                     console.log('Powiadomienie zostało pomyślnie usunięte');
+                                    warningModal.style.display = 'block';
+                                    modalText1.textContent = `Powiadomienie zostało pomyślnie usunięte`;
+
                                     // Tutaj możesz dodać kod do odświeżenia listy powiadomień
                                 } else {
                                     console.error('Wystąpił błąd podczas usuwania powiadomienia');
                                 }
                             })
-                            .catch(error => console.error('Błąd usuwania powiadomienia:', error));
+                            .catch(error => {
+                                console.error('Błąd usuwania powiadomienia:', error)
+                                errorModal.style.display = 'block';
+                                modalText.textContent = `Błąd usuwania powiadomienia: ${error.message}`;
+                            });
 
                         closeModal();
                     }

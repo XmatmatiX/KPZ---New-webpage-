@@ -122,6 +122,11 @@ button:hover {
     width: 200px;
 }
 
+.excelButton {
+    margin: 20px;
+    width: 200px;
+}
+
 .fileButton {
     width: 200px;
 }
@@ -215,6 +220,16 @@ input[type="checkbox"] {
     width: 700px;
 }
 
+.smallGroupInput {
+    width: 200px;
+}
+
+.groupDescription {
+    width: 700px;
+    height: 200px;
+    align-items: start;
+}
+
 .adminInput {
     width: 500px;
 }
@@ -239,6 +254,16 @@ input[type="checkbox"] {
     padding: 10px 40px;
     display: grid;
     grid-template-columns: 1fr 8fr;
+    gap: 20px;
+    align-items: center;
+    height: 80px;
+}
+
+.AdmintopicDetailsHeader {
+    background-color: #bae7f3;
+    padding: 10px 40px;
+    display: grid;
+    grid-template-columns: 1fr 9fr 2fr;
     gap: 20px;
     align-items: center;
     height: 80px;
@@ -291,6 +316,52 @@ input[type="checkbox"] {
     justify-content: start;
 }
 
+.topicData {
+    padding: 5px 0;
+    display: grid;
+    grid-template-columns: 2fr 13fr;
+    gap: 15px;
+    align-items: center;
+    justify-content: start;
+    margin-right: 100px;
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+.topicData2 {
+    padding: 5px 0;
+    display: grid;
+    grid-template-columns: 2fr 13fr;
+    gap: 15px;
+    align-items: start;
+    justify-content: start;
+    margin-right: 100px;
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+.topics3 {
+    padding: 5px 0;
+    display: grid;
+    grid-template-columns: 2fr 2fr;
+    gap: 10px;
+    align-items: start;
+    justify-content: start;
+    width: 300px;
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+.groupDetails4 {
+    padding: 10px 0;
+    display: grid;
+    grid-template-columns: 1fr 8fr;
+    gap: 20px;
+    align-items: center;
+    justify-content: start;
+    margin-right: 140px;
+}
+
 .groupDetails {
     padding: 10px 0;
     display: grid;
@@ -319,6 +390,17 @@ input[type="checkbox"] {
     border-radius: var(--radius-small);
 }
 
+.group2 {
+    background-color: #FFFFFF;
+    padding: 7px 10px;
+    border-radius: var(--radius-small);
+    cursor: pointer;
+}
+
+.group2:hover {
+    background-color: var(--hover2);
+}
+
 .topicDetails {
     background-color: #FFFFFF;
     padding: 20px 0;
@@ -340,9 +422,16 @@ input[type="checkbox"] {
     justify-content: center;
     align-items: center;
     line-height: 2;
-    font-size: 17px;
+    font-size: 15px;
     border-top: 2px solid black;
     border-bottom: 2px solid black;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow-x: auto;
 }
 
 .topicLabel {
@@ -437,6 +526,17 @@ input[type="checkbox"] {
     justify-items: center;
 }
 
+.borderItemAdmin2 {
+    background-color: #bae7f3;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 1fr 2fr 4fr 1fr 2fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+}
+
 .borderNotification {
     background-color: #bae7f3;
     margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
@@ -518,7 +618,25 @@ input[type="checkbox"] {
     align-items: center;
 }
 
+.topicItemAdmin2 {
+    cursor: pointer;
+    background-color: #fff;
+    margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
+    padding: 10px;
+    height: 55px;
+    border-radius: var(--radius-small);
+    display: grid;  /* Siatka*/
+    grid-template-columns: 1fr 2fr 4fr 1fr 2fr;
+    gap: 5px; /* Odstęp między elementami */
+    justify-items: center;
+    align-items: center;
+}
+
 .topicItemAdmin:hover {
+    background-color: var(--hover2);
+}
+
+.topicItemAdmin2:hover {
     background-color: var(--hover2);
 }
 
@@ -569,8 +687,7 @@ input[type="checkbox"] {
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
     align-items: center;
-    font-weight: bold;
-    /* usuniecie pogrubienia w moemncie przeczytania powiadomienia*/
+    /*font-weight: bold;*/
 }
 
 .notificationItem:hover {
@@ -579,7 +696,7 @@ input[type="checkbox"] {
 
 .notificationItem.active {
     background-color: var(--hover2);
-    font-weight: normal;
+    /*font-weight: normal;*/
 }
 
 .notificationGroupItem {
@@ -763,6 +880,16 @@ input {
     border: none;
 }
 
+textarea {
+    padding: 14px 20px;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--radius-medium);
+    border: none;
+    resize: none;
+    /*font-family: var(--title-font);*/
+}
+
 .studentInput {
     width: 400px;
 }
@@ -869,6 +996,10 @@ input {
 h1 {
     padding: 6px 24px;
     font-size: 30px;
+    background-color: var(--primary-light);
+}
+
+.color {
     background-color: var(--primary-light);
 }
 

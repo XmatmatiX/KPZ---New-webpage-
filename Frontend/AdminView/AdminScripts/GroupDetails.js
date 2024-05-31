@@ -1,16 +1,72 @@
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Pobierz przycisk "Wyloguj się"
+
     var notificationButton = document.getElementById("notificationButton");
+    const urlParams = new URLSearchParams(window.location.search);
+    const groupId = urlParams.get('id');
 
-    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
+    const errorModal = document.getElementById('errorModal');
+    const modalText = errorModal.querySelector('.textModal p');
+    const closeButton = document.querySelector('#errorModal .close');
+    const confirmButton = document.getElementById('confButton');
+
+    closeButton.addEventListener('click', function() {
+        errorModal.style.display = 'none';
+    });
+
+    confirmButton.addEventListener('click', function() {
+        errorModal.style.display = 'none';
+    });
+
     notificationButton.addEventListener("click", function() {
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const groupId = urlParams.get('id');
-
         window.location.href = `groupNotifications.html?id=${groupId}`;
+    });
+
+    var closeButtons = document.querySelectorAll(".close");
+    closeButtons.forEach(function(closeButton) {
+        closeButton.addEventListener("click", function() {
+            var modal = this.closest(".deleteModal");
+            modal.style.display = "none";
+        });
+    });
+
+    var cancelButton = document.getElementById("cancelBtn");
+    cancelButton.addEventListener("click", function() {
+        var modal = this.closest(".deleteModal");
+        modal.style.display = "none";
+    });
+
+    var confirmBtn = document.getElementById("confirmBtn");
+    confirmBtn.addEventListener("click", function() {
+
+        fetch(`http://127.0.0.1:8000/Admin/Group/${groupId}/Confirm`, {
+            method: 'PUT'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Wystąpił błąd podczas zatwierdzania');
+                }
+                else {
+                    var modal = this.closest(".deleteModal");
+                    modal.style.display = "none";
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Wystąpił błąd podczas zatwierdzania:', error);
+                errorModal.style.display = 'block';
+                modalText.textContent = `Wystąpił błąd podczas zatwierdzania: ${error.message}`;
+            });
+
+    });
+
+    var confirmationButton = document.getElementById("confirmationButton");
+
+    confirmationButton.addEventListener("click", function() {
+
+        var confirmModal = document.getElementById("confirmModal");
+        confirmModal.style.display = "block";
     });
 });
 
@@ -42,6 +98,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         return 'Zarezerwowany';
                     case 'taken':
                         return 'Zajęty';
+                    case 'confirmed':
+                        return 'Zatwierdzony';
                     default:
                         return 'Nieznany';
                 }
@@ -63,18 +121,27 @@ document.addEventListener("DOMContentLoaded", function() {
                 <p class="group">${data.company}</p>
             `;
 
-            fetch(`http://127.0.0.1:8000/Admin/Guardian/${guardianId}`)
-                .then(response => response.json())
-                .then(data => {
-                    const guardianName = `${data.name} ${data.surname}`;
-                    // Tutaj możesz kontynuować z wyświetlaniem danych opiekuna na stronie
-                    const guardianDetails = document.getElementById('guardian');
-                    guardianDetails.innerHTML = `
+            const guardianDetails = document.getElementById('guardian');
+
+            if(guardianId) {
+                fetch(`http://127.0.0.1:8000/Admin/Guardian/${guardianId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const guardianName = `${data.name} ${data.surname}`;
+
+                        guardianDetails.innerHTML = `
                         <p>Prowadzący</p>
                         <p class="group">${guardianName}</p>
                     `;
-                })
-                .catch(error => console.error('Błąd pobierania danych opiekuna:', error));
+                    })
+                    .catch(error => console.error('Błąd pobierania danych opiekuna:', error));
+            }
+            else {
+                guardianDetails.innerHTML = `
+                   <p>Prowadzący</p>
+                   <p class="group">Brak</p>
+                `;
+            }
 
             const stateDetails = document.getElementById('state')
             const translatdeStatus = translateStatus(data.state);
@@ -85,9 +152,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const students = document.getElementById('studentGroupList');
 
-            const members = data['members']; // Pobranie tablicy projektów
-            console.log("members")
-            console.log(members)
+            const members = data['members'];
 
             members.forEach(member => {
                 const memberItem = document.createElement('div');

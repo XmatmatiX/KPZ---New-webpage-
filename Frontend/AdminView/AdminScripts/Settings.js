@@ -7,6 +7,73 @@ document.addEventListener("DOMContentLoaded", function() {
     const uploadButton = document.getElementById("uploadFiles");
     const excelButton = document.getElementById("excelFiles");
     const adminList = document.getElementById("adminList");
+    const deleteExcel = document.getElementById("deleteExcel");
+
+    const errorModal = document.getElementById('errorModal');
+    const modalText = errorModal.querySelector('.textModal p');
+    const closeButton = document.querySelector('#errorModal .close');
+    const confirmButton = document.getElementById('confButton');
+
+    closeButton.addEventListener('click', function() {
+        errorModal.style.display = 'none';
+    });
+
+    confirmButton.addEventListener('click', function() {
+        errorModal.style.display = 'none';
+    });
+
+    const warningModal = document.getElementById('warningModal');
+    const modalText1 = warningModal.querySelector('.textModal p');
+    const closeButton1 = document.querySelector('#warningModal .close');
+    const confirmButton1 = document.getElementById('confButton1');
+
+    closeButton1.addEventListener('click', function() {
+        warningModal.style.display = 'none';
+        location.reload();
+    });
+
+    confirmButton1.addEventListener('click', function() {
+        warningModal.style.display = 'none';
+        location.reload();
+    });
+
+    const deleteModalExcel = document.getElementById('deleteExcelFile');
+    const closeButton2 = document.getElementById('closeButton2');
+    const confirmButton2 = document.getElementById('confirmButton2');
+    const cancelButton2 = document.getElementById('cancelButton2');
+
+    deleteExcel.addEventListener("click", function () {
+        deleteModalExcel.style.display = 'block';
+    });
+
+    closeButton2.addEventListener('click', function() {
+        deleteModalExcel.style.display = 'none';
+    });
+
+    cancelButton2.addEventListener('click', function() {
+        deleteModalExcel.style.display = 'none';
+    });
+
+    confirmButton2.addEventListener('click', function() {
+
+        fetch(`http://127.0.0.1:8000/Admin/ExcelFile`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    warningModal.style.display = 'block';
+                    modalText1.textContent = `Plik Excel został pomyślnie usunięty`;
+                } else {
+                    console.error('Wystąpił błąd podczas próby usunięcia pliku');
+                }
+            })
+            .catch(error => {
+                errorModal.style.display = 'block';
+                modalText.textContent = `Błąd podczas usuwania pliku Excel: ${error.message}`;
+            });
+
+        deleteModalExcel.style.display = 'none';
+    });
 
     const pdfUpload = document.getElementById('pdf-upload');
     const fileName = document.getElementById('file-name');
@@ -56,14 +123,16 @@ document.addEventListener("DOMContentLoaded", function() {
             })
                 .then(response => {
                     if (response.ok) {
-
-                        console.log('Baza danych została pomyślnie wyczyszczona');
-                        location.reload()
+                        warningModal.style.display = 'block';
+                        modalText1.textContent = `Baza danych została pomyślnie wyczyszczona`;
                     } else {
                         console.error('Wystąpił błąd podczas próby wyczyszczenia bazy danych');
                     }
                 })
-                .catch(error => console.error('Błąd czyszczenia bazy danych:', error));
+                .catch(error => {
+                    errorModal.style.display = 'block';
+                    modalText.textContent = `Błąd czyszczenia bazy danych: ${error.message}`;
+                });
 
             closeModal();
         }
@@ -74,10 +143,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const fileInput = document.getElementById('pdf-upload');
         const file = fileInput.files[0];
+        console.log("File")
+        console.log(file);
 
-        // Sprawdź, czy plik został wybrany
         if (!file) {
-            console.error('Nie wybrano pliku');
+            errorModal.style.display = 'block';
+            modalText.textContent = `Nie wybrano pliku`;
             return;
         }
 
@@ -90,15 +161,34 @@ document.addEventListener("DOMContentLoaded", function() {
             body: formData
         })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                if (response.ok) {
+                    return response.json().then(data => {
+                        errorModal.style.display = 'block';
+                        modalText.textContent = `Prawidłowo załadowano plik Excel`;
+                    });
+                } else {
+                    return response.json().then(data => {
+                        let errorMsg = data.detail || 'Wystąpił błąd podczas próby załadowania pliku';
+                        if(data.error == "409: File already exists. If you want to replace it, please delete and upload a new one.") {
+                            errorMsg = "409: Plik został już załadowany. Jeżeli chcesz go zmienić, musisz najpierw usunąć aktualny plik"
+                        }
+                        else if (data.error) {
+                            errorMsg = data.error;
+                        }
+
+                        errorModal.style.display = 'block';
+                        modalText.textContent = `${errorMsg}`;
+                    });
                 }
-                return response.json();
             })
-            .then(data => {
-                console.log("Prawidłowo załadowano pliki Excel");
-            })
-            .catch(error => console.error('Błąd pobierania danych:', error));
+            .catch(error => {
+                errorModal.style.display = 'block';
+                modalText.textContent = `Błąd podczas ładowania pliku: ${error.message}`;
+            });
+
+    });
+
+    deleteExcel.addEventListener("click", function() {
 
     });
 
@@ -114,9 +204,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 return response.json();
             })
             .then(data => {
-                console.log("Prawidłowo załadowano pliki");
+                errorModal.style.display = 'block';
+                modalText.textContent = `Prawidłowo załadowano plik`;
             })
-            .catch(error => console.error('Błąd pobierania danych:', error));
+            .catch(error => {
+                errorModal.style.display = 'block';
+                modalText.textContent = `Błąd podczas ładowania pliku: ${error.message}`;
+            });
 
     });
 
@@ -135,11 +229,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 return response.json();
             })
             .then(data => {
-                console.log('Dodano nowego administratora:', email);
+                warningModal.style.display = 'block';
+                modalText1.textContent = `Dodano nowego administratora: ${email}`;
+                //console.log('Dodano nowego administratora:', email);
             })
-            .catch(error => console.error('Błąd pobierania danych:', error));
+            .catch(error => {
+                errorModal.style.display = 'block';
+                modalText.textContent = `Błąd podczas dodawania administratora: ${error.message}`;
+            });
 
-            location.reload()
+            //location.reload()
     });
 
     // AdminList
@@ -192,14 +291,17 @@ document.addEventListener("DOMContentLoaded", function() {
                             .then(response => {
                                 if (response.ok) {
                                     // Powiadomienie zostało pomyślnie usunięte, możesz wykonać odpowiednie akcje, np. odświeżyć listę powiadomień
-                                    console.log('Administrator został prawidłowo usunięty');
-                                    location.reload();
+                                    warningModal.style.display = 'block';
+                                    modalText1.textContent = `Administrator został prawidłowo usunięty`;
 
                                 } else {
                                     console.error('Wystąpił błąd podczas usuwania administratora');
                                 }
                             })
-                            .catch(error => console.error('Błąd usuwania administratora:', error));
+                            .catch(error => {
+                                errorModal.style.display = 'block';
+                                modalText.textContent = `Błąd podczas usuwania administratora: ${error.message}`;
+                            });
 
                         closeModal();
 
