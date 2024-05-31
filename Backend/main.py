@@ -225,7 +225,6 @@ def get_time_for_resrvation():
 @app.get("/Admin/ProjectList")
 def admin_project_list(db: Session = Depends(get_db)):
     projects = CRUD.get_all_projects(db)
-    return {"projects:": projects}
     logos = []
     companynames = []
     titles = []
@@ -475,6 +474,8 @@ def post_add_project(
     Dodawanie nowego projektu przez admina
     z dodatkowa opcja przypisania do grupy
     """
+    # Sprawdzanie czy wszystkie pola wymagane są uzupełnione
+
     try:
         CRUD.create_project(db, project)
         if groupID:
@@ -560,8 +561,12 @@ def delete_admin(id: int,db: Session= Depends(get_db)):
 
 @app.post("/Admin/UploadProjects")
 def post_uploads_projects(db: Session = Depends(get_db)):
+    """
+    Tworzenie projektow w bazie na podstawie zamieszczonego excel
+    """
+    file_path = 'docs/forms/KPZ_FORMS.xlsx'  # Dodaj ścieżkę do pliku
     projects=[]
-    projects.append(CRUD.create_project_from_forms(db))
+    projects.append(CRUD.create_project_from_forms(db, file_path))
     return {"message": "Successfully submitted projects", "projects":projects}
 
 @app.put("/Admin/Group/{group_id}/Confirm")
@@ -583,8 +588,36 @@ def delete_project(id:int, db: Session = Depends(get_db)):
     CRUD.delete_project(db, project)
     return {"message": "Project deleted successfully"}
 
+@app.put("/Admin/{project_id}/Logo")
+def put_logo(project_id: str, logo_file:UploadFile=File(...),db: Session = Depends(get_db) ):
+    """
+    Dodawanie loga firmy przez podanie nazwy firmy.
+    Dodanie pliku oznacza nadpisanie poprzedniego. Sciezka pliku zapisuje sie w project.logopath
+    """
+    try:
+        project = CRUD.get_project_by_id(db, project_id)
+
+        save_path = os.path.join("docs", "logo", str(project.companyname))
+        os.makedirs(save_path, exist_ok=True)
+
+        # Sprawdź, czy istnieje już plik logo firmy
+        existing_logo_path = os.path.join(save_path, str(project.logopath))
+        if os.path.exists(existing_logo_path):
+            os.remove(existing_logo_path)
+
+        file_path = os.path.join(save_path, logo_file.filename)
+        CRUD.update_project_logopath(db,project, str(file_path))
+
+        # Zapisz przesłany plik na dysku
+        with open(file_path, "wb") as buffer:
+            buffer.write(logo_file.file.read())
+
+        return JSONResponse(status_code=200, content={"message": "File uploaded successfully", "file_path": file_path})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"message": "An error occurred", "error": str(e)})
+
 @app.post("/Admin/ExcelFile")
-def post_excel(pdf_file: UploadFile = File(...),db: Session = Depends(get_db)):
+def post_excel(excel_file: UploadFile = File(...),db: Session = Depends(get_db)):
     """
     Dodawanie pliku excel z forms
     Plik musi byc nazwany KPZ_FORMS.xlsx!!!!
@@ -596,7 +629,7 @@ def post_excel(pdf_file: UploadFile = File(...),db: Session = Depends(get_db)):
         os.makedirs(save_path, exist_ok=True)
 
         # Połącz ścieżkę i nazwę pliku
-        file_path = os.path.join(save_path, pdf_file.filename)
+        file_path = os.path.join(save_path, excel_file.filename)
 
         # Sprawdź, czy plik już istnieje w katalogu
         if os.path.exists(file_path):
@@ -605,7 +638,7 @@ def post_excel(pdf_file: UploadFile = File(...),db: Session = Depends(get_db)):
 
         # Zapisz przesłany plik na dysku
         with open(file_path, "wb") as buffer:
-            buffer.write(pdf_file.file.read())
+            buffer.write(excel_file.file.read())
 
         return JSONResponse(status_code=200, content={"message": "File uploaded successfully", "file_path": file_path})
     except Exception as e:
@@ -801,6 +834,9 @@ def enroll_student_to_project( user_id: int, project_id: int, db: Session = Depe
 
 @app.delete("/Student/{user_id}/QuitProject")
 def delete_reservation(user_id: int, db: Session = Depends(get_db)):
+    """
+    Rezegnacja grupy projektowej z rezerwacji projekt. Użytkownik musi byc liderem.
+    """
     user = CRUD.get_user_by_id(db, user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -821,6 +857,10 @@ def delete_reservation(user_id: int, db: Session = Depends(get_db)):
 
 @app.post("/Student/unsubscribe/{id}")
 def unsubscribe_from_group(id: int, db: Session = Depends(get_db)):
+    """
+    Opuszczenie grupy projektowej. Lider nie może opuścić grupy, chyba że jest jedynym jej członkiem.
+    W takim przypadku grupa zostanie usunięta
+    """
     # Pobierz użytkownika
     user = CRUD.get_user_by_id(db, id)
     if not user:
@@ -855,6 +895,9 @@ def unsubscribe_from_group(id: int, db: Session = Depends(get_db)):
 
 @app.post("/Student/{my_id}/unsubscribeSomeone/{someone_id}")
 def unsubscribe_from_group(my_id: int, someone_id: int,  db: Session = Depends(get_db)):
+    """
+       Usuwanie członka grupy. Tylko Lider może usunąć członka grupy.
+    """
     # Pobierz użytkownika
     user = CRUD.get_user_by_id(db, my_id)
     other_user = CRUD.get_user_by_id(db, someone_id)
@@ -888,9 +931,7 @@ def unsubscribe_from_group(my_id: int, someone_id: int,  db: Session = Depends(g
 
     # Zapisz zmiany w bazie danych
     db.commit()
-
     return {"message": "User unsubscribed from the group successfully"}
-
 
 @app.post("/Student/{user_id}/JoinGroup/{inviteCode}")
 def join_group(user_id: int, inviteCode: str, db: Session = Depends(get_db)):

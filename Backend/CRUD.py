@@ -1,6 +1,7 @@
 import random
 import string
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 from sqlalchemy.orm import Session
 import pandas as pd
@@ -132,19 +133,27 @@ def create_guardian(db: Session, guardian: schemas.GuardianCreate):
 
 
 def create_project(db: Session, project: schemas.ProjectCreate):
-    db_project = models.Project(companyname=project.companyname, projecttitle=project.projecttitle,
-                                description=project.description,
-                                email=project.email, phonenumber=project.phonenumber, logopath=project.logopath,
-                                technologies=project.technologies,
-                                mingroupsize=project.mingroupsize, maxgroupsize=project.maxgroupsize,
-                                groupnumber=project.groupnumber,
-                                englishgroup=project.englishgroup, remarks=project.remarks,
-                                cooperationtype=project.cooperationtype, person=project.person
-                                )
-    db.add(db_project)
-    db.commit()
-    db.refresh(db_project)
-    return db_project
+    # Walidacja pól
+    if not project.companyname or not project.projecttitle or not project.email or not project.phonenumber or not project.description or project.mingroupsize is None or project.maxgroupsize is None or project.groupnumber is None or not project.englishgroup:
+        raise HTTPException(status_code=400, detail="All required fields must be filled")
+
+    try:
+        db_project = models.Project(companyname=project.companyname, projecttitle=project.projecttitle,
+                                    description=project.description,
+                                    email=project.email, phonenumber=project.phonenumber, logopath=project.logopath,
+                                    technologies=project.technologies,
+                                    mingroupsize=project.mingroupsize, maxgroupsize=project.maxgroupsize,
+                                    groupnumber=project.groupnumber,
+                                    englishgroup=project.englishgroup, remarks=project.remarks,
+                                    cooperationtype=project.cooperationtype, person=project.person
+                                    )
+        db.add(db_project)
+        db.commit()
+        db.refresh(db_project)
+        return db_project
+    except IntegrityError:
+        raise HTTPException(status_code=400, detail="Integrity error occurred, project not added")
+
 
 
 """
@@ -185,11 +194,10 @@ def create_project_group_short(db: Session, user: schemas.UserReturn) -> models.
     return db_group
 
 
-def create_project_from_forms(db: Session):
+def create_project_from_forms(db: Session, file_path:str):
     """
     Sciagniecie rekordow z pliku excel wygenerowanego z google forms
     """
-    file_path = 'docs/forms/KPZ_FORMS.xlsx'  # Dodaj ścieżkę do pliku
 
     created_projects = []
 
@@ -300,7 +308,6 @@ def get_admins(db):
 def get_project_by_id(db: Session, project_id: int):
     return db.query(models.Project).filter(models.Project.projectid == project_id).first()
 
-
 def get_project_by_company(db: Session, project_name: str) -> list[models.Project] | None:
     return db.query(models.Project).filter(models.Project.companyname == project_name).all()
 
@@ -361,7 +368,7 @@ def histories_whole_info(db: Session):
         else:
             proj = None
         complexHistory.append({"group": history.groupid, "historyid": history.historyid, "content": history.content,
-                               "date": history.datatime, "project": proj})
+                               "date": history.datatime, "project": proj,"displayed":history.displayed})
     return complexHistory
 
 
@@ -576,6 +583,15 @@ def update_project_reservation_isConfirmed(db: Session, reservation: schemas.Pro
     create_action_history(db, reservation.groupid, contentA=f"Zatwierdzono realizacje tematu {reservation.projectid}.")
     return reservation
 
+def update_project_logopath(db: Session, company: schemas.ProjectBase, path ):
+    """
+    Update project logopath- action made by admin
+    """
+
+    company.logopath= path
+    db.commit()
+    db.refresh(company)
+    return company
 
 """
 Delete
