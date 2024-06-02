@@ -29,7 +29,8 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('person'),
             document.getElementById('mingroupsize'),
             document.getElementById('maxgroupsize'),
-            document.getElementById('groupnumber')
+            document.getElementById('groupnumber'),
+            document.getElementById('englishgroup')
         ];
         let allValid = true;
 
@@ -67,11 +68,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (isNaN(data.groupnumber) || isNaN(data.mingroupsize) || isNaN(data.maxgroupsize)) {
             warningModal.style.display = 'block';
+            modalText.textContent = `Pola liczbowe (rozmiar grupy oraz ilość grup) muszą zawierać poprawne wartości liczbowe`;
             return;
         }
-
-        console.log("Dane")
-        console.log(data)
 
         try {
             const response = await fetch('http://127.0.0.1:8000/Admin/AddProject', {

@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const excelButton = document.getElementById("excelFiles");
     const adminList = document.getElementById("adminList");
     const deleteExcel = document.getElementById("deleteExcel");
+    const setTime = document.getElementById("setTime");
 
     const errorModal = document.getElementById('errorModal');
     const modalText = errorModal.querySelector('.textModal p');
@@ -212,6 +213,42 @@ document.addEventListener("DOMContentLoaded", function() {
                 modalText.textContent = `Błąd podczas ładowania pliku: ${error.message}`;
             });
 
+    });
+
+    setTime.addEventListener("click", function() {
+
+        const dateTime = document.getElementById('datetime').value;
+
+        if (dateTime) {
+            const date = new Date(dateTime);
+
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // miesiące są 0-indeksowane
+            const day = String(date.getDate()).padStart(2, '0');
+            const hour = String(date.getHours()).padStart(2, '0');
+            const minute = String(date.getMinutes()).padStart(2, '0');
+            const second = String(date.getSeconds()).padStart(2, '0');
+
+            fetch(`http://127.0.0.1:8000/Admin/setTime/${year}:${month}:${day}:${hour}:${minute}:${second}`, {
+                method: 'POST', // lub 'GET', zależnie od API
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ dateTime: dateTime })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    errorModal.style.display = 'block';
+                    modalText.textContent = `Ustawiono datę na: ${date}`;
+                })
+                .catch((error) => {
+                    errorModal.style.display = 'block';
+                    modalText.textContent = `Wystąpił błąd: ${error}`;
+                });
+        } else {
+            errorModal.style.display = 'block';
+            modalText.textContent = `Proszę wybrać datę`;
+        }
     });
 
     addButton.addEventListener("click", function() {
