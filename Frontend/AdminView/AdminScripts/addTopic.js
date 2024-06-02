@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const submitButton = document.getElementById('addTopicButton');
     const warningModal = document.getElementById('warningModal');
+    const modalText = warningModal.querySelector('.textModal p');
     const closeButton = document.querySelector('#warningModal .close');
     const confirmButton = document.getElementById('confirmBtn');
 
@@ -18,6 +19,34 @@ document.addEventListener("DOMContentLoaded", function() {
     submitButton.addEventListener('click', async function(event) {
 
         event.preventDefault();
+
+        const requiredFields = [
+            document.getElementById('companyname'),
+            document.getElementById('projecttitle'),
+            document.getElementById('email'),
+            document.getElementById('phonenumber'),
+            document.getElementById('description'),
+            document.getElementById('person'),
+            document.getElementById('mingroupsize'),
+            document.getElementById('maxgroupsize'),
+            document.getElementById('groupnumber')
+        ];
+        let allValid = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('invalid');
+                allValid = false;
+            } else {
+                field.classList.remove('invalid');
+            }
+        });
+
+        if (!allValid) {
+            warningModal.style.display = 'block';
+            modalText.textContent = `Wszystkie wymagane pola muszą zostać uzupełnione`;
+            return;
+        }
 
         const data = {
             companyname: document.getElementById('companyname').value,
@@ -54,13 +83,16 @@ document.addEventListener("DOMContentLoaded", function() {
             });
 
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.detail || response.statusText);
             }
 
             const result = await response.json();
-            console.log('Projekt został dodany:', result);
+            warningModal.style.display = 'block';
+            modalText.textContent = `Projekt został prawidłowo dodany`;
         } catch (error) {
-            console.error('Wystąpił błąd podczas dodawania projektu:', error);
+            warningModal.style.display = 'block';
+            modalText.textContent = `Wystąpił błąd podczas dodawania projektu: ${error.message}`;
         }
 
     });

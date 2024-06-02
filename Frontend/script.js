@@ -54,9 +54,6 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
             const topicList = document.getElementById('topicList');
 
-            console.log("Dane")
-            console.log(data)
-
             const logos = data['logos'];
             const companynames = data['companynames'];
             const titles = data['titles'];

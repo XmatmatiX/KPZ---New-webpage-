@@ -152,6 +152,19 @@ button:hover {
     border-radius: 0 0 var(--radius-small) var(--radius-small);
 }
 
+.required {
+    color: red;
+}
+
+.warning {
+    color: red;
+    display: none;
+}
+
+.invalid {
+    border: 1px solid red;
+}
+
 .uploadFiles {
     display: flex;
     align-items: center;
