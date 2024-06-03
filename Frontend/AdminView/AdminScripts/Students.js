@@ -8,19 +8,17 @@ function addButtonListener(studentItem, userId) {
     });
 }
 
-function openModal(userID) {
+function updateGroupSize(groupId) {
+    const groupSizeElement = document.querySelector(`#groupSize_${groupId}`);
+    const currentGroupSize = parseInt(groupSizeElement.textContent);
+    const updatedGroupSize = currentGroupSize + 1; // Dodaj 1
+    groupSizeElement.textContent = updatedGroupSize.toString();
+}
 
-    const modal = document.getElementById('groupModal');
-    const span = document.getElementById("closeButton");
+function displayGroups(userID) {
+
     const groupList = document.getElementById('groupList');
-
-    function closeModal() {
-        modal.style.display = "none";
-        groupList.innerHTML = '';
-    }
-
-    modal.style.display = "block";
-    span.onclick = closeModal;
+    groupList.innerHTML = '';
 
     fetch('http://127.0.0.1:8000/Admin/Groups')
         .then(response => response.json())
@@ -28,76 +26,95 @@ function openModal(userID) {
             const groups = data['groups:']; // Pobranie tablicy projektów
 
             const groupids = groups['groupids'];
-            const leaders = groups['leaders'];
             const groupsize = groups['groupsize'];
-            const guardians = groups['guardians'];
-            const projects = groups['projects'];
+            const projectTitles = groups['project_titles'];
 
-            const fetchProjectPromises = projects.map(project => {
-                return fetch(`http://127.0.0.1:8000/Admin/Project/${project.projectid}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        return {
-                            projectTitle: data.projecttitle
-                        };
-                    })
-                    .catch(error => {
-                        console.error('Błąd pobierania danych projektu:', error);
-                        return {}; // Zwrócenie pustego obiektu w przypadku błędu
-                    });
-            });
+            for (let i = 0; i < groupids.length; i++) {
 
-            // Oczekiwanie na zakończenie wszystkich żądań fetch
-            Promise.all(fetchProjectPromises)
-                .then(projectsData  => {
+                const groupItem = document.createElement('div');
+                groupItem.classList.add('groupItem2');
 
-                    //const guardiansData = dataArray.slice(0, guardians.length);
-                    //const projectsData = dataArray.slice(guardians.length);
-                    for (let i = 0; i < groupids.length; i++) {
-
-                        const groupItem = document.createElement('div');
-                        groupItem.classList.add('groupItem2');
-
-                        const project = projectsData[i];
-
-                        groupItem.innerHTML = `
+                groupItem.innerHTML = `
                             <p>${groupids[i]}</p>
-                            <p>${project.projectTitle}</p>
+                            <p>${projectTitles[i]}</p>
                             <p>${groupsize[i]}</p>
                             <button class="searchButton">Wybierz</button>
                         `;
 
-                        const selectButton = groupItem.querySelector('.searchButton');
-                        selectButton.addEventListener('click', function() {
+                const warningModal = document.getElementById('warningModal');
+                const errorModal = document.getElementById('errorModal');
+                const modalText = errorModal.querySelector('.textModal p');
+                const closeButton = document.querySelector('#errorModal .close');
+                const confirmButton = document.getElementById('confirmButton');
 
-                            console.log('Wybrano user:', userID);
-                            console.log('Wybrano grupę:', groupids[i]);
-
-                            fetch(`http://127.0.0.1:8000/Admin/SignToGroup/${userID}/${groupids[i]}`, {
-                                method: 'POST'
-                            })
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error('The squad of a group with reservation can not be changed');
-                                    }
-
-                                    console.log('Student został pomyślnie przypisany do grupy.');
-                                    return response.json();
-                                })
-                                .then(data => {
-
-                                    closeModal();
-                                    location.reload();
-
-                                })
-                                .catch(error => console.error('Błąd pobierania danych:', error));
-                        });
-
-                        groupList.appendChild(groupItem);
-                    }
+                closeButton.addEventListener('click', function() {
+                    errorModal.style.display = 'none';
                 });
+
+                confirmButton.addEventListener('click', function() {
+                    errorModal.style.display = 'none';
+                });
+
+                const selectButton = groupItem.querySelector('.searchButton');
+                selectButton.addEventListener('click', function() {
+
+                    console.log('Wybrano user:', userID);
+                    console.log('Wybrano grupę:', groupids[i]);
+
+                    fetch(`http://127.0.0.1:8000/Admin/SignToGroup/${userID}${groupids[i]}`, {
+                        method: 'POST'
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('The squad of a group with reservation can not be changed');
+                            }
+
+                            warningModal.style.display = 'block';
+
+                            displayGroups(userID);
+                            return response.json();
+
+                        })
+                        .catch(error => {
+                            errorModal.style.display = 'block';
+                            modalText.textContent = `Wystąpił błąd: ${error.message}`;
+                        });
+                });
+
+                groupList.appendChild(groupItem);
+            }
+
         })
         .catch(error => console.error('Błąd pobierania danych:', error));
+}
+
+function openModal(userID) {
+
+    const span = document.getElementById("closeButton");
+
+    const modal = document.getElementById('groupModal');
+    const closeButton = document.querySelector('#warningModal .close');
+    const confirmButton = document.getElementById('confirmBtn');
+    const groupList = document.getElementById('groupList');
+
+    function closeModal() {
+        modal.style.display = "none";
+        groupList.innerHTML = '';
+        location.reload();
+    }
+
+    function close() {
+        modal.style.display = "none";
+        groupList.innerHTML = '';
+    }
+
+    span.onclick = close;
+
+    modal.style.display = "block";
+    closeButton.onclick = closeModal;
+    confirmButton.onclick = closeModal;
+
+    displayGroups(userID);
 
 }
 
@@ -111,9 +128,6 @@ function allStudents(students) {
             const ids = data['ids'];
             const names = data['names'];
             const surnames = data['surnames'];
-
-            console.log("Wszyscy")
-            console.log(data)
 
             // Iteracja przez wszystkich studentów
             for (let i = 0; i < emails.length; i++) {
@@ -298,7 +312,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data)
                     displaySearchedStudents(students, data);
                 })
                 .catch(error => console.error('Błąd pobierania danych:', error));

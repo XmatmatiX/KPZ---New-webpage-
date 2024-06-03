@@ -1,6 +1,8 @@
 from Backend import CRUD, models
 from Backend import schemas
 from Backend.database import SessionLocal
+#from database import SessionLocal
+import CRUD, models, schemas
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -23,19 +25,24 @@ def fill_database():
 
     users = readUsers(db)
     guards = readGuardians(db)
-    projects = readProjects(db)
+    #projects = readProjects(db)
+    CRUD.create_project_from_forms(db)
+    projects = CRUD.get_all_projects(db)
+    mini = projects[0].mingroupsize
+    maxi = projects[0].maxgroupsize
     group = CRUD.create_project_group_short(db, users[0])
-    CRUD.update_user_group_id(db, users[5], group.groupid)
-    CRUD.update_user_group_id(db, users[15], group.groupid)
-    CRUD.update_user_group_id(db, users[17], group.groupid)
+    for i in range(mini+1, maxi):
+        CRUD.update_user_group_id(db, users[i], group.groupid)
     CRUD.update_project_group_guardian(db, group.groupid,guards[2].guardianid)
     group = CRUD.get_group(db, group.groupid)
     CRUD.create_project_reservation(db, projects[0], group)
 
     group = CRUD.create_project_group_short(db, users[4])
-    CRUD.update_user_group_id(db, users[6], group.groupid)
-    CRUD.update_user_group_id(db, users[10], group.groupid)
-    CRUD.update_project_group_guardian(db, group.groupid,guards[0].guardianid)
+    mini = projects[1].mingroupsize
+    maxi = projects[1].maxgroupsize
+    n=len(users)
+    for i in range(mini+1, maxi):
+        CRUD.update_user_group_id(db, users[n-i], group.groupid)
     group = CRUD.get_group(db, group.groupid)
     CRUD.create_project_reservation(db, projects[1], group)
 
@@ -97,6 +104,7 @@ def readProjects(db:SessionLocal):
         vals = line.split(';')
         print(vals)
         print('\n')"""
+
     project1 = schemas.ProjectCreate(
         companyname="Schronisko",
         projecttitle="SmartPaws",

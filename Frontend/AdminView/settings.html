@@ -42,7 +42,7 @@
         <div class="uploadFiles">
             <div class="file-input-container">
                 <label class="file-label">WYBIERZ</label>
-                <input type="file" id="pdf-upload" accept="application/pdf" style="display: none;">
+                <input type="file" id="pdf-upload" style="display: none;">
                 <span class="file-name" id="file-name">Nie wybrano pliku</span>
                 <button class="file-remove" id="remove-file" style="display: none;">
                     <img src="../Images/blackTrash.png">
@@ -51,12 +51,28 @@
             <button id="excelFiles" class="fileButton">Załaduj EXCEL</button>
         </div>
 
+        <h1>Usunięcie załadowanego pliku Excel</h1>
+        <article>
+            <p class="pp">Usuwanie pliku</p>
+        </article>
+        <button id="deleteExcel" class="excelButton">Usuń plik EXCEL</button>
+
         <h1>Załadowanie tematów projektowych</h1>
         <article>
             <p class="pp">Załadowanie tematów z arkusza kalkulacyjnego</p>
             <p class="pp"></p>
         </article>
-        <button id="uploadFiles" class="uploadButton">Załaduj tematy</button>
+        <button id="uploadFiles" class="excelButton">Załaduj tematy</button>
+
+        <h1>Data zapisów</h1>
+        <article>
+            <p class="pp">Ustawienie dokładnej daty rozpoczęcia zapisów</p>
+            <p class="pp"></p>
+        </article>
+        <div class="uploadFiles">
+            <input type="datetime-local" id="datetime" class="datetime-picker">
+            <button id="setTime" class="fileButton">Zatwierdź</button>
+        </div>
 
         <h1>Wyczyszczenie bazy danych</h1>
         <article>
@@ -87,6 +103,19 @@
             </div>
         </div>
 
+        <div id="deleteExcelFile" class="deleteModal">
+            <div class="modal-content">
+                <span id="closeButton2" class="close">&times;</span>
+                <div class="textModal">
+                    <p>Czy na pewno chcesz usunąć aktualny plik Excel?</p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confirmButton2">Potwierdź</button>
+                    <button id="cancelButton2">Anuluj</button>
+                </div>
+            </div>
+        </div>
+
         <div id="deleteAdmin" class="deleteModal">
             <div class="modal-content">
                 <span id="closeButton" class="close">&times;</span>
@@ -96,6 +125,30 @@
                 <div class="buttonModal">
                     <button id="confirmButton">Potwierdź</button>
                     <button id="cancelButton">Anuluj</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="warningModal" class="deleteModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="textModal">
+                    <p></p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confButton1">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="errorModal" class="deleteModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="textModal">
+                    <p></p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confButton">Potwierdź</button>
                 </div>
             </div>
         </div>

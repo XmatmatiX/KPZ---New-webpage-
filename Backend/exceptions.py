@@ -39,3 +39,7 @@ class GroupSizeNotValidForProjectException(Exception):
     "The group size is not valid for project"
     pass
 
+
+class NotTimeForReservationException(Exception):
+    "Time for subscribtion has yet to come"
+    pass

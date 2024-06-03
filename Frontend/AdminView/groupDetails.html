@@ -37,14 +37,23 @@
         <section class="groupHeader">
             <h1 id="groupid"></h1>
             <div id="groupDetails" class="groupSection">
-                <div id="thema" class="groupDetails"></div>
-                <div id="company" class="groupDetails"></div>
-                <div id="guardian" class="groupDetails"></div>
-                <div id="state" class="groupDetails"></div>
+                <div id="thema" class="groupDetails4"></div>
+                <div id="company" class="groupDetails4"></div>
+                <div id="guardian" class="groupDetails4"></div>
+                <div id="state" class="groupDetails4"></div>
             </div>
         </section>
 
         <button id="notificationButton" class="notificationButton">WIADOMOŚCI</button>
+
+        <h1>Przesłane pliki</h1>
+
+        <article>
+            <p>Potwierdź realizację wybranego tematu przez grupę. Status rezerwacji zmieni się z zarezerwowanego na zatwierdzony.</p>
+            <p>Przed zatwierdzeniem, zweryfikuj przesłane przez grupę pliki.</p>
+        </article>
+
+        <button id="confirmationButton" class="notificationButton">POTWIERDŹ</button>
 
         <h1>Studenci</h1>
 
@@ -62,6 +71,31 @@
             </section>
 
         </section>
+
+        <div id="confirmModal" class="deleteModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="textModal">
+                    <p>Czy na pewno chcesz potwierdzić realizację danego projektu przez grupę?</p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confirmBtn">Potwierdź</button>
+                    <button id="cancelBtn">Anuluj</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="errorModal" class="deleteModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="textModal">
+                    <p></p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confButton">Potwierdź</button>
+                </div>
+            </div>
+        </div>
 
     </div>
 </section>
