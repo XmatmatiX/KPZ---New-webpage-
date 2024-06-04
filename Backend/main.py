@@ -225,32 +225,35 @@ def get_time_for_resrvation():
 @app.get("/Admin/ProjectList")
 def admin_project_list(db: Session = Depends(get_db)):
     projects = CRUD.get_all_projects(db)
-    logos = []
-    companynames = []
-    titles = []
-    pid = []
-    minsizes = []
-    maxsizes = []
-    stats = []
-    groups = []
-    for project in projects:
-        n = CRUD.number_project_reserved(db, project.projectid)
-        groups_project = CRUD.get_groups_assigned_to_projects(db, project)
-        for i in range(project.groupnumber):
-            logos.append(project.logopath)
-            companynames.append(project.companyname)
-            titles.append(project.projecttitle)
-            pid.append(project.projectid)
-            minsizes.append(project.mingroupsize)
-            maxsizes.append(project.maxgroupsize)
-            if i < n:
-                stats.append(ProjectStatus.reserved)
-                groups.append(groups_project[i])
-            else:
-                stats.append(ProjectStatus.available)
-                groups.append(None)
-    return {"logos": logos, "companynames": companynames, "titles": titles, "projecstid": pid, "minsizes": minsizes,
-            "maxsizes": maxsizes, "status": stats, "group": groups}
+
+    return {"projects:": projects}
+
+    # logos = []
+    # companynames = []
+    # titles = []
+    # pid = []
+    # minsizes = []
+    # maxsizes = []
+    # stats = []
+    # groups = []
+    # for project in projects:
+    #     n = CRUD.number_project_reserved(db, project.projectid)
+    #     groups_project = CRUD.get_groups_assigned_to_projects(db, project)
+    #     for i in range(project.groupnumber):
+    #         logos.append(project.logopath)
+    #         companynames.append(project.companyname)
+    #         titles.append(project.projecttitle)
+    #         pid.append(project.projectid)
+    #         minsizes.append(project.mingroupsize)
+    #         maxsizes.append(project.maxgroupsize)
+    #         if i < n:
+    #             stats.append(ProjectStatus.reserved)
+    #             groups.append(groups_project[i])
+    #         else:
+    #             stats.append(ProjectStatus.available)
+    #             groups.append(None)
+    # return {"logos": logos, "companynames": companynames, "titles": titles, "projecstid": pid, "minsizes": minsizes,
+    #         "maxsizes": maxsizes, "status": stats, "group": groups}
 
 
 @app.get("/Admin/Project/{id}")
@@ -692,7 +695,7 @@ def get_student_group(id: int, db: Session = Depends(get_db)):
 
     # Get the group of the student
     group = CRUD.get_group(db, student.groupid)
-    if not group:
+    if group is None:
         raise HTTPException(status_code=404, detail="Group not found")
 
     # Initialize lists for member details
@@ -820,6 +823,8 @@ def enroll_student_to_project( user_id: int, project_id: int, db: Session = Depe
         raise HTTPException(status_code=404, detail="Project not found")
 
     group = CRUD.get_group(db, user.groupid)
+    if CRUD.has_group_reservation(db, group.groupid):
+        raise HTTPException(status_code=404, detail="You already have reservation!")
     try:
         # Spróbuj utworzyć rezerwację projektu
         new_reservation = CRUD.create_project_reservation(db, project, group)

@@ -23,13 +23,10 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Pobierz przycisk "Wyloguj się"
     var searchButton = document.getElementById("searchButton");
 
-    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
     searchButton.addEventListener("click", function() {
-        // Przenieś użytkownika do strony landingPage.html
-        window.location.href = "freeGroups.html";
+        window.location.href = "topicsView.html.html";
     });
 });
 
@@ -60,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (manageButton) {
         manageButton.addEventListener('click', function() {
-            window.location.href = 'changeLieder.html'; // Przekierowanie do strony changeLieder.html
+            window.location.href = 'changeLeader.html';
         });
     } else {
         console.log('Przycisk zarządzania stanowiskiem nie został znaleziony');
@@ -68,12 +65,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Pobierz przycisk "Wyloguj się"
     var topics = document.getElementById("topicsStudent");
 
-    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
     topics.addEventListener("click", function() {
-        // Przenieś użytkownika do strony landingPage.html
         window.location.href = "topicsView.html";
     });
 });
@@ -83,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (groupButton) {
         groupButton.addEventListener('click', function() {
-            window.location.href = 'studentInGroup.html'; // Przekierowanie do strony changeLider.html
+            window.location.href = 'yourGroup.html';
         });
     }
 });
@@ -92,11 +86,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (changeButton) {
         changeButton.addEventListener('click', function() {
-            window.location.href = 'changeLieder.html'; // Przekierowanie do strony changeLider.html
+            window.location.href = 'changeLeader.html'; // Przekierowanie do strony changeLider.html
         });
     }
 });
+document.addEventListener("DOMContentLoaded", function() {
+    
+    const homeButton = document.getElementById("signInHome");
 
+    if(homeButton)
+        {
+            homeButton.addEventListener("click", function() {
+                window.location.href = "../StudentView/enrollment.html";
+            });
+        }
+});
 // Project List
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -167,9 +171,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 document.addEventListener('DOMContentLoaded', function() {
     const enrollButton = document.getElementById('idTopic'); // the button for topic ID input
-    const signInButton = document.querySelector('button[onclick="id()"]'); // the sign-in button
+    //const signInButton = document.querySelector('button[onclick="id()"]'); // the sign-in button
+    const signInButton = document.getElementById('EnrollButton'); // the sign-in button
     const errorMessage = document.getElementById('errorId');
     const successMessage = document.getElementById('successId');
+
+    const userId=822; // NA STALE NA RAZIE JEST <- KEYCLOAK zmieni
 
     // Initially hide messages
     errorMessage.style.display = 'Nie udało się zapisac na ten temat';
@@ -178,15 +185,44 @@ document.addEventListener('DOMContentLoaded', function() {
     signInButton.addEventListener('click', function() {
         // Mock condition: check if the input value is "123"
         const topicId = enrollButton.value;
-        if (topicId === '123') {
-            // Display success message if topic ID is '123'
-            successMessage.style.display = 'block';
-            errorMessage.style.display = 'none';
-        } else {
-            // Display error message if topic ID is not '123'
-            errorMessage.style.display = 'block';
-            successMessage.style.display = 'none';
-        }
+        console.log(topicId);
+        const input=`http://127.0.0.1:8000/Student/${userId}/Enroll/${topicId}`;
+        console.log(input);
+        let status=200;
+        fetch(`http://127.0.0.1:8000/Student/${userId}/Enroll/${topicId}`,{method: 'POST'})
+            .then(response => {
+                status=response.status;
+                // if (!response.ok) {
+                //     errorMessage.style.display = 'block';
+                //     successMessage.style.display = 'none';
+                // }
+                return response.json();
+            })
+            .then(data => {
+                if (status!==200)
+                {
+                    console.log(data.detail);
+                    errorMessage.textContent=data.detail;
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+                }
+                else
+                {
+                    successMessage.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                }
+
+
+        });
+        // if (topicId === '123') {
+        //     // Display success message if topic ID is '123'
+        //     successMessage.style.display = 'block';
+        //     errorMessage.style.display = 'none';
+        // } else {
+        //     // Display error message if topic ID is not '123'
+        //     errorMessage.style.display = 'block';
+        //     successMessage.style.display = 'none';
+        // }
     });
 });
 /*student in group*/
@@ -197,10 +233,9 @@ document.addEventListener('DOMContentLoaded', function() {
     leaveButton.addEventListener('click', function() {
         const confirmation = confirm('Czy na pewno chcesz opuścić grupę?');
         if (confirmation) {
-            // Tu wpisz logikę potrzebną do opuszczenia grupy, np. zapytanie AJAX do serwera
             console.log('Użytkownik opuścił grupę.');
             window.location.href = "enrollment.html";
-            //location.reload(); // Odświeżenie bieżącej strony
+            location.reload(); // Odświeżenie bieżącej strony
         }
     });
 });
@@ -392,93 +427,12 @@ function closeModal() {
 }
 
 document.querySelector('.modal .close').addEventListener('click', closeModal);
-openModal('Grupa XYZ', 'Jan Kowalski');
 
-/*studentGroup*/
-document.addEventListener("DOMContentLoaded", function() {
-    // Identyfikator studenta, dla którego chcemy uzyskać informacje o grupie
-    const studentId = '123'; // Załóżmy, że to jest nasz studentId
 
-    // Funkcja do pobierania danych grupy studenta
-    function fetchGroupDetails(studentId) {
-        fetch(`http://127.0.0.1:8000/Student/Group/${studentId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Group Details:', data);
-                displayGroupDetails(data);
-            })
-            .catch(error => console.error('Error fetching group details:', error));
-    }
 
-    // Funkcja do wyświetlania szczegółów grupy na stronie
-    function displayGroupDetails(data) {
-        const groupInfo = document.getElementById('group-info');
-        groupInfo.innerHTML = `<h2>Informacje o grupie</h2>
-                                <p>Kod zaproszenia: ${data.invite_code}</p>
-                                <p>Rozmiar grupy: ${data.group_size}</p>
-                                <h3>Opiekun grupy:</h3>
-                                <p>Imię i nazwisko: ${data.guardian_info.guardian_name ? data.guardian_info.guardian_name : 'Brak'}</p>
-                                <p>Email: ${data.guardian_info.guardian_email ? data.guardian_info.guardian_email : 'Brak'}</p>
-                                <h3>Członkowie grupy:</h3>`;
-        data.members.forEach(member => {
-            groupInfo.innerHTML += `<p>${member.name} ${member.surname} - ${member.role}</p>`;
-        });
-    }
 
-    // Wywołanie funkcji
-    fetchGroupDetails(studentId);
-});
 
-document.addEventListener("DOMContentLoaded", function() {
-    const nominateButton = document.querySelector('.nominate-button');
 
-    if (nominateButton) {
-        nominateButton.addEventListener('click', () => {
-            const checkboxes = document.querySelectorAll('.group-members input[type="checkbox"]');
-            let newLeaderId = null;
-
-            // Przejście przez wszystkie checkboxy i znalezienie zaznaczonego
-            checkboxes.forEach((checkbox, index) => {
-                if (checkbox.checked) {
-                    // Załóżmy, że każdy checkbox ma atrybut `data-user-id` z ID użytkownika
-                    newLeaderId = checkbox.getAttribute('data-user-id');
-                }
-            });
-
-            if (newLeaderId) {
-                changeLeader(newLeaderId);
-            } else {
-                alert('Proszę wybrać nowego lidera!');
-            }
-        });
-    }
-
-    // Funkcja do wysłania żądania zmiany lidera
-    function changeLeader(newLeaderId) {
-        const groupId = '123'; // Tutaj ustaw prawidłowe ID grupy
-        fetch(`http://127.0.0.1:8000/Student/ChangeLeader/${newLeaderId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id_grupy: groupId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert('Lider został zmieniony.');
-            console.log(data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Nie udało się zmienić lidera.');
-        });
-    }
-});
 
 
 
