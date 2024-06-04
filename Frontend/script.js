@@ -54,9 +54,6 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
             const topicList = document.getElementById('topicList');
 
-            console.log("Dane")
-            console.log(data)
-
             const logos = data['logos'];
             const companynames = data['companynames'];
             const titles = data['titles'];
@@ -64,7 +61,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const minsizes = data['minsizes'];
             const maxsizes = data['maxsizes'];
             const status = data['status'];
-            //const group = data['group'];
 
             function translateStatus(status) {
                 switch(status) {
@@ -90,7 +86,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     groupSizeText += ` - ${maxsizes[i]}`;
                 }
 
-                // <p>${group[i] ? group[i] : 'Brak'}</p>
                 const translatedStatus = translateStatus(status[i]);
 
                 // Utworzenie HTML dla pojedynczego projektu

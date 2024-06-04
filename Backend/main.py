@@ -217,11 +217,14 @@ def project_detail(id: int, db: Session = Depends(get_db)):
             "groupnumber": project.groupnumber, "remarks": project.remarks, "cooperationtype": project.cooperationtype,
             "numertaken": num_taken, "language": project.englishgroup}
 
+@app.get("/TimeReservation")
+def get_time_for_resrvation():
+    return {"datatime": CRUD.readTimeOfSubscribtion()}
+
 ########### SEKCJA ADMIN ################
 @app.get("/Admin/ProjectList")
 def admin_project_list(db: Session = Depends(get_db)):
     projects = CRUD.get_all_projects(db)
-    return {"projects:": projects}
     logos = []
     companynames = []
     titles = []
@@ -253,6 +256,36 @@ def admin_project_list(db: Session = Depends(get_db)):
 @app.get("/Admin/Project/{id}")
 def admin_project(id: int, db: Session = Depends(get_db)):
     return CRUD.get_project_by_id(db, id)
+@app.get("/Admin/Reservations")
+def admin_reservation(db: Session = Depends(get_db)):
+    """
+            lista rezerwacji
+    """
+    reservations = CRUD.get_all_reservations(db)
+    rid=[]
+    logos = []
+    company = []
+    topic = []
+    project_group = []
+    status = []
+
+    for reservation in reservations:
+        project = CRUD.get_project_by_id(db, reservation.projectid)
+        rid.append(reservation.projectreservationid)
+        logos.append(project.logopath)
+        company.append(project.companyname)
+        topic.append(project.projecttitle)
+        project_group.append(reservation.groupid)
+        status.append(reservation.status)
+
+    return {
+        "reservations_id": rid,
+        "logos": logos,
+        "company": company,
+        "topic": topic,
+        "project_group": project_group,
+        "status": status
+    }
 
 @app.get("/Admin/Reservation/{project_id}")
 def admin_reservation(project_id: int, db: Session = Depends(get_db)):
@@ -269,11 +302,22 @@ def admin_group(id: int, db: Session = Depends(get_db)):
     """
     Do poprawy - zawezic to co o uzytkowniku widac
     """
+    group= CRUD.get_group(db, id)
+    if group is None:
+        raise HTTPException(status_code=404, detail="Group not found")
     members = CRUD.get_group_members(db, id)
     reservation = CRUD.get_project_reservation_by_group(db, id)
-    project = CRUD.get_project_by_id(db, reservation.projectid)
-    return {"id": id, "members": members, "thema": project.projecttitle, "company": project.companyname,
-            "state": reservation.status}
+    if reservation is not None:
+        project = CRUD.get_project_by_id(db, reservation.projectid)
+        thema=project.projecttitle
+        company= project.companyname
+        status=reservation.status
+    else:
+        thema=None
+        company=None
+        status=None
+    return {"id": id, "members": members, "thema": thema, "company": company,
+            "state": status, "guardian": group.guardianid}
 
 @app.get("/Admin/Groups")
 def admin_groups(db: Session = Depends(get_db)):
@@ -314,18 +358,20 @@ def admin_free_students(db: Session = Depends(get_db)):
 @app.post("/Admin/SearchStudent/{parameter}")
 def search_students(parameter: str, db: Session = Depends(get_db)):
     students = CRUD.get_user_by_something(db, parameter)
+    ids=[]
     names = []
     surnames = []
     groups = []
     roles = []
     emails =[]
     for student in students:
+        ids.append(student.userid)
         names.append(student.name)
         surnames.append(student.surname)
         groups.append(student.groupid)
         roles.append(student.rolename)
         emails.append(student.email)
-    return {"names": names, "surnames": surnames, "groups": groups, "roles": roles, "emails":emails}
+    return {"ids": ids,"names": names, "surnames": surnames, "groups": groups, "roles": roles, "emails":emails}
 
 @app.get("/Admin/Students")
 def get_students(db: Session = Depends(get_db)):
@@ -378,7 +424,7 @@ def put_admin_create(email:str, db:Session=Depends(get_db)):
     CRUD.update_to_admin(db,email)
     return {"message": " Admin changed succesfully"}
 
-@app.get("/Admin/AdminList}")
+@app.get("/Admin/AdminList")
 def get_admins(db: Session = Depends(get_db)):
     admins = CRUD.get_admins(db)
     ids=[]
@@ -419,6 +465,27 @@ def post_sign_to_group(user_id:int, groupId:int,db:Session=Depends(get_db)):
     except exceptions.MinimumSizeGroupException:
         raise HTTPException(status_code=404, detail="???")
 
+@app.post("/Admin/AddProject")
+def post_add_project(
+        project:schemas.ProjectCreate,
+        groupID: int =None,
+        db: Session = Depends(get_db)):
+    """
+    Dodawanie nowego projektu przez admina
+    z dodatkowa opcja przypisania do grupy
+    """
+    # Sprawdzanie czy wszystkie pola wymagane są uzupełnione
+
+    try:
+        CRUD.create_project(db, project)
+        if groupID:
+            CRUD.create_project_reservation(db,project,groupID)
+        return {"message": "Project added successfully"}
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Failed to add project")
 
 
 @app.get("/Admin/Notification")
@@ -494,8 +561,12 @@ def delete_admin(id: int,db: Session= Depends(get_db)):
 
 @app.post("/Admin/UploadProjects")
 def post_uploads_projects(db: Session = Depends(get_db)):
+    """
+    Tworzenie projektow w bazie na podstawie zamieszczonego excel
+    """
+    file_path = 'docs/forms/KPZ_FORMS.xlsx'  # Dodaj ścieżkę do pliku
     projects=[]
-    projects.append(CRUD.create_project_from_forms(db))
+    projects.append(CRUD.create_project_from_forms(db, file_path))
     return {"message": "Successfully submitted projects", "projects":projects}
 
 @app.put("/Admin/Group/{group_id}/Confirm")
@@ -517,8 +588,36 @@ def delete_project(id:int, db: Session = Depends(get_db)):
     CRUD.delete_project(db, project)
     return {"message": "Project deleted successfully"}
 
+@app.put("/Admin/{project_id}/Logo")
+def put_logo(project_id: str, logo_file:UploadFile=File(...),db: Session = Depends(get_db) ):
+    """
+    Dodawanie loga firmy przez podanie nazwy firmy.
+    Dodanie pliku oznacza nadpisanie poprzedniego. Sciezka pliku zapisuje sie w project.logopath
+    """
+    try:
+        project = CRUD.get_project_by_id(db, project_id)
+
+        save_path = os.path.join("docs", "logo", str(project.companyname))
+        os.makedirs(save_path, exist_ok=True)
+
+        # Sprawdź, czy istnieje już plik logo firmy
+        existing_logo_path = os.path.join(save_path, str(project.logopath))
+        if os.path.exists(existing_logo_path):
+            os.remove(existing_logo_path)
+
+        file_path = os.path.join(save_path, logo_file.filename)
+        CRUD.update_project_logopath(db,project, str(file_path))
+
+        # Zapisz przesłany plik na dysku
+        with open(file_path, "wb") as buffer:
+            buffer.write(logo_file.file.read())
+
+        return JSONResponse(status_code=200, content={"message": "File uploaded successfully", "file_path": file_path})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"message": "An error occurred", "error": str(e)})
+
 @app.post("/Admin/ExcelFile")
-def post_excel(pdf_file: UploadFile = File(...),db: Session = Depends(get_db)):
+def post_excel(excel_file: UploadFile = File(...),db: Session = Depends(get_db)):
     """
     Dodawanie pliku excel z forms
     Plik musi byc nazwany KPZ_FORMS.xlsx!!!!
@@ -530,7 +629,7 @@ def post_excel(pdf_file: UploadFile = File(...),db: Session = Depends(get_db)):
         os.makedirs(save_path, exist_ok=True)
 
         # Połącz ścieżkę i nazwę pliku
-        file_path = os.path.join(save_path, pdf_file.filename)
+        file_path = os.path.join(save_path, excel_file.filename)
 
         # Sprawdź, czy plik już istnieje w katalogu
         if os.path.exists(file_path):
@@ -539,7 +638,7 @@ def post_excel(pdf_file: UploadFile = File(...),db: Session = Depends(get_db)):
 
         # Zapisz przesłany plik na dysku
         with open(file_path, "wb") as buffer:
-            buffer.write(pdf_file.file.read())
+            buffer.write(excel_file.file.read())
 
         return JSONResponse(status_code=200, content={"message": "File uploaded successfully", "file_path": file_path})
     except Exception as e:
@@ -571,12 +670,20 @@ def delete_excel(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 
+@app.post("/Admin/setTime/{year}:{month}:{day}:{hour}:{minute}:{second}")
+def set_time_subscribtion(year:int, month:int, day:int, hour:int, minute:int, second:int, db: Session = Depends(get_db)):
+    data=f"{day}.{month}.{year} {hour}:{minute}:{second}"
+    CRUD.setTimeOfSubscribtion(data)
+    return {"message": f"ustawiono czas rezerwacji na {data}"}
+
+
 ########### SEKCJA STUDENT ################
 
 @app.get("/Student/Group/{id}")
 def get_student_group(id: int, db: Session = Depends(get_db)):
     """
     Returns information about a group to which student with id belong
+    id jest studenta!
     """
     # Get the student by their id
     student = CRUD.get_user_by_id(db, id)
@@ -596,19 +703,40 @@ def get_student_group(id: int, db: Session = Depends(get_db)):
 
     # Check if the project is reserved
     reservation = CRUD.get_project_reservation_by_group(db, group.groupid)
-    if reservation:
-        # Project is reserved, get contact information
-        contact_info = {
-            "company": reservation.project.companyname,
-            "contact_email": reservation.project.email,
-            "contact_phone": reservation.project.phonenumber
+    if reservation :
+        project=CRUD.get_project_by_id(db, reservation.projectid)
+        project_info = {
+            "project_id": project.projectid,
+            "project_title": project.projecttitle
         }
+        status=reservation.status
+        if status=="confirmed":
+            # Project is reserved, get contact information
+            contact_info = {
+                "company": reservation.project.companyname,
+                "contact_email": reservation.project.email,
+                "contact_phone": reservation.project.phonenumber,
+                "person": project.person
+            }
+        else:
+            contact_info = {
+                "company": reservation.project.companyname,
+                "contact_email": None,
+                "contact_phone": None,
+                "person": None
+            }
     else:
+        status="None"
+        project_info = {
+            "project_id": None,
+            "project_title": None
+        }
         # Project is not reserved, set contact information to null
         contact_info = {
             "company": None,
             "contact_email": None,
-            "contact_phone": None
+            "contact_phone": None,
+            "person": None
         }
 
     # Check if the group has a guardian
@@ -640,7 +768,9 @@ def get_student_group(id: int, db: Session = Depends(get_db)):
         "guardian_info": guardian_info,
         "members": member_details,
         "invite_code": group.invitecode,
-        "group_size": group.groupsize
+        "group_size": group.groupsize,
+        "reservation-status": status,
+        "project-info":project_info,
     }
 
 @app.put("/Student/ChangeLeader/{id}")
@@ -695,8 +825,10 @@ def enroll_student_to_project( user_id: int, project_id: int, db: Session = Depe
     try:
         # Spróbuj utworzyć rezerwację projektu
         new_reservation = CRUD.create_project_reservation(db, project, group)
-    except exceptions.ProjectNotAvailableException:
+    except exceptions.NotTimeForReservationException:
         raise HTTPException(status_code=400, detail="Project cannot be reserved at the moment")
+    except exceptions.ProjectNotAvailableException:
+        raise HTTPException(status_code=400, detail="Project is already reserved")
     except exceptions.GroupSizeNotValidForProjectException:
         raise HTTPException(status_code=400, detail="Group size doesnt meet requirements")
 
@@ -704,6 +836,9 @@ def enroll_student_to_project( user_id: int, project_id: int, db: Session = Depe
 
 @app.delete("/Student/{user_id}/QuitProject")
 def delete_reservation(user_id: int, db: Session = Depends(get_db)):
+    """
+    Rezegnacja grupy projektowej z rezerwacji projekt. Użytkownik musi byc liderem.
+    """
     user = CRUD.get_user_by_id(db, user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -724,6 +859,10 @@ def delete_reservation(user_id: int, db: Session = Depends(get_db)):
 
 @app.post("/Student/unsubscribe/{id}")
 def unsubscribe_from_group(id: int, db: Session = Depends(get_db)):
+    """
+    Opuszczenie grupy projektowej. Lider nie może opuścić grupy, chyba że jest jedynym jej członkiem.
+    W takim przypadku grupa zostanie usunięta
+    """
     # Pobierz użytkownika
     user = CRUD.get_user_by_id(db, id)
     if not user:
@@ -758,6 +897,9 @@ def unsubscribe_from_group(id: int, db: Session = Depends(get_db)):
 
 @app.post("/Student/{my_id}/unsubscribeSomeone/{someone_id}")
 def unsubscribe_from_group(my_id: int, someone_id: int,  db: Session = Depends(get_db)):
+    """
+       Usuwanie członka grupy. Tylko Lider może usunąć członka grupy.
+    """
     # Pobierz użytkownika
     user = CRUD.get_user_by_id(db, my_id)
     other_user = CRUD.get_user_by_id(db, someone_id)
@@ -791,9 +933,7 @@ def unsubscribe_from_group(my_id: int, someone_id: int,  db: Session = Depends(g
 
     # Zapisz zmiany w bazie danych
     db.commit()
-
     return {"message": "User unsubscribed from the group successfully"}
-
 
 @app.post("/Student/{user_id}/JoinGroup/{inviteCode}")
 def join_group(user_id: int, inviteCode: str, db: Session = Depends(get_db)):

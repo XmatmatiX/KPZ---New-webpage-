@@ -4,27 +4,102 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const addButton = document.getElementById("addAdmin");
     const cleanButton = document.getElementById("cleanDatabase");
+    const uploadButton = document.getElementById("uploadFiles");
+    const excelButton = document.getElementById("excelFiles");
+    const adminList = document.getElementById("adminList");
+    const deleteExcel = document.getElementById("deleteExcel");
+    const setTime = document.getElementById("setTime");
 
-    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
-    addButton.addEventListener("click", function() {
+    const errorModal = document.getElementById('errorModal');
+    const modalText = errorModal.querySelector('.textModal p');
+    const closeButton = document.querySelector('#errorModal .close');
+    const confirmButton = document.getElementById('confButton');
 
-        const emailInput = document.getElementById('newAdmin')
-        const email = emailInput.value;
+    closeButton.addEventListener('click', function() {
+        errorModal.style.display = 'none';
+    });
 
-        fetch(`http://127.0.0.1:8000/Admin/AdminCreate/${email}`, {
-            method: 'PUT'
+    confirmButton.addEventListener('click', function() {
+        errorModal.style.display = 'none';
+    });
+
+    const warningModal = document.getElementById('warningModal');
+    const modalText1 = warningModal.querySelector('.textModal p');
+    const closeButton1 = document.querySelector('#warningModal .close');
+    const confirmButton1 = document.getElementById('confButton1');
+
+    closeButton1.addEventListener('click', function() {
+        warningModal.style.display = 'none';
+        location.reload();
+    });
+
+    confirmButton1.addEventListener('click', function() {
+        warningModal.style.display = 'none';
+        location.reload();
+    });
+
+    const deleteModalExcel = document.getElementById('deleteExcelFile');
+    const closeButton2 = document.getElementById('closeButton2');
+    const confirmButton2 = document.getElementById('confirmButton2');
+    const cancelButton2 = document.getElementById('cancelButton2');
+
+    deleteExcel.addEventListener("click", function () {
+        deleteModalExcel.style.display = 'block';
+    });
+
+    closeButton2.addEventListener('click', function() {
+        deleteModalExcel.style.display = 'none';
+    });
+
+    cancelButton2.addEventListener('click', function() {
+        deleteModalExcel.style.display = 'none';
+    });
+
+    confirmButton2.addEventListener('click', function() {
+
+        fetch(`http://127.0.0.1:8000/Admin/ExcelFile`, {
+            method: 'DELETE'
         })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                if (response.ok) {
+                    warningModal.style.display = 'block';
+                    modalText1.textContent = `Plik Excel został pomyślnie usunięty`;
+                } else {
+                    console.error('Wystąpił błąd podczas próby usunięcia pliku');
                 }
-                return response.json();
             })
-            .then(data => {
-                console.log('Dodano nowego administratora:', email);
-            })
-            .catch(error => console.error('Błąd pobierania danych:', error));
+            .catch(error => {
+                errorModal.style.display = 'block';
+                modalText.textContent = `Błąd podczas usuwania pliku Excel: ${error.message}`;
+            });
+
+        deleteModalExcel.style.display = 'none';
     });
+
+    const pdfUpload = document.getElementById('pdf-upload');
+    const fileName = document.getElementById('file-name');
+    const fileLabel = document.querySelector('.file-label');
+    const removeFileButton = document.getElementById('remove-file');
+
+    fileLabel.addEventListener('click', () => {
+        pdfUpload.click();
+    });
+
+    pdfUpload.addEventListener('change', () => {
+        if (pdfUpload.files.length > 0) {
+            fileName.textContent = pdfUpload.files[0].name;
+            removeFileButton.style.display = 'inline';
+        } else {
+            fileName.textContent = 'Nie wybrano pliku';
+            removeFileButton.style.display = 'none';
+        }
+    });
+
+    removeFileButton.addEventListener('click', () => {
+        pdfUpload.value = '';
+        fileName.textContent = 'Nie wybrano pliku';
+        removeFileButton.style.display = 'none';
+    })
 
     cleanButton.addEventListener("click", function () {
 
@@ -49,17 +124,232 @@ document.addEventListener("DOMContentLoaded", function() {
             })
                 .then(response => {
                     if (response.ok) {
-
-                        console.log('Baza danych została pomyślnie wyczyszczona');
-                        location.reload()
+                        warningModal.style.display = 'block';
+                        modalText1.textContent = `Baza danych została pomyślnie wyczyszczona`;
                     } else {
                         console.error('Wystąpił błąd podczas próby wyczyszczenia bazy danych');
                     }
                 })
-                .catch(error => console.error('Błąd czyszczenia bazy danych:', error));
+                .catch(error => {
+                    errorModal.style.display = 'block';
+                    modalText.textContent = `Błąd czyszczenia bazy danych: ${error.message}`;
+                });
 
             closeModal();
         }
         cancelBtn.onclick = closeModal;
     });
+
+    excelButton.addEventListener("click", function() {
+
+        const fileInput = document.getElementById('pdf-upload');
+        const file = fileInput.files[0];
+        console.log("File")
+        console.log(file);
+
+        if (!file) {
+            errorModal.style.display = 'block';
+            modalText.textContent = `Nie wybrano pliku`;
+            return;
+        }
+
+        // Utwórz obiekt FormData
+        const formData = new FormData();
+        formData.append('pdf_file', file);
+
+        fetch(`http://127.0.0.1:8000/Admin/ExcelFile`, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json().then(data => {
+                        errorModal.style.display = 'block';
+                        modalText.textContent = `Prawidłowo załadowano plik Excel`;
+                    });
+                } else {
+                    return response.json().then(data => {
+                        let errorMsg = data.detail || 'Wystąpił błąd podczas próby załadowania pliku';
+                        if(data.error == "409: File already exists. If you want to replace it, please delete and upload a new one.") {
+                            errorMsg = "409: Plik został już załadowany. Jeżeli chcesz go zmienić, musisz najpierw usunąć aktualny plik"
+                        }
+                        else if (data.error) {
+                            errorMsg = data.error;
+                        }
+
+                        errorModal.style.display = 'block';
+                        modalText.textContent = `${errorMsg}`;
+                    });
+                }
+            })
+            .catch(error => {
+                errorModal.style.display = 'block';
+                modalText.textContent = `Błąd podczas ładowania pliku: ${error.message}`;
+            });
+
+    });
+
+    deleteExcel.addEventListener("click", function() {
+
+    });
+
+    uploadButton.addEventListener("click", function() {
+
+        fetch(`http://127.0.0.1:8000/Admin/UploadProjects`, {
+            method: 'POST'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                errorModal.style.display = 'block';
+                modalText.textContent = `Prawidłowo załadowano plik`;
+            })
+            .catch(error => {
+                errorModal.style.display = 'block';
+                modalText.textContent = `Błąd podczas ładowania pliku: ${error.message}`;
+            });
+
+    });
+
+    setTime.addEventListener("click", function() {
+
+        const dateTime = document.getElementById('datetime').value;
+
+        if (dateTime) {
+            const date = new Date(dateTime);
+
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // miesiące są 0-indeksowane
+            const day = String(date.getDate()).padStart(2, '0');
+            const hour = String(date.getHours()).padStart(2, '0');
+            const minute = String(date.getMinutes()).padStart(2, '0');
+            const second = String(date.getSeconds()).padStart(2, '0');
+
+            fetch(`http://127.0.0.1:8000/Admin/setTime/${year}:${month}:${day}:${hour}:${minute}:${second}`, {
+                method: 'POST', // lub 'GET', zależnie od API
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ dateTime: dateTime })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    errorModal.style.display = 'block';
+                    modalText.textContent = `Ustawiono datę na: ${date}`;
+                })
+                .catch((error) => {
+                    errorModal.style.display = 'block';
+                    modalText.textContent = `Wystąpił błąd: ${error}`;
+                });
+        } else {
+            errorModal.style.display = 'block';
+            modalText.textContent = `Proszę wybrać datę`;
+        }
+    });
+
+    addButton.addEventListener("click", function() {
+
+        const emailInput = document.getElementById('newAdmin')
+        const email = emailInput.value;
+
+        fetch(`http://127.0.0.1:8000/Admin/AdminCreate/${email}`, {
+            method: 'PUT'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                warningModal.style.display = 'block';
+                modalText1.textContent = `Dodano nowego administratora: ${email}`;
+                //console.log('Dodano nowego administratora:', email);
+            })
+            .catch(error => {
+                errorModal.style.display = 'block';
+                modalText.textContent = `Błąd podczas dodawania administratora: ${error.message}`;
+            });
+
+            //location.reload()
+    });
+
+    // AdminList
+
+    fetch(`http://127.0.0.1:8000/Admin/AdminList`)
+        .then(response => response.json())
+        .then(data => {
+
+            const emails = data['email'];
+            const ids = data['ids'];
+            const names = data['names'];
+            const surnames = data['surnames'];
+
+            for(let i=0; i<emails.length; i++) {
+
+                const adminItem = document.createElement('div');
+                adminItem.classList.add('adminItem');
+
+                const fullName = `${names[i]} ${surnames[i]}`;
+
+                adminItem.innerHTML = `
+                     <p>${emails[i]}</p>
+                     <p>${fullName}</p>
+                     <button class="searchButton deleteButton">Usuń</button>
+                `;
+
+                // Dodanie nasłuchiwania zdarzenia kliknięcia do przycisku "Usuń"
+                const deleteButton = adminItem.querySelector('.deleteButton');
+                deleteButton.addEventListener('click', function() {
+                    const modal = document.getElementById('deleteAdmin');
+
+                    // elementy do zamykania modalu
+                    //const span = document.getElementsByClassName("close2")[0];
+                    const span = document.getElementById("closeButton");
+                    const confirmBtn = document.getElementById("confirmButton");
+                    const cancelBtn = document.getElementById("cancelButton");
+
+                    function closeModal() {
+                        modal.style.display = "none";
+                    }
+
+                    // Przypisanie obsługi zdarzeń do przycisków
+                    modal.style.display = "block";
+                    span.onclick = closeModal;
+                    confirmBtn.onclick = function() {
+
+                        fetch(`http://127.0.0.1:8000/Admin/AdminDelete/${ids[i]}`, {
+                            method: 'PUT'
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    // Powiadomienie zostało pomyślnie usunięte, możesz wykonać odpowiednie akcje, np. odświeżyć listę powiadomień
+                                    warningModal.style.display = 'block';
+                                    modalText1.textContent = `Administrator został prawidłowo usunięty`;
+
+                                } else {
+                                    console.error('Wystąpił błąd podczas usuwania administratora');
+                                }
+                            })
+                            .catch(error => {
+                                errorModal.style.display = 'block';
+                                modalText.textContent = `Błąd podczas usuwania administratora: ${error.message}`;
+                            });
+
+                        closeModal();
+
+                    }
+                    cancelBtn.onclick = closeModal; // Zamknij modal po anulowaniu
+                });
+
+                adminList.appendChild(adminItem);
+
+            }
+
+        })
+        .catch(error => console.error('Błąd pobierania danych projektu:', error));
 });

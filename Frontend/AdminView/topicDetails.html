@@ -34,19 +34,57 @@
     </div>
     <div class="page">
 
-    <div id="topicHeader" class="topicDetailsHeader">
-    </div>
-
-    <section id="topicSection" class="topicSection">
-        <div id="contactDetails" class="contactSection">
-            <div id="email" class="contactDetails"></div>
-            <div id="phone" class="contactDetails"></div>
+        <div id="topicHeader" class="AdmintopicDetailsHeader">
         </div>
 
-        <div id="topicDetails" class="topicDetails">
+        <section id="topicSection" class="topicSection">
+            <div id="contactDetails" class="contactSection">
+                <div id="person" class="contactDetails"></div>
+                <div id="email" class="contactDetails"></div>
+                <div id="phone" class="contactDetails"></div>
+            </div>
+
+            <div id="topicDetails" class="topicDetails">
+            </div>
+
+        </section>
+
+        <div id="deleteAdmin" class="deleteModal">
+            <div class="modal-content">
+                <span id="closeButton" class="close">&times;</span>
+                <div class="textModal">
+                    <p>Czy na pewno chcesz usunąć wybrany temat?</p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confirmButton">Potwierdź</button>
+                    <button id="cancelButton">Anuluj</button>
+                </div>
+            </div>
         </div>
 
-    </section>
+        <div id="warningModal" class="deleteModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="textModal">
+                    <p></p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confButton1">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="errorModal" class="deleteModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="textModal">
+                    <p></p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confButton">Potwierdź</button>
+                </div>
+            </div>
+        </div>
 
     </div>
 </section>

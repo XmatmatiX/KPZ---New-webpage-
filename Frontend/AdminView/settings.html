@@ -34,9 +34,49 @@
     </div>
     <div class="page">
 
+        <h1>Załadowanie pliku Excel</h1>
+        <article>
+            <p class="pp">Dodawanie pliku excel z Google Forms</p>
+            <p class="pp">Plik musi byc nazwany KPZ_FORMS.xlsx!!!!</p>
+        </article>
+        <div class="uploadFiles">
+            <div class="file-input-container">
+                <label class="file-label">WYBIERZ</label>
+                <input type="file" id="pdf-upload" style="display: none;">
+                <span class="file-name" id="file-name">Nie wybrano pliku</span>
+                <button class="file-remove" id="remove-file" style="display: none;">
+                    <img src="../Images/blackTrash.png">
+                </button>
+            </div>
+            <button id="excelFiles" class="fileButton">Załaduj EXCEL</button>
+        </div>
+
+        <h1>Usunięcie załadowanego pliku Excel</h1>
+        <article>
+            <p class="pp">Usuwanie pliku</p>
+        </article>
+        <button id="deleteExcel" class="excelButton">Usuń plik EXCEL</button>
+
+        <h1>Załadowanie tematów projektowych</h1>
+        <article>
+            <p class="pp">Załadowanie tematów z arkusza kalkulacyjnego</p>
+            <p class="pp"></p>
+        </article>
+        <button id="uploadFiles" class="excelButton">Załaduj tematy</button>
+
+        <h1>Data zapisów</h1>
+        <article>
+            <p class="pp">Ustawienie dokładnej daty rozpoczęcia zapisów</p>
+            <p class="pp"></p>
+        </article>
+        <div class="uploadFiles">
+            <input type="datetime-local" id="datetime" class="datetime-picker">
+            <button id="setTime" class="fileButton">Zatwierdź</button>
+        </div>
+
         <h1>Wyczyszczenie bazy danych</h1>
         <article>
-            <p class="pp">Uwaga, ta funkcja usunie wszystkie tematy projektów, które zostały zaprezentowane przez firmy w bieżącym roku akademickim. Niemniej jednak, nie wpłynie ona na żadne dane dotyczące grup lub studentów.</p>
+            <p class="pp">Uwaga, ta funkcja usunie wszystkie tematy projektów, które zostały zaprezentowane przez firmy w bieżącym roku akademickim. Ponadto doprowadzi do usunięcia wszystkich studentów oraz grup biorących udział w zapisach tego roku akademickiego. W bazie danych pozostaną tylko informacje na temat administratorów.</p>
             <p class="pp">Prosimy o zachowanie ostrożności podczas korzystania z tej funkcji, ponieważ jej wykonanie jest nieodwracalne. Po wyczyszczeniu danych, tematy projektów nie będą już dostępne w systemie, a wszelkie powiązane informacje zostaną trwale usunięte.</p>
         </article>
         <button id="cleanDatabase" class="cleanButton">Wyczyść bazę danych</button>
@@ -48,20 +88,7 @@
             <button id="addAdmin" class="adminButton">Dodaj administratora</button>
         </section>
 
-        <section class="adminList">
-
-            <div class="adminItem">
-                <p>jan.kowalski@pwr.edu.pl</p>
-                <p>Jan Kowalski</p>
-                <button class="searchButton">Usuń</button>
-            </div>
-
-            <div class="adminItem">
-                <p>kamil.nowak@pwr.edu.pl</p>
-                <p>Kamil Nowak</p>
-                <button class="searchButton">Usuń</button>
-            </div>
-        </section>
+        <section id="adminList" class="adminList"></section>
 
         <div id="cleanModal" class="deleteModal">
             <div class="modal-content">
@@ -72,6 +99,56 @@
                 <div class="buttonModal">
                     <button id="confirmBtn">Potwierdź</button>
                     <button id="cancelBtn">Anuluj</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="deleteExcelFile" class="deleteModal">
+            <div class="modal-content">
+                <span id="closeButton2" class="close">&times;</span>
+                <div class="textModal">
+                    <p>Czy na pewno chcesz usunąć aktualny plik Excel?</p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confirmButton2">Potwierdź</button>
+                    <button id="cancelButton2">Anuluj</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="deleteAdmin" class="deleteModal">
+            <div class="modal-content">
+                <span id="closeButton" class="close">&times;</span>
+                <div class="textModal">
+                    <p>Czy na pewno chcesz odebrać użytkownikowi prawa administratora?</p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confirmButton">Potwierdź</button>
+                    <button id="cancelButton">Anuluj</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="warningModal" class="deleteModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="textModal">
+                    <p></p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confButton1">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="errorModal" class="deleteModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="textModal">
+                    <p></p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confButton">Potwierdź</button>
                 </div>
             </div>
         </div>
