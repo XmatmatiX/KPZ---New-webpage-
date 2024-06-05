@@ -173,6 +173,15 @@ button:hover {
     margin: 20px 20px;
 }
 
+.dateLabel {
+    display: inline-block;
+    font-size: 20px;
+    background-color: white;
+    border-radius: var(--radius-small);
+    align-items: center;
+    padding: 5px 15px;
+}
+
 .file-input-container {
     display: flex;
     align-items: center;

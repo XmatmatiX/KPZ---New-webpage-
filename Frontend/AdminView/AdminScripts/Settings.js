@@ -8,7 +8,29 @@ document.addEventListener("DOMContentLoaded", function() {
     const excelButton = document.getElementById("excelFiles");
     const adminList = document.getElementById("adminList");
     const deleteExcel = document.getElementById("deleteExcel");
+    const enrollmentTime = document.getElementById("enrollmentTime");
     const setTime = document.getElementById("setTime");
+
+    fetch(`http://127.0.0.1:8000/TimeReservation`)
+        .then(response => response.json())
+        .then(data => {
+
+            const datetime = new Date(data['datatime']);
+            const formattedDate = datetime.toLocaleString('default', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+            });
+
+            enrollmentTime.textContent = formattedDate;
+
+        })
+        .catch(error => {
+            console.log(error);
+        });
 
     const errorModal = document.getElementById('errorModal');
     const modalText = errorModal.querySelector('.textModal p');
@@ -244,8 +266,8 @@ document.addEventListener("DOMContentLoaded", function() {
             })
                 .then(response => response.json())
                 .then(data => {
-                    errorModal.style.display = 'block';
-                    modalText.textContent = `Ustawiono datę na: ${date}`;
+                    warningModal.style.display = 'block';
+                    modalText1.textContent = `Ustawiono datę na: ${date}`;
                 })
                 .catch((error) => {
                     errorModal.style.display = 'block';

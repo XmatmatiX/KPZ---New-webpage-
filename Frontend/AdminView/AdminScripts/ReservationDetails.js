@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const themaElement = themaDetails.querySelector('.group2');
 
             themaElement.addEventListener('click', () => {
-                window.location.href = `topicDetails.html?id=${topic.projectid}`;
+                window.location.href = `topicDetails.html?id=${data.pid}`;
             });
 
             const companyDetails = document.getElementById('company')
