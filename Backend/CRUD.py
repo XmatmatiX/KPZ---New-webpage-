@@ -297,9 +297,12 @@ def get_free_students(db):
 
 
 def get_group_without_project(db):
-    users = db.query(models.ProjectGroup).filter(models.ProjectGroup.groupid == None).all()
-    users.sort(key=lambda x: x.surname)
-    return users
+    reservations=get_all_reservations(db)
+    groups = db.query(models.ProjectGroup).all()
+    for reservation in reservations:
+        group = get_group(db, reservation.groupid)
+        groups.remove(group)
+    return groups
 
 def get_all_students(db):
     return db.query(models.Users).filter(models.Users.rolename != "admin").all()
@@ -411,6 +414,25 @@ def group_search(db: Session, text: str) -> list[models.ProjectGroup] | None:
     if groups:
         groups.sort(key=lambda x: x.groupid)
     return get_groups_info(db, groups)
+
+def reservation_search(db: Session, text: str) -> list[models.ProjectReservation] | None:
+    reservations = []
+    match = []
+    array = getNumbers(text)
+    if len(array) > 0:
+        for a in array:
+            reservation = get_project_reservation_by_group(db,a)
+            match.append(reservation)
+    all_reservations = get_all_reservations(db)
+    for reservation in all_reservations:
+        project = get_project_by_id(db, reservation.projectid)
+        if text in project.companyname:
+            reservations.append(reservation)
+        if text in project.projecttitle:
+            reservations.append(reservation)
+
+    reservations = reservations+match
+    return reservations
 
 
 

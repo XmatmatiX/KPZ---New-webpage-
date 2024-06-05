@@ -334,7 +334,7 @@ def admin_reservation(project_id: int, db: Session = Depends(get_db)):
     reservation = CRUD.get_project_reservation_by_id(db, project_id)
     project = CRUD.get_project_by_id(db, reservation.projectid)
     return {"company": project.companyname,"id": project_id, "thema": project.projecttitle, "group":reservation.groupid,
-            "state": reservation.status}
+            "state": reservation.status, "pid": project.projectid}
 
 
 @app.get("/Admin/ReservationStatus/{status}")
@@ -355,6 +355,33 @@ def admin_reservation(status: str, db: Session = Depends(get_db)):
         topic.append(project.projecttitle)
         project_group.append(reservation.groupid)
         statuses.append(status)
+
+    return {"reservations_id": rid,
+    "logos": logos,
+    "company": company,
+    "topic": topic,
+    "project_group": project_group,
+    "status": statuses}
+
+
+@app.get("/Admin/ReservationSearch/{parameter}")
+def search_reservation(parameter: str, db: Session = Depends(get_db)):
+    """status to jeden z ReservationStatus"""
+    reservations = CRUD.reservation_search(db, parameter)
+    rid = []
+    logos = []
+    company = []
+    topic = []
+    project_group = []
+    statuses = []
+    for reservation in reservations:
+        rid.append(reservation.projectreservationid)
+        project = CRUD.get_project_by_id(db, reservation.projectid)
+        logos.append(project.logopath)
+        company.append(project.companyname)
+        topic.append(project.projecttitle)
+        project_group.append(reservation.groupid)
+        statuses.append(reservation.status)
 
     return {"reservations_id": rid,
     "logos": logos,
@@ -429,9 +456,9 @@ def admin_free_students(db: Session = Depends(get_db)):
         "index": student_indexes
     }
 @app.get("/Admin/GroupsWithoutProject")
-def admin_free_students(db: Session = Depends(get_db)):
+def free_groups(db: Session = Depends(get_db)):
     """
-        Zwraca wszytskich zalogowanych studentow bez grup
+        Zwraca grupy bez rezerwacji
     """
     groups = CRUD.get_group_without_project(db)
     return {"groups:": groups}
