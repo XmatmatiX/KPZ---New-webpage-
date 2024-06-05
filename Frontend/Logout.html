@@ -6,6 +6,12 @@
     <script src="keycloak_modules/keycloak-js/dist/keycloak.js"></script>
     <script>
 
+        function deleteToken()
+        {
+            sessionStorage.removeItem("JWT");
+            window.location.href="landingPage.html";
+        }
+        /*
         const keycloak = new Keycloak({
                 url: 'http://localhost:8080/',
                 realm: 'myrealm',
@@ -20,13 +26,15 @@
 
         keycloak.logout({
             redirectUri: "landingPage.html"
+
         }).catch(err => {
             console.error('Failed to logout:', err);
         });
 
+         */
     </script>
 </head>
-<body>
+<body onload="deleteToken()">
 
 </body>
 </html>

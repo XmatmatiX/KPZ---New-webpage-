@@ -359,7 +359,7 @@ def get_all_groups_info(db):
             themas.append(None)
             firms.append(None)
         else:
-            project=get_project_by_id(reservation.projectid)
+            project=get_project_by_id(db, reservation.projectid)
             themas.append(project.projecttitle)
             firms.append(project.companyname)
     return {"groupids":ids, "leaders":leaders, "groupsize":groupsizes, "guardians":guardians, "project_titles": themas, "companys":firms}

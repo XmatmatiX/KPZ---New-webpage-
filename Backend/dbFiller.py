@@ -3,6 +3,7 @@ from Backend import schemas
 from Backend.database import SessionLocal
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import psycopg2
 
 SQLALCHEMY_DATABASE_URL = "postgresql://postgres:mysecretpassword@localhost:5432/postgres"
 
