@@ -395,7 +395,8 @@ def group_search(db: Session, text: str) -> list[models.ProjectGroup] | None:
     array = getNumbers(text)
     if len(array) > 0:
         for a in array:
-            match.append(get_group(db, a))
+            if get_group(db, a):
+                match.append(get_group(db, a))
     all_groups = db.query(models.ProjectGroup).all()
     for group in all_groups:
         if has_group_reservation(db, group.groupid):
@@ -407,7 +408,8 @@ def group_search(db: Session, text: str) -> list[models.ProjectGroup] | None:
                 groups.append(group)
 
     groups = groups+match
-    groups.sort(key=lambda x: x.groupid)
+    if groups:
+        groups.sort(key=lambda x: x.groupid)
     return get_groups_info(db, groups)
 
 
@@ -439,27 +441,6 @@ def get_groups_info(db:Session, groups: list[models.ProjectGroup]):
 def get_all_groups_info(db:Session):
     groups = db.query(models.ProjectGroup).all()
     return get_groups_info(db,groups)
-    """ids = []
-    leaders = []
-    groupsizes = []
-    guardians = []
-    themas = []
-    firms = []
-    for group in groups:
-        ids.append(group.groupid)
-        leaders.append(get_group_leader(db, group.groupid))
-        groupsizes.append(group.groupsize)
-        guardians.append(group.guardianid)
-        reservation = get_project_reservation_by_group(db, group.groupid)
-        if reservation is None:
-            themas.append(None)
-            firms.append(None)
-        else:
-            project = get_project_by_id(db, reservation.projectid)
-            themas.append(project.projecttitle)
-            firms.append(project.companyname)
-    return {"groupids": ids, "leaders": leaders, "groupsize": groupsizes, "guardians": guardians,
-            "project_titles": themas, "companys": firms}"""
 
 
 def get_group_leader(db: Session, groupid: int) -> models.Users | None:
@@ -476,6 +457,10 @@ def get_guardian(db: Session, id: int) -> models.Guardian | None:
 
 def get_guardian_byEmail(db: Session, email: str) -> models.Guardian | None:
     return db.query(models.Guardian).filter(models.Guardian.email == email).first()
+
+def get_project_reservations_by_status(db:Session, status:str) -> list[models.ProjectReservation] | None:
+    return db.query(models.ProjectReservation).filter(models.ProjectReservation.status == status).all()
+
 
 
 """
@@ -616,12 +601,20 @@ def update_project_reservation_files(db: Session, reservation: schemas.ProjectRe
 
     UWAGA DO SERWERA: czy argumnent path jest konieczny, czy ma byc po prostu grupa z rezerwacji
     """
-    reservation.confirmationpath = path
-    reservation.status = "waiting"
-    db.commit()
-    db.refresh(reservation)
-    create_action_history(db, reservation.groupid,
-                          contentA=f"Dodano pliki. Znajduja sie w lokalizacji {reservation.confirmationpath}")
+    if path:
+        reservation.confirmationpath = path
+        reservation.status = "waiting"
+        db.commit()
+        db.refresh(reservation)
+        create_action_history(db, reservation.groupid,
+                              contentA=f"Dodano pliki. Znajduja sie w lokalizacji {reservation.confirmationpath}")
+    else:
+        reservation.confirmationpath = path
+        reservation.status = "reserved"
+        db.commit()
+        db.refresh(reservation)
+        create_action_history(db, reservation.groupid,
+                              contentA="Plik potwierdzenia zostal usuniety")
     return reservation
 
 

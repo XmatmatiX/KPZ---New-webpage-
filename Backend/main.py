@@ -33,6 +33,16 @@ class ProjectStatus(str, Enum):
     available = "available"
     reserved = "reserved"
 
+"""
+Statusy rezerwacji: "reserved"  -zarezerwowano
+ "waiting" - wyslano pliki
+"confirmed" - potwierdzono
+"""
+class ReservationStatus(str, Enum):
+    reserved = "reserved"
+    waiting = "waiting"
+    confirmed = "confirmed"
+
 
 app = FastAPI()
 
@@ -206,6 +216,30 @@ def project_list(db: Session = Depends(get_db)):
             "maxsizes": maxsizes, "status": stats}
 
 
+@app.get("/ProjectListFree")
+def project_list( db: Session = Depends(get_db)):
+    projects = CRUD.get_all_projects(db)
+    logos = []
+    companynames = []
+    titles = []
+    pid = []
+    minsizes = []
+    maxsizes = []
+    stats = []
+    for project in projects:
+        n = CRUD.number_project_reserved(db, project.projectid)
+        for i in range(project.groupnumber):
+            if i >=n:
+                logos.append(project.logopath)
+                companynames.append(project.companyname)
+                titles.append(project.projecttitle)
+                pid.append(project.projectid)
+                minsizes.append(project.mingroupsize)
+                maxsizes.append(project.maxgroupsize)
+                stats.append(ProjectStatus.available)
+    return {"logos": logos, "companynames": companynames, "titles": titles, "projecstid": pid, "minsizes": minsizes,
+            "maxsizes": maxsizes, "status": stats}
+
 @app.get("/Project/{id}")
 def project_detail(id: int, db: Session = Depends(get_db)):
     project = CRUD.get_project_by_id(db, id)
@@ -301,6 +335,33 @@ def admin_reservation(project_id: int, db: Session = Depends(get_db)):
     project = CRUD.get_project_by_id(db, reservation.projectid)
     return {"company": project.companyname,"id": project_id, "thema": project.projecttitle, "group":reservation.groupid,
             "state": reservation.status}
+
+
+@app.get("/Admin/ReservationStatus/{status}")
+def admin_reservation(status: str, db: Session = Depends(get_db)):
+    """status to jeden z ReservationStatus"""
+    reservations = CRUD.get_project_reservations_by_status(db, status)
+    rid = []
+    logos = []
+    company = []
+    topic = []
+    project_group = []
+    statuses = []
+    for reservation in reservations:
+        rid.append(reservation.projectreservationid)
+        project = CRUD.get_project_by_id(db, reservation.projectid)
+        logos.append(project.logopath)
+        company.append(project.companyname)
+        topic.append(project.projecttitle)
+        project_group.append(reservation.groupid)
+        statuses.append(status)
+
+    return {"reservations_id": rid,
+    "logos": logos,
+    "company": company,
+    "topic": topic,
+    "project_group": project_group,
+    "status": statuses}
 
 @app.get("/Admin/Group/{id}")
 def admin_group(id: int, db: Session = Depends(get_db)):
@@ -1079,7 +1140,7 @@ def post_pdf_file(user_id: int,pdf_file: UploadFile = File(...),db:Session =Depe
         with open(file_path, "wb") as buffer:
             buffer.write(pdf_file.file.read())
 
-        CRUD.create_action_history(db, groupID,"File uploaded successfully")
+        CRUD.update_project_reservation_files(db, reservation,file_path)
         return JSONResponse(status_code=200, content={"message": "File uploaded successfully", "file_path": file_path})
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "An error occurred", "error": str(e)})
@@ -1117,7 +1178,9 @@ def delete_pdf_file(user_id: int, db: Session = Depends(get_db)):
         # Usuń pusty katalog
         os.rmdir(directory_path)
 
-        CRUD.create_action_history(db, groupID,"File deleted successfully")
+        reservation = CRUD.get_project_reservation_by_group(db, groupID)
+
+        CRUD.update_project_reservation_files(db, reservation, None)
         return {"message": f"All files in directory {user.groupid} deleted successfully"}
 
     except Exception as e:
