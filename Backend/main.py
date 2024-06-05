@@ -367,6 +367,13 @@ def admin_free_students(db: Session = Depends(get_db)):
         "surname": student_surnames,
         "index": student_indexes
     }
+@app.get("/Admin/GroupsWithoutProject")
+def admin_free_students(db: Session = Depends(get_db)):
+    """
+        Zwraca wszytskich zalogowanych studentow bez grup
+    """
+    groups = CRUD.get_group_without_project(db)
+    return {"groups:": groups}
 
 @app.post("/Admin/SearchStudent/{parameter}")
 def search_students(parameter: str, db: Session = Depends(get_db)):
@@ -563,7 +570,12 @@ def delete_database(db: Session = Depends(get_db)):
 
 @app.put("/Admin/AdminDelete/{id}")
 def delete_admin(id: int,db: Session= Depends(get_db)):
+    """
+    Nie mozna usunac konta kpz@pwr.edu.pl !! -> Superadmin
+    """
     admin = CRUD.get_user_by_id(db, id)
+    if admin.email == "kpz@pwr.edu.pl":
+        return {"message": "You can't "}
     if admin is None:
         return {"message": "Such admin didn't exist"}
     CRUD.delete_user(db, admin)

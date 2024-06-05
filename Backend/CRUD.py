@@ -296,6 +296,11 @@ def get_free_students(db):
     return users
 
 
+def get_group_without_project(db):
+    users = db.query(models.ProjectGroup).filter(models.ProjectGroup.groupid == None).all()
+    users.sort(key=lambda x: x.surname)
+    return users
+
 def get_all_students(db):
     return db.query(models.Users).filter(models.Users.rolename != "admin").all()
 
@@ -396,6 +401,8 @@ def group_search(db: Session, text: str) -> list[models.ProjectGroup] | None:
         if has_group_reservation(db, group.groupid):
             reservation = get_project_reservation_by_group(db, group.groupid)
             project = get_project_by_id(db, reservation.projectid)
+            if text in project.companyname:
+                groups.append(group)
             if text in project.projecttitle:
                 groups.append(group)
 
