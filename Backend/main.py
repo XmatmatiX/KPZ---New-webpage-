@@ -294,6 +294,8 @@ def admin_reservation(db: Session = Depends(get_db)):
 def admin_reservation(project_id: int, db: Session = Depends(get_db)):
     """
             Zwraca dane o danej rezerwacji
+            UWAGA: id jest rezerwacji a nie projektu
+            id jest rezerwacji a nie projektu!!
     """
     reservation = CRUD.get_project_reservation_by_id(db, project_id)
     project = CRUD.get_project_by_id(db, reservation.projectid)
@@ -315,12 +317,14 @@ def admin_group(id: int, db: Session = Depends(get_db)):
         thema=project.projecttitle
         company= project.companyname
         status=reservation.status
+        path=reservation.confirmationpath
     else:
         thema=None
         company=None
         status=None
+        path=None
     return {"id": id, "members": members, "thema": thema, "company": company,
-            "state": status, "guardian": group.guardianid}
+            "state": status, "guardian": group.guardianid, "confirmation-path": path}
 
 @app.get("/Admin/Groups")
 def admin_groups(db: Session = Depends(get_db)):
@@ -329,6 +333,12 @@ def admin_groups(db: Session = Depends(get_db)):
     """
     groups = CRUD.get_all_groups_info(db)
     return {"groups:": groups}
+
+@app.post("/Admin/SearchGroup/{parameter}")
+def search_groups(parameter: str, db: Session = Depends(get_db)):
+    groups = CRUD.group_search(db, parameter)
+    return {"groups:": groups}
+
 
 @app.get("/Admin/FreeStudents")
 def admin_free_students(db: Session = Depends(get_db)):
@@ -469,10 +479,7 @@ def post_sign_to_group(user_id:int, groupId:int,db:Session=Depends(get_db)):
         raise HTTPException(status_code=404, detail="???")
 
 @app.post("/Admin/AddProject")
-def post_add_project(
-        project:schemas.ProjectCreate,
-        groupID: int =None,
-        db: Session = Depends(get_db)):
+def post_add_project(project: schemas.ProjectCreate, groupID: int =None, db: Session = Depends(get_db)):
     """
     Dodawanie nowego projektu przez admina
     z dodatkowa opcja przypisania do grupy

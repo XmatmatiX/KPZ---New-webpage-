@@ -261,7 +261,6 @@ def get_user_by_something(db: Session, text: str) -> list[models.Users] | None:
     array = getNumbers(text)
     if len(array) > 0:
         for a in array:
-            print(a)
             group = get_group(db, a)
             if group:
                 memb = get_group_members(db, a)
@@ -360,6 +359,7 @@ def get_all_history(db: Session):
 
 def histories_whole_info(db: Session):
     histories = get_all_history(db)
+    histories = sorted(histories, key=lambda x: x.datatime, reverse=True)
     complexHistory = []
     for history in histories:
         project = get_project_reservation_by_group(db, history.groupid)
@@ -384,8 +384,29 @@ def get_group_members(db: Session, groupid: int) -> list[models.Users] | None:
     return db.query(models.Users).filter(models.Users.groupid == groupid).all()
 
 
-def get_all_groups_info(db):
-    groups = db.query(models.ProjectGroup).all()
+def group_search(db: Session, text: str) -> list[models.ProjectGroup] | None:
+    groups = []
+    match = []
+    array = getNumbers(text)
+    if len(array) > 0:
+        for a in array:
+            match.append(get_group(db, a))
+    all_groups = db.query(models.ProjectGroup).all()
+    for group in all_groups:
+        if has_group_reservation(db, group.groupid):
+            reservation = get_project_reservation_by_group(db, group.groupid)
+            project = get_project_by_id(db, reservation.projectid)
+            if text in project.projecttitle:
+                groups.append(group)
+
+    groups = groups+match
+    groups.sort(key=lambda x: x.groupid)
+    return get_groups_info(db, groups)
+
+
+
+
+def get_groups_info(db:Session, groups: list[models.ProjectGroup]):
     ids = []
     leaders = []
     groupsizes = []
@@ -407,6 +428,31 @@ def get_all_groups_info(db):
             firms.append(project.companyname)
     return {"groupids": ids, "leaders": leaders, "groupsize": groupsizes, "guardians": guardians,
             "project_titles": themas, "companys": firms}
+
+def get_all_groups_info(db:Session):
+    groups = db.query(models.ProjectGroup).all()
+    return get_groups_info(db,groups)
+    """ids = []
+    leaders = []
+    groupsizes = []
+    guardians = []
+    themas = []
+    firms = []
+    for group in groups:
+        ids.append(group.groupid)
+        leaders.append(get_group_leader(db, group.groupid))
+        groupsizes.append(group.groupsize)
+        guardians.append(group.guardianid)
+        reservation = get_project_reservation_by_group(db, group.groupid)
+        if reservation is None:
+            themas.append(None)
+            firms.append(None)
+        else:
+            project = get_project_by_id(db, reservation.projectid)
+            themas.append(project.projecttitle)
+            firms.append(project.companyname)
+    return {"groupids": ids, "leaders": leaders, "groupsize": groupsizes, "guardians": guardians,
+            "project_titles": themas, "companys": firms}"""
 
 
 def get_group_leader(db: Session, groupid: int) -> models.Users | None:
