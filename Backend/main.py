@@ -3,7 +3,10 @@ from __future__ import annotations
 from enum import Enum
 
 from sqlalchemy.orm import Session
-from fastapi import Depends, FastAPI, HTTPException, status, Security, UploadFile, File
+from fastapi import FastAPI, Request
+from fastapi import Depends, HTTPException, status, Security, UploadFile, File
+
+from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 # from magic import Magic
 import os
@@ -12,6 +15,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, Se
 # from passlib.context import CryptContext
 #from pydantic import parse_obj_as, ValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import RedirectResponse
 
 import models, schemas, CRUD, exceptions
 from database import SessionLocal, engine
@@ -34,7 +38,15 @@ class ProjectStatus(str, Enum):
     reserved = "reserved"
 
 
-app = FastAPI()
+app = FastAPI(
+    servers=[
+        {"url": "https://projekty.kpz.pwr.edu.pl", "description": "KPZ APP by name "},
+        {"url": "http://156.17.197.70", "description": "KPZ APP by IP"},
+
+    ],
+    root_path="/api/v1",
+)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -44,6 +56,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# proxy_prefix = "/api/v1"
+# proxy_url = "http://0.0.0.0:9999" + proxy_prefix
 
 # Dependency
 def get_db():
@@ -1184,8 +1198,11 @@ def get_pdf_file(user_id: int, db: Session = Depends(get_db)):
 #         "groups": groups,
 #     }
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+# @app.get("/")
+# def read_root():
+#     return {"Hello": "World"}
 
 
+@app.get("/app")
+def read_main(request: Request):
+    return {"message": "Hello World", "root_path": request.scope.get("root_path")}
