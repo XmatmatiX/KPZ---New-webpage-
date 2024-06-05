@@ -1118,18 +1118,37 @@ article {
     margin-right: 8px;
 }
 
+.checkboxes {
+    display: flex;
+    justify-content: space-between;
+    margin-left: auto;
+}
+
 .freeBorder2 {
     background-color: var(--primary-light);
     width: 170px;
     height: 40px;
-    margin-right: 0px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    margin-left: auto;
+    margin: 20px 0px 20px auto;
     padding: 10px;
     display: flex;
     align-items: center;
     font-weight: normal;
+}
+
+.freeBorder3 {
+    background-color: var(--primary-light);
+    width: 170px;
+    height: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    font-weight: normal;
+}
+
+.freeBorder3:not(:last-child) {
+    margin-right: 40px;
 }
 
 .topicSection {

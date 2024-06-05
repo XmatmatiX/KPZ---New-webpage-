@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         return 'Zajęty';
                     case 'confirmed':
                         return 'Zatwierdzony';
+                    case 'waiting':
+                        return 'Oczekujący na zatwierdzenie';
                     default:
                         return 'Nieznany';
                 }

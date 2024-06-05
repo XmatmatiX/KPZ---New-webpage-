@@ -8,13 +8,6 @@ function addButtonListener(studentItem, userId) {
     });
 }
 
-function updateGroupSize(groupId) {
-    const groupSizeElement = document.querySelector(`#groupSize_${groupId}`);
-    const currentGroupSize = parseInt(groupSizeElement.textContent);
-    const updatedGroupSize = currentGroupSize + 1; // Dodaj 1
-    groupSizeElement.textContent = updatedGroupSize.toString();
-}
-
 function displayGroups(userID) {
 
     const groupList = document.getElementById('groupList');
@@ -134,7 +127,8 @@ function allStudents(students) {
                 const studentItem = document.createElement('div');
                 studentItem.classList.add('studentItem');
 
-                const groupContent = groups[i] !== null ? groups[i] : `<button class="groupButton">Przypisz grupę</button>`;
+                // const groupContent = groups[i] !== null ? groups[i] : `<button class="groupButton">Przypisz grupę</button>`;
+                const groupContent = groups[i] !== null ? groups[i] : `BRAK`;
 
                 // Utworzenie HTML dla pojedynczego projektu
                 studentItem.innerHTML = `
@@ -150,11 +144,11 @@ function allStudents(students) {
                 //     window.location.href = `reservationDetails.html?id=${projecstid[i]}`;
                 // });
 
-                const groupButton = studentItem.querySelector('.groupButton');
-                if (groupButton) {
-                    // Dodanie nasłuchiwania zdarzenia kliknięcia tylko gdy istnieje element .groupButton
-                    addButtonListener(studentItem, ids[i]);
-                }
+                // const groupButton = studentItem.querySelector('.groupButton');
+                // if (groupButton) {
+                //     // Dodanie nasłuchiwania zdarzenia kliknięcia tylko gdy istnieje element .groupButton
+                //     addButtonListener(studentItem, ids[i]);
+                // }
                 students.appendChild(studentItem);
             }
 
@@ -193,10 +187,11 @@ function freeStudents(students) {
                     <p>${student.email}</p>
                     <p>${student.name}</p>
                     <p>${student.surname}</p>
-                    <button class="groupButton">Przypisz grupę</button>
+<!--                    <button class="groupButton">Przypisz grupę</button>-->
+                    <p>BRAK</p>
                 `;
 
-                addButtonListener(studentItem, student.userid);
+                //addButtonListener(studentItem, student.userid);
                 students.appendChild(studentItem);
 
             });
@@ -230,7 +225,8 @@ function displaySearchedStudents(students, searchData) {
         const studentItem = document.createElement('div');
         studentItem.classList.add('studentItem');
 
-        const groupContent = groups[i] !== null ? groups[i] : `<button class="groupButton">Przypisz grupę</button>`;
+        // const groupContent = groups[i] !== null ? groups[i] : `<button class="groupButton">Przypisz grupę</button>`;
+        const groupContent = groups[i] !== null ? groups[i] : `BRAK`;
 
         // Utworzenie HTML dla pojedynczego projektu
         studentItem.innerHTML = `
@@ -240,11 +236,11 @@ function displaySearchedStudents(students, searchData) {
             <p>${groupContent}</p>
         `;
 
-        const groupButton = studentItem.querySelector('.groupButton');
-        if (groupButton) {
-            // Dodanie nasłuchiwania zdarzenia kliknięcia tylko gdy istnieje element .groupButton
-            addButtonListener(studentItem, ids[i]);
-        }
+        // const groupButton = studentItem.querySelector('.groupButton');
+        // if (groupButton) {
+        //     // Dodanie nasłuchiwania zdarzenia kliknięcia tylko gdy istnieje element .groupButton
+        //     addButtonListener(studentItem, ids[i]);
+        // }
         students.appendChild(studentItem);
     }
 }
