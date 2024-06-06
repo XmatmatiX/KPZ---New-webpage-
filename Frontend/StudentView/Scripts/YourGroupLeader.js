@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const surname = document.getElementById('nazwisko').value;
         const email = document.getElementById('email').value;
 
-        fetch(`http://127.0.0.1:8000/Student/${userId}/Group/GuardianChange/${name}/${surname}/${email}`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${userId}/Group/GuardianChange/${name}/${surname}/${email}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
         function fetchGroupDetails(groupId) {
-        fetch(`http://127.0.0.1:8000/Student/Group/${groupId}`)
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group/${groupId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
          for (let i = 0; i < files.length; i++) {
         formData.append('files[]', files[i]);
         }
-         fetch(`http://127.0.0.1:8000/Student/${userId}/PDF_file`, {
+         fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${userId}/PDF_file`, {
                 method: 'POST',
                 body: formData
             })
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/Student/${userId}/PDF_file`, {
+            const response = await fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${userId}/PDF_file`, {
                 method: 'DELETE'
             });
 
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to get the list of PDF files
     async function getPDFList() {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/Student/${userId}/PDF_file`, {
+            const response = await fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${userId}/PDF_file`, {
                 method: 'GET'
             });
 

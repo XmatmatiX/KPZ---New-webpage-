@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     function fetchGroupDetails(groupId) {
-        fetch(`http://127.0.0.1:8000/Student/Group/${groupId}`)
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group/${groupId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function leaveGroup() {
         const studentId = 44;
 
-        fetch(`http://127.0.0.1:8000/Student/unsubscribe/${studentId}`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/unsubscribe/${studentId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
