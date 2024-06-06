@@ -261,7 +261,6 @@ def get_user_by_something(db: Session, text: str) -> list[models.Users] | None:
     array = getNumbers(text)
     if len(array) > 0:
         for a in array:
-            print(a)
             group = get_group(db, a)
             if group:
                 memb = get_group_members(db, a)
@@ -296,6 +295,14 @@ def get_free_students(db):
     users.sort(key=lambda x: x.surname)
     return users
 
+
+def get_group_without_project(db):
+    reservations=get_all_reservations(db)
+    groups = db.query(models.ProjectGroup).all()
+    for reservation in reservations:
+        group = get_group(db, reservation.groupid)
+        groups.remove(group)
+    return get_groups_info(db,groups)
 
 def get_all_students(db):
     return db.query(models.Users).filter(models.Users.rolename != "admin").all()
@@ -360,6 +367,7 @@ def get_all_history(db: Session):
 
 def histories_whole_info(db: Session):
     histories = get_all_history(db)
+    histories = sorted(histories, key=lambda x: x.datatime, reverse=True)
     complexHistory = []
     for history in histories:
         project = get_project_reservation_by_group(db, history.groupid)
@@ -384,8 +392,52 @@ def get_group_members(db: Session, groupid: int) -> list[models.Users] | None:
     return db.query(models.Users).filter(models.Users.groupid == groupid).all()
 
 
-def get_all_groups_info(db):
-    groups = db.query(models.ProjectGroup).all()
+def group_search(db: Session, text: str) -> list[models.ProjectGroup] | None:
+    groups = []
+    match = []
+    array = getNumbers(text)
+    if len(array) > 0:
+        for a in array:
+            if get_group(db, a):
+                match.append(get_group(db, a))
+    all_groups = db.query(models.ProjectGroup).all()
+    for group in all_groups:
+        if has_group_reservation(db, group.groupid):
+            reservation = get_project_reservation_by_group(db, group.groupid)
+            project = get_project_by_id(db, reservation.projectid)
+            if text in project.companyname:
+                groups.append(group)
+            if text in project.projecttitle:
+                groups.append(group)
+
+    groups = groups+match
+    if groups:
+        groups.sort(key=lambda x: x.groupid)
+    return get_groups_info(db, groups)
+
+def reservation_search(db: Session, text: str) -> list[models.ProjectReservation] | None:
+    reservations = []
+    match = []
+    array = getNumbers(text)
+    if len(array) > 0:
+        for a in array:
+            reservation = get_project_reservation_by_group(db,a)
+            match.append(reservation)
+    all_reservations = get_all_reservations(db)
+    for reservation in all_reservations:
+        project = get_project_by_id(db, reservation.projectid)
+        if text in project.companyname:
+            reservations.append(reservation)
+        if text in project.projecttitle:
+            reservations.append(reservation)
+
+    reservations = reservations+match
+    return reservations
+
+
+
+
+def get_groups_info(db:Session, groups: list[models.ProjectGroup]):
     ids = []
     leaders = []
     groupsizes = []
@@ -408,6 +460,10 @@ def get_all_groups_info(db):
     return {"groupids": ids, "leaders": leaders, "groupsize": groupsizes, "guardians": guardians,
             "project_titles": themas, "companys": firms}
 
+def get_all_groups_info(db:Session):
+    groups = db.query(models.ProjectGroup).all()
+    return get_groups_info(db,groups)
+
 
 def get_group_leader(db: Session, groupid: int) -> models.Users | None:
     members = get_group_members(db, groupid)
@@ -423,6 +479,10 @@ def get_guardian(db: Session, id: int) -> models.Guardian | None:
 
 def get_guardian_byEmail(db: Session, email: str) -> models.Guardian | None:
     return db.query(models.Guardian).filter(models.Guardian.email == email).first()
+
+def get_project_reservations_by_status(db:Session, status:str) -> list[models.ProjectReservation] | None:
+    return db.query(models.ProjectReservation).filter(models.ProjectReservation.status == status).all()
+
 
 
 """
@@ -563,12 +623,20 @@ def update_project_reservation_files(db: Session, reservation: schemas.ProjectRe
 
     UWAGA DO SERWERA: czy argumnent path jest konieczny, czy ma byc po prostu grupa z rezerwacji
     """
-    reservation.confirmationpath = path
-    reservation.status = "waiting"
-    db.commit()
-    db.refresh(reservation)
-    create_action_history(db, reservation.groupid,
-                          contentA=f"Dodano pliki. Znajduja sie w lokalizacji {reservation.confirmationpath}")
+    if path:
+        reservation.confirmationpath = path
+        reservation.status = "waiting"
+        db.commit()
+        db.refresh(reservation)
+        create_action_history(db, reservation.groupid,
+                              contentA=f"Dodano pliki. Znajduja sie w lokalizacji {reservation.confirmationpath}")
+    else:
+        reservation.confirmationpath = path
+        reservation.status = "reserved"
+        db.commit()
+        db.refresh(reservation)
+        create_action_history(db, reservation.groupid,
+                              contentA="Plik potwierdzenia zostal usuniety")
     return reservation
 
 

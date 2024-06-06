@@ -4,18 +4,22 @@ document.addEventListener("DOMContentLoaded", function() {
     // Odczytanie ID projektu z adresu URL
     const urlParams = new URLSearchParams(window.location.search);
     const projectId = urlParams.get('id');
-    console.log("ID: ", projectId)
 
     fetch(`http://127.0.0.1:8000/Project/${projectId}`)
         .then(response => response.json())
         .then(projectData => {
 
-            console.log("Project")
-            console.log(projectData)
-
             const projectDetailsElement = document.getElementById('topicHeader');
+
+            let logoHTML = '';
+            if (projectData.logo === null) {
+                logoHTML = 'BRAK';
+            } else {
+                logoHTML = `<img class="logo" src="../../../Backend/${projectData.logo}" alt="There should be a photo">`;
+            }
+
             projectDetailsElement.innerHTML = `
-                <img class="logo" src="Images/logo.png" alt="There should be a logo here">
+                ${logoHTML}
                 <p class="companyName">${projectData.companyname}</p>
             `;
 

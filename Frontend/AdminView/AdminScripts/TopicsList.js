@@ -13,29 +13,30 @@ document.addEventListener("DOMContentLoaded", function() {
             projects.forEach(topic => {
                 const topicItem = document.createElement('div');
                 topicItem.classList.add('topicItem');
+                const logoPath = topic.logopath ? `../../../Backend/${topic.logopath}` : '';
 
                 // Ustalenie tekstu dla groupSize
                 let groupMin = topic.mingroupsize;
                 let groupMax = topic.maxgroupsize;
-                if (groupMax === groupMin)
-                {
-                    topicItem.innerHTML = `
-                        <p>${topic.logopath}</p>
-                        <p>${topic.companyname}</p>
-                        <p>${topic.projecttitle}</p>
-                        <p>${topic.maxgroupsize}</p>
-                        <p>${topic.groupnumber}</p>
-                    `;
+                let groupSizeText = topic.maxgroupsize;
+                if (topic.maxgroupsize !== topic.mingroupsize) {
+                    groupSizeText = `${topic.mingroupsize} - ${topic.maxgroupsize}`;
                 }
-                else {
-                    topicItem.innerHTML = `
-                        <p>${topic.logopath ? topic.logopath : 'Brak'}</p>
-                        <p>${topic.companyname}</p>
-                        <p>${topic.projecttitle}</p>
-                        <p>${topic.mingroupsize} - ${topic.maxgroupsize}</p>
-                        <p>${topic.groupnumber}</p>
-                    `;
+
+                let logoHTML = '';
+                if (topic.logopath === null) {
+                    logoHTML = 'BRAK';
+                } else {
+                    logoHTML = `<img class="logo" src="../../../Backend/${topic.logopath}" alt="There should be a photo">`;
                 }
+
+                topicItem.innerHTML = `
+                    ${logoHTML}
+                    <p>${topic.companyname}</p>
+                    <p>${topic.projecttitle}</p>
+                    <p>${groupSizeText}</p>
+                    <p>${topic.groupnumber}</p>
+                `;
 
                 // Dodanie nasłuchiwania zdarzenia kliknięcia na każdy element topicItemAdmin
                 topicItem.addEventListener('click', function() {
