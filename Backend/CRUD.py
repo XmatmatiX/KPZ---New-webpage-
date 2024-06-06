@@ -302,7 +302,7 @@ def get_group_without_project(db):
     for reservation in reservations:
         group = get_group(db, reservation.groupid)
         groups.remove(group)
-    return groups
+    return get_groups_info(db,groups)
 
 def get_all_students(db):
     return db.query(models.Users).filter(models.Users.rolename != "admin").all()
