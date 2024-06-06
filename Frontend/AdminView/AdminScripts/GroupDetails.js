@@ -113,14 +113,16 @@ document.addEventListener("DOMContentLoaded", function() {
             groupid.textContent = 'Grupa ' + data.id;
 
             const themaDetails = document.getElementById('thema')
+            const thema = data.thema || 'BRAK';
             themaDetails.innerHTML = `
                 <p>Temat</p>
-                <p class="group">${data.thema}</p>
+                <p class="group">${thema}</p>
             `;
             const companyDetails = document.getElementById('company')
+            const company = data.company || 'BRAK';
             companyDetails.innerHTML = `
                 <p>Firma</p>
-                <p class="group">${data.company}</p>
+                <p class="group">${company}</p>
             `;
 
             const guardianDetails = document.getElementById('guardian');
@@ -151,6 +153,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 <p>Status</p>
                 <p class="group">${translatdeStatus}</p>
             `;
+
+            const confirmationSection = document.getElementById("confirmationSection");
+            if (!data.thema) {
+                confirmationSection.style.display = 'none';
+            } else {
+                confirmationSection.style.display = 'article';
+
+                const confirmation = document.getElementById("confirmation");
+                const conf = data['confirmation-path'] || 'BRAK';
+                confirmation.textContent = `${conf}`;
+            }
 
             const students = document.getElementById('studentGroupList');
 

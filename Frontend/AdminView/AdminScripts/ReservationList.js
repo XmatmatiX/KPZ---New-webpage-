@@ -38,8 +38,15 @@ function allProjects(projects) {
 
                 const translatedStatus = translateStatus(status[i]);
 
+                let logoHTML = '';
+                if (logos[i] === null) {
+                    logoHTML = 'BRAK';
+                } else {
+                    logoHTML = `<img class="logo" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+                }
+
                 topicItem.innerHTML = `
-                    <p>${logos[i] ? logos[i] : 'Brak'}</p>
+                    ${logoHTML}
                     <p>${company[i]}</p>
                     <p>${topic[i]}</p>
                     <p>${project_group[i]}</p>
@@ -92,8 +99,15 @@ function chosenProjects(projects, state) {
 
                 const translatedStatus = translateStatus(status[i]);
 
+                let logoHTML = '';
+                if (logos[i] === null) {
+                    logoHTML = 'BRAK';
+                } else {
+                    logoHTML = `<img class="logo" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+                }
+
                 topicItem.innerHTML = `
-                    <p>${logos[i] ? logos[i] : 'Brak'}</p>
+                    ${logoHTML}
                     <p>${company[i]}</p>
                     <p>${topic[i]}</p>
                     <p>${project_group[i]}</p>

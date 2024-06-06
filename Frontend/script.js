@@ -85,9 +85,16 @@ function allProjects(topicList) {
 
                 const translatedStatus = translateStatus(status[i]);
 
+                let logoHTML = '';
+                if (logos[i] === null) {
+                    logoHTML = 'BRAK';
+                } else {
+                    logoHTML = `<img class="logo" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+                }
+
                 // Utworzenie HTML dla pojedynczego projektu
                 topicItem.innerHTML = `
-                    <p>${logos[i] ? logos[i] : 'Brak'}</p>
+                    ${logoHTML}
                     <p>${companynames[i]}</p>
                     <p>${titles[i]}</p>
                     <p>${groupSizeText}</p>
@@ -160,9 +167,16 @@ function freeProjects(topics) {
 
                 const translatedStatus = translateStatus(status[i]);
 
+                let logoHTML = '';
+                if (logos[i] === null) {
+                    logoHTML = 'BRAK';
+                } else {
+                    logoHTML = `<img class="logo" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+                }
+
                 // Utworzenie HTML dla pojedynczego projektu
                 topicItem.innerHTML = `
-                    <p>${logos[i] ? logos[i] : 'Brak'}</p>
+                    ${logoHTML}
                     <p>${companynames[i]}</p>
                     <p>${titles[i]}</p>
                     <p>${groupSizeText}</p>

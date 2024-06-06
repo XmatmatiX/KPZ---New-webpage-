@@ -173,9 +173,27 @@ button:hover {
     margin: 20px 20px;
 }
 
+.uploadFiles2 {
+    display: flex;
+    flex-direction: column;
+    /*align-items: center;*/
+    gap: 30px;
+    margin: 20px 20px;
+}
+
 .dateLabel {
     display: inline-block;
     font-size: 20px;
+    background-color: white;
+    border-radius: var(--radius-small);
+    align-items: center;
+    padding: 5px 15px;
+}
+
+.dateLabel2 {
+    margin-top: 15px;
+    display: inline-block;
+    font-size: 17px;
     background-color: white;
     border-radius: var(--radius-small);
     align-items: center;
@@ -286,7 +304,7 @@ input[type="checkbox"] {
     background-color: #bae7f3;
     padding: 10px 40px;
     display: grid;
-    grid-template-columns: 1fr 9fr 2fr;
+    grid-template-columns: 1fr 7fr 2fr 2fr;
     gap: 20px;
     align-items: center;
     height: 80px;
@@ -777,6 +795,24 @@ pre {
     height: 580px;
 }
 
+.modal-file {
+    background-color: #fefefe;
+    margin: 5% auto; /* Centralizuj modal */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 450px;
+    height: 370px;
+}
+
+.warningP {
+    display: none;
+    justify-content: center; /* Wyśrodkowanie poziome */
+    align-items: center; /* Wyśrodkowanie pionowe */
+    background-color: red;
+    padding: 10px 5px;
+    text-align: center;
+}
+
 .textModal {
     margin: 40px 0;
     text-align: center;
@@ -810,6 +846,17 @@ pre {
     height: 500px;
     background-color: var(--primary-dark);
     padding: 20px 0;
+}
+
+.fileView {
+    margin: 30px 0;
+    height: 280px;
+    background-color: var(--primary-dark);
+    padding: 20px 0;
+    display: flex;
+    justify-content: center; /* Wyśrodkowanie elementów w poziomie */
+    align-items: center; /* Wyśrodkowanie elementów w pionie */
+    flex-direction: column;
 }
 
 .groupItem {
@@ -907,7 +954,7 @@ textarea {
     border-radius: var(--radius-medium);
     border: none;
     resize: none;
-    /*font-family: var(--title-font);*/
+    font-family: var(--title-font) !important;
 }
 
 .studentInput {
