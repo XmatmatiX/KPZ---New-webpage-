@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const reservationId = urlParams.get('id');
 
-    fetch(`http://127.0.0.1:8000/Admin/Reservation/${reservationId}`)
+    fetch(`http://127.0.0.1:8000/api/Admin/Reservation/${reservationId}`)
         .then(response => response.json())
         .then(data => {
 

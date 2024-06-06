@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var confirmBtn = document.getElementById("confirmBtn");
     confirmBtn.addEventListener("click", function() {
 
-        fetch(`http://127.0.0.1:8000/Admin/Group/${groupId}/Confirm`, {
+        fetch(`http://127.0.0.1:8000/api/Admin/Group/${groupId}/Confirm`, {
             method: 'PUT'
         })
             .then(response => {
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const groupId = urlParams.get('id');
 
-    fetch(`http://127.0.0.1:8000/Admin/Group/${groupId}`)
+    fetch(`http://127.0.0.1:8000/api/Admin/Group/${groupId}`)
         .then(response => response.json())
         .then(data => {
 
@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const guardianDetails = document.getElementById('guardian');
 
             if(guardianId) {
-                fetch(`http://127.0.0.1:8000/Admin/Guardian/${guardianId}`)
+                fetch(`http://127.0.0.1:8000/api/Admin/Guardian/${guardianId}`)
                     .then(response => response.json())
                     .then(data => {
                         const guardianName = `${data.name} ${data.surname}`;

@@ -61,7 +61,7 @@ function openModal(projectID) {
         const formData = new FormData();
         formData.append('logo_file', file);
 
-        fetch(`http://127.0.0.1:8000/Admin/${projectID}/Logo`, {
+        fetch(`http://127.0.0.1:8000/api/Admin/${projectID}/Logo`, {
             method: 'PUT',
             body: formData
         })
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     confirmButton.addEventListener('click', function() {
 
-        fetch(`http://127.0.0.1:8000/Admin/DeleteProject/${projectId}`, {
+        fetch(`http://127.0.0.1:8000/api/Admin/DeleteProject/${projectId}`, {
             method: 'DELETE'
         })
             .then(response => {
@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // Pobranie szczegółów projektu za pomocą endpointu /Project/{id}
-    fetch(`http://127.0.0.1:8000/Admin/Project/${projectId}`)
+    fetch(`http://127.0.0.1:8000/api/Admin/Project/${projectId}`)
         .then(response => response.json())
         .then(projectData => {
 

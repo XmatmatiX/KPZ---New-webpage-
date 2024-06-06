@@ -54,7 +54,8 @@ app = FastAPI(
         {"url": "http://156.17.197.70", "description": "KPZ APP by IP"},
 
     ],
-    root_path="/api/v1",
+    #root_path="/api",
+    # root_path_in_servers=False,
 )
 
 

@@ -20,7 +20,7 @@ function translateStatus(status) {
 function allProjects(projects) {
 
     // Pobranie danych z endpointa GET /ProjectList
-    fetch('http://127.0.0.1:8000/Admin/Reservations')
+    fetch('http://127.0.0.1:8000/api/Admin/Reservations')
         .then(response => response.json())
         .then(data => {
 
@@ -68,7 +68,7 @@ function allProjects(projects) {
 
 function chosenProjects(projects, state) {
 
-    fetch(`http://127.0.0.1:8000/Admin/ReservationStatus/${state}`)
+    fetch(`http://127.0.0.1:8000/api/Admin/ReservationStatus/${state}`)
         .then(response => response.json())
         .then(data => {
 
