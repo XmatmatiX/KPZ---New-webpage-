@@ -2,7 +2,7 @@
 
 function allGroups(groupList) {
 
-    fetch('http://127.0.0.1:8000/api/Admin/Groups')
+    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/Groups')
         .then(response => response.json())
         .then(data => {
 
@@ -17,7 +17,7 @@ function allGroups(groupList) {
 
             const fetchGuardianPromises  = guardians.map(guardianId => {
                 if(guardianId) {
-                    return fetch(`http://127.0.0.1:8000/api/Admin/Guardian/${guardianId}`)
+                    return fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Guardian/${guardianId}`)
                         .then(response => response.json())
                         .then(data => `${data.name} ${data.surname}`)
                         .catch(error => {
@@ -66,7 +66,7 @@ function allGroups(groupList) {
 }
 function freeGroups(groupList) {
 
-    fetch('http://127.0.0.1:8000/api/Admin/GroupsWithoutProject')
+    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/GroupsWithoutProject')
         .then(response => response.json())
         .then(data => {
 
@@ -94,7 +94,7 @@ function freeGroups(groupList) {
 
             const fetchGuardianPromises  = guardians.map(guardianId => {
                 if(guardianId) {
-                    return fetch(`http://127.0.0.1:8000/api/Admin/Guardian/${guardianId}`)
+                    return fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Guardian/${guardianId}`)
                         .then(response => response.json())
                         .then(data => `${data.name} ${data.surname}`)
                         .catch(error => {
@@ -166,7 +166,7 @@ function displaySearchedGroups(group, data) {
 
     const fetchGuardianPromises  = guardians.map(guardianId => {
         if(guardianId) {
-            return fetch(`http://127.0.0.1:8000/api/Admin/Guardian/${guardianId}`)
+            return fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Guardian/${guardianId}`)
                 .then(response => response.json())
                 .then(data2 => `${data2.name} ${data2.surname}`)
                 .catch(error => {
@@ -264,7 +264,7 @@ document.addEventListener("DOMContentLoaded", function() {
             allGroups(groupList);
         }
         else {
-            fetch(`http://127.0.0.1:8000/api/Admin/SearchGroup/${group}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/SearchGroup/${group}`, {
                 method: 'POST'
             })
                 .then(response => {

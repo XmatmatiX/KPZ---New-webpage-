@@ -13,7 +13,7 @@ function displayGroups(userID) {
     const groupList = document.getElementById('groupList');
     groupList.innerHTML = '';
 
-    fetch('http://127.0.0.1:8000/api/Admin/Groups')
+    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/Groups')
         .then(response => response.json())
         .then(data => {
             const groups = data['groups:']; // Pobranie tablicy projektów
@@ -54,7 +54,7 @@ function displayGroups(userID) {
                     console.log('Wybrano user:', userID);
                     console.log('Wybrano grupę:', groupids[i]);
 
-                    fetch(`http://127.0.0.1:8000/api/Admin/SignToGroup/${userID}${groupids[i]}`, {
+                    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/SignToGroup/${userID}${groupids[i]}`, {
                         method: 'POST'
                     })
                         .then(response => {
@@ -112,7 +112,7 @@ function openModal(userID) {
 }
 
 function allStudents(students) {
-    fetch(`http://127.0.0.1:8000/api/Admin/Students`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Students`)
         .then(response => response.json())
         .then(data => {
 
@@ -157,7 +157,7 @@ function allStudents(students) {
 }
 
 function freeStudents(students) {
-    fetch(`http://127.0.0.1:8000/api/Admin/FreeStudents`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/FreeStudents`)
         .then(response => response.json())
         .then(details => {
 
@@ -298,7 +298,7 @@ document.addEventListener("DOMContentLoaded", function() {
             allStudents(students);
         }
         else {
-            fetch(`http://127.0.0.1:8000/api/Admin/SearchStudent/${student}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/SearchStudent/${student}`, {
                 method: 'POST'
             })
                 .then(response => {

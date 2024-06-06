@@ -61,7 +61,7 @@ function openModal(projectID) {
         const formData = new FormData();
         formData.append('logo_file', file);
 
-        fetch(`http://127.0.0.1:8000/api/Admin/${projectID}/Logo`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/${projectID}/Logo`, {
             method: 'PUT',
             body: formData
         })
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     confirmButton.addEventListener('click', function() {
 
-        fetch(`http://127.0.0.1:8000/api/Admin/DeleteProject/${projectId}`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/DeleteProject/${projectId}`, {
             method: 'DELETE'
         })
             .then(response => {
@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // Pobranie szczegółów projektu za pomocą endpointu /Project/{id}
-    fetch(`http://127.0.0.1:8000/api/Admin/Project/${projectId}`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Project/${projectId}`)
         .then(response => response.json())
         .then(projectData => {
 

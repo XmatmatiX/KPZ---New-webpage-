@@ -2,7 +2,7 @@
 
 document.addEventListener("DOMContentLoaded", function() {
     //Pobranie danych z endpointa GET /ProjectList
-    fetch('http://127.0.0.1:8000/api/Admin/ProjectList')
+    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/ProjectList')
         .then(response => response.json())
         .then(data => {
             const topicList = document.getElementById('topicList');
