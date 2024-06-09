@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function updateProjectDetails(data) {
-        const projectDetailsContainer = document.getElementById('project-details');
+        const projectDetailsContainer = document.getElementById('project-details-div');
         if (projectDetailsContainer) {
             projectDetailsContainer.innerHTML = `
                 <h7>Opiekun grupy</h7>
