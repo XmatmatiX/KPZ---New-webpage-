@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 document.addEventListener("DOMContentLoaded", function() {
     // Pobranie danych z endpointa GET /ProjectList
-    fetch('http://127.0.0.1:8000/ProjectList')
+    fetch('https://projekty.kpz.pwr.edu.pl/api/ProjectList')
         .then(response => response.json())
         .then(data => {
             const topicList = document.getElementById('topicList');
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const input=`http://127.0.0.1:8000/Student/${userId}/Enroll/${topicId}`;
         console.log(input);
         let status=200;
-        fetch(`http://127.0.0.1:8000/Student/${userId}/Enroll/${topicId}`,{method: 'POST'})
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${userId}/Enroll/${topicId}`,{method: 'POST'})
             .then(response => {
                 status=response.status;
                 // if (!response.ok) {

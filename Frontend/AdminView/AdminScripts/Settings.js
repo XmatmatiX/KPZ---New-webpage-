@@ -257,7 +257,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const minute = String(date.getMinutes()).padStart(2, '0');
             const second = String(date.getSeconds()).padStart(2, '0');
 
-            fetch(`https://projekty.kpz.pwr.edu.pl0/api/Admin/setTime/${year}:${month}:${day}:${hour}:${minute}:${second}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/setTime/${year}:${month}:${day}:${hour}:${minute}:${second}`, {
                 method: 'POST', // lub 'GET', zależnie od API
                 headers: {
                     'Content-Type': 'application/json'
