@@ -655,17 +655,20 @@ def update_project_reservation_isConfirmed(db: Session, reservation: schemas.Pro
     create_action_history(db, reservation.groupid, contentA=f"Zatwierdzono realizacje tematu {reservation.projectid}.")
     return reservation
 
-def update_project_logopath(db: Session, company: schemas.ProjectBase, path ):
+def update_project_logopath(db: Session, project_name: schemas.ProjectBase, path: str):
     """
     Update project logopath- action made by admin
     """
+    projects =get_project_by_company(db,project_name.companyname)
 
-    company.logopath= path
-    db.commit()
-    db.refresh(company)
-    return company
+    for project in projects:
+        project.logopath = path
+        db.commit()
+        db.refresh(project)
 
-"""
+    return projects
+
+"""stu
 Delete
 """
 
