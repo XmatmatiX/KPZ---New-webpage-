@@ -5,6 +5,12 @@ document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const projectId = urlParams.get('id');
 
+    const button = document.getElementById("backButton")
+
+    button.addEventListener("click", function() {
+        window.location.href = "landingPage.html";
+    })
+
     fetch(`http://127.0.0.1:8000/Project/${projectId}`)
         .then(response => response.json())
         .then(projectData => {

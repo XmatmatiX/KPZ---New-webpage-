@@ -102,9 +102,27 @@ button {
     transition: background-color 0.3s; /* Efekt przejścia podczas zmiany tła */
 }
 
+.mainHeader {
+    margin-top: 20px;
+}
+
 .headerButton {
     margin-left: auto;
     margin-right: 30px;
+}
+
+.formattedP {
+    display: inline-block;
+    margin-right: 20px;
+    margin-bottom: 15px;
+    font-size: 20px;
+    line-height: 1.45;
+}
+
+.backButton {
+    margin-left: 30px;
+    margin-right: auto;
+    margin-top: 15px;
 }
 
 button:hover {
@@ -683,11 +701,11 @@ pre {
     background-color: #fff;
     margin-bottom: 15px; /* Dodanie odstępu między elementami listy w pionie */
     padding: 10px;
-    height: 55px;
+    height: auto; /*55 px*/
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
     grid-template-columns: 1fr 2fr 4fr 1fr 1fr;
-    gap: 5px; /* Odstęp między elementami */
+    gap: 10px; /* Odstęp między elementami */
     justify-items: center;
     align-items: center;
 }
