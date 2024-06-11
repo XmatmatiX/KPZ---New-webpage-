@@ -270,7 +270,9 @@ def get_user_by_something(db: Session, text: str) -> list[models.Users] | None:
     match = db.query(models.Users).filter(models.Users.name.icontains(text), models.Users.rolename != "admin").all()
     match2 = db.query(models.Users).filter(models.Users.surname.icontains(text), models.Users.rolename != "admin").all()
     match3 = db.query(models.Users).filter(models.Users.email.icontains(text), models.Users.rolename != "admin").all()
-    result = match + match2 + match3 + members
+    match4 = db.query(models.Users).filter((models.Users.name+models.Users.surname).icontains(text),  models.Users.rolename != "admin").all()
+    #result = match + match2 + match3 + match4 + members
+    result = list(set(match) | set(match2) | set(match3) | set(match4) | set(members))
     result.sort(key=lambda x: x.surname)
     return result
 
@@ -410,7 +412,8 @@ def group_search(db: Session, text: str) -> list[models.ProjectGroup] | None:
             if text in project.projecttitle:
                 groups.append(group)
 
-    groups = groups+match
+    #groups = groups+match
+    groups =list( set(groups)| set(match))
     if groups:
         groups.sort(key=lambda x: x.groupid)
     return get_groups_info(db, groups)
@@ -431,7 +434,8 @@ def reservation_search(db: Session, text: str) -> list[models.ProjectReservation
         if text in project.projecttitle:
             reservations.append(reservation)
 
-    reservations = reservations+match
+    #reservations = reservations+match
+    reservations =list(set(reservations)|set(match))
     return reservations
 
 
@@ -651,17 +655,20 @@ def update_project_reservation_isConfirmed(db: Session, reservation: schemas.Pro
     create_action_history(db, reservation.groupid, contentA=f"Zatwierdzono realizacje tematu {reservation.projectid}.")
     return reservation
 
-def update_project_logopath(db: Session, company: schemas.ProjectBase, path ):
+def update_project_logopath(db: Session, project_name: schemas.ProjectBase, path: str):
     """
     Update project logopath- action made by admin
     """
+    projects =get_project_by_company(db,project_name.companyname)
 
-    company.logopath= path
-    db.commit()
-    db.refresh(company)
-    return company
+    for project in projects:
+        project.logopath = path
+        db.commit()
+        db.refresh(project)
 
-"""
+    return projects
+
+"""stu
 Delete
 """
 

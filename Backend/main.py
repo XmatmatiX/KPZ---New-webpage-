@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import Optional
 
 from sqlalchemy.orm import Session
 from fastapi import Depends, FastAPI, HTTPException, status, Security, UploadFile, File
@@ -574,7 +575,7 @@ def post_sign_to_group(user_id:int, groupId:int,db:Session=Depends(get_db)):
         raise HTTPException(status_code=404, detail="???")
 
 @app.post("/Admin/AddProject")
-def post_add_project(project: schemas.ProjectCreate, groupID: int =None, db: Session = Depends(get_db)):
+def post_add_project(project: schemas.ProjectCreate, groupID: Optional[int] = None, db: Session = Depends(get_db)):
     """
     Dodawanie nowego projektu przez admina
     z dodatkowa opcja przypisania do grupy
@@ -584,7 +585,17 @@ def post_add_project(project: schemas.ProjectCreate, groupID: int =None, db: Ses
     try:
         CRUD.create_project(db, project)
         if groupID:
-            CRUD.create_project_reservation(db,project,groupID)
+            group= CRUD.get_group(db,groupID)
+            if CRUD.has_group_reservation(db, groupID):
+                raise HTTPException(status_code=404, detail="You already have reservation!")
+            try:
+                new_reservation = CRUD.create_project_reservation(db, project, group)
+            except exceptions.NotTimeForReservationException:
+                raise HTTPException(status_code=400, detail="Project cannot be reserved at the moment")
+            except exceptions.ProjectNotAvailableException:
+                raise HTTPException(status_code=400, detail="Project is already reserved")
+            except exceptions.GroupSizeNotValidForProjectException:
+                raise HTTPException(status_code=400, detail="Group size doesnt meet requirements")
         return {"message": "Project added successfully"}
 
     except HTTPException as e:
@@ -702,7 +713,8 @@ def delete_project(id:int, db: Session = Depends(get_db)):
 def put_logo(project_id: str, logo_file:UploadFile=File(...),db: Session = Depends(get_db) ):
     """
     Dodawanie loga firmy przez podanie nazwy firmy.
-    Dodanie pliku oznacza nadpisanie poprzedniego. Sciezka pliku zapisuje sie w project.logopath
+    Dodanie pliku oznacza nadpisanie poprzedniego. Sciezka pliku zapisuje sie w project.logopath.
+    Logo zostanie ustawione do wszytskich tematow firmy
     """
     try:
         project = CRUD.get_project_by_id(db, project_id)
@@ -716,6 +728,7 @@ def put_logo(project_id: str, logo_file:UploadFile=File(...),db: Session = Depen
             os.remove(existing_logo_path)
 
         file_path = os.path.join(save_path, logo_file.filename)
+        # title= project.projecttitle
         CRUD.update_project_logopath(db,project, str(file_path))
 
         # Zapisz przesłany plik na dysku
@@ -869,6 +882,7 @@ def get_student_group(id: int, db: Session = Depends(get_db)):
         member_details.append({
             "name": member.name,
             "surname": member.surname,
+            "email":member.email,
             "role": member.rolename
         })
 

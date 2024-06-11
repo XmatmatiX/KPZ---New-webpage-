@@ -20,6 +20,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
         event.preventDefault();
 
+        const group = document.getElementById("projectgroup")
+        const groupID = group.value;
+
         const requiredFields = [
             document.getElementById('companyname'),
             document.getElementById('projecttitle'),
@@ -73,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/Admin/AddProject', {
+            const response = await fetch(`http://127.0.0.1:8000/Admin/AddProject?groupID=${groupID}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
