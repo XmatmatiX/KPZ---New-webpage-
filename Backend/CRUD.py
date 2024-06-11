@@ -53,36 +53,7 @@ def create_project_reservation(db: Session, project: models.Project,
     raise exceptions.NotTimeForReservationException
 
 
-"""def create_project_reservation(db: Session,
-                           reservation: schemas.ProjectReservationCreate) -> models.ProjectReservation | exceptions.ProjectNotAvailableException:
-"""
-#Checks if project can be reserved and if yes, checks if group's size is adecuate for this project creates new project reservation,
-#if not returns None
-#:param db: Session
-#:param reservation: schemas of reservation to be made
-#:return: return the reservation
-#:raise exceptions.ProjectNotAvailableException : if project cannot be reserved - all the group projects were taken
-"""
-if is_project_available(db, reservation.projectid):
-    db_reservation = models.ProjectReservation(projectid=reservation.projectid, groupid=reservation.groupid,
-                                               isconfirmed=False, status="reserved")
-    db.add(db_reservation)
-    db.commit()
-    db.refresh(db_reservation)
-    create_action_history_short(db, db_reservation.projectreservationid, "Zarezerwowano projekt")
-    return db_reservation
-raise exceptions.ProjectNotAvailableException"""
 
-"""
-Schemas Action Hisotry nakazuje podanie kazdorazowo czasu, ktory i tak jest przypisywany w create
-def create_action_history(db: Session, action_history: schemas.ActionHistoryCreate):
-    db_action_history = models.ActionHistory(groupid=action_history.groupid, datatime=datetime.now(),
-                                             content=action_history.content, displayed=False)
-    db.add(db_action_history)
-    db.commit()
-    db.refresh(db_action_history)
-    return db_action_history
-"""
 
 
 def create_action_history(db: Session, gid: int, contentA: str) -> models.ActionHistory:
@@ -135,7 +106,7 @@ def create_guardian(db: Session, guardian: schemas.GuardianCreate):
 def create_project(db: Session, project: schemas.ProjectCreate):
     # Walidacja pól
     if not project.companyname or not project.projecttitle or not project.email or not project.phonenumber or not project.description or project.mingroupsize is None or project.maxgroupsize is None or project.groupnumber is None or not project.englishgroup:
-        raise HTTPException(status_code=400, detail="All required fields must be filled")
+        raise HTTPException(status_code=400, detail="Wszytskie pola są wymagane")
 
     try:
         db_project = models.Project(companyname=project.companyname, projecttitle=project.projecttitle,
@@ -152,7 +123,7 @@ def create_project(db: Session, project: schemas.ProjectCreate):
         db.refresh(db_project)
         return db_project
     except IntegrityError:
-        raise HTTPException(status_code=400, detail="Integrity error occurred, project not added")
+        raise HTTPException(status_code=400, detail="Podczas dodawania tematu wystąpił błąd. Projekt nie został utworzony")
 
 
 
