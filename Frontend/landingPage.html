@@ -23,12 +23,22 @@
 <!--    <button class="headerButton">Zarejestruj się</button>-->
 </section>
 
-<div class="freeBorder">
-    <input type="checkbox" id="freeCheckbox">
-    <label for="freeCheckbox">Wolne</label>
+<div class="mainHeader">
+    <h1>Zapisy na przedmiot Projekt zespołowy</h1>
+    <article>
+        <p class="formattedP">Zapisy na projekty zaproponowane przez firmy ruszają po skompletowaniu list prowadzących kursy na 6 semestrze studiów inżynierskich. Zazwyczaj dzieje się to równolegle z uruchomieniem zapisów wydziałowych, czyli mniej więcej po połowie lutego. Wybór projektu do realizacji wymaga zgody prowadzącego (lub prowadzących jeśli członkowie zespołu są zapisani do różnych osób) którą można uzyskać mailowo. Zgłoszenie musi zawierać informację o członkach zespołu, prowadzącym i temacie, który chcecie wybrać Zgłoszenia są obsługiwane w kolejności zgłoszeń.</p>
+        <p class="formattedP">Tematy zgłaszane przez firmy mają określoną maksymalną liczbę grup (informacja wyświetlania na liście zgłoszonych tematów), które mogą dany temat realizować. Najczęściej jest to jedna grupa, ale zdarzają się wyjątki. Liczbę równoczesnych realizacji projektu określi firma zgłaszając propozycję projektu.</p>
+        <div style="display: flex; height: 40px; align-items: center">
+            <p style="display: inline-block; margin-right: 20px; font-size: 20px;">Aktualna data zapisów:</p>
+            <label id="enrollmentTime" class="dateLabel"></label>
+        </div>
+    </article>
 </div>
 
-<div class="topicHeader">LISTA TEMATÓW</div>
+<div class="freeBorder">
+    <input type="checkbox" id="freeCheckbox">
+    <label for="freeCheckbox">Dostępne</label>
+</div>
 
 <section id="topicList" class="topicList">
     <div class="borderItem">

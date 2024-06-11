@@ -1,12 +1,13 @@
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
+    // Pobierz przycisk "Wyloguj się"
+    var logoutButton = document.getElementById("logout");
 
-    var loginButton = document.getElementById("loginButton");
-
-    loginButton.addEventListener("click", function() {
-        // Przenieś użytkownika do strony loginPage.html
-        window.location.href = "loginPage.html";
+    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
+    logoutButton.addEventListener("click", function() {
+        // Przenieś użytkownika do strony landingPage.html
+        window.location.href = "../landingPage.html";
     });
 });
 
@@ -17,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
     logoutButton.addEventListener("click", function() {
         // Przenieś użytkownika do strony landingPage.html
-        window.location.href = "../Logout.html";
+        window.location.href = "../landingPage.html";
     });
 });
 
@@ -120,6 +121,7 @@ function allProjects(topicList) {
 
                 // Utworzenie HTML dla pojedynczego projektu
                 topicItem.innerHTML = `
+                    <p>${projecstid[i]}</p>
                     ${logoHTML}
                     <p>${companynames[i]}</p>
                     <p>${titles[i]}</p>
@@ -152,6 +154,7 @@ function freeProjects(topics) {
             const borderElement = document.createElement('div');
             borderElement.classList.add('borderItem');
             borderElement.innerHTML = `
+                <p>Id projektu</p>
                 <p>Logo</p>
                 <p>Firma</p>
                 <p>Temat</p>
@@ -202,6 +205,7 @@ function freeProjects(topics) {
 
                 // Utworzenie HTML dla pojedynczego projektu
                 topicItem.innerHTML = `
+                    <p>${projecstid[i]}</p>
                     ${logoHTML}
                     <p>${companynames[i]}</p>
                     <p>${titles[i]}</p>
@@ -243,6 +247,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const borderElement = document.createElement('div');
             borderElement.classList.add('borderItem');
             borderElement.innerHTML = `
+                <p>Id projektu</p>
                 <p>Logo</p>
                 <p>Firma</p>
                 <p>Temat</p>

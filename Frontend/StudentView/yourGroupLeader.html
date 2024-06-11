@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../style.css"/>
+    <link rel="stylesheet" href="style.css"/>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +17,7 @@
         <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
         <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
     </div>
-    <button class="headerButton">Przeglądaj tematy</button>
+    <button id="topicsStudent" class="headerButton">Przeglądaj tematy</button>
     <button id="logout" class="headerButton">Wyloguj się</button>
 </section>
 
@@ -25,55 +25,47 @@
     <div class="menu">
         <p>Przeglądaj</p>
         <button id="homeButton" class="menuButton"><img src="../Images/home.png" alt="There should be home photo"> Strona główna </button>
-        <button id="searchButton" class="menuButton"><img src="../Images/loupe.png" alt="There should be home photo"> Wolne grupy </button>
         <button id="groupButton" class="pageButton"><img src="../Images/people.png" alt="There should be home photo"> Twoja grupa </button>
-        <button id="enrollmentButton" class="menuButton"><img src="../Images/home.png" alt="There should be home photo"> Zapisy </button>
+        <button id="enrollmentButton" class="menuButton"><img src="../Images/signin.png" alt="There should be home photo"> Zapisy </button>
     </div>
     <div class="page">
-        <div class="container-lider">
-            <section class="group-info">
+        <section class="headerAdmin">
+            <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">
+            <button id="searchGroupButton" class="searchButton">Szukaj</button>
+        </section>
+        <div class="container-leader">
+            <div class="group-info-leader">
                 <h3>Skład grupy</h3>
-                <div class="group-members">
-                    <div class="member">
-                        <img src="../Images/Vector.jpg" alt="Avatar studenta">
-                        <p>Imię Nazwisko Indeks (lider)</p>
-                    </div>
-                    <div class="member">
-                        <img src="../Images/Vector.jpg" alt="Avatar studenta">
-                        <p>Imię Nazwisko Indeks (student2)</p>
-                    </div>
-                    <div class="member">
-                        <img src="../Images/Vector.jpg" alt="Avatar studenta">
-                        <p>Imię Nazwisko Indeks (student3)</p>
-                    </div>
-                </div>
+                  <div id="member-details" class="details-container-member2">
+                    <!-- Dynamic content will be loaded here -->
+                  </div>
                 <div class="button-container">
                     <button id="tutor">Wprowadź opiekuna</button>
                     <button id="file">Załącz pliki</button>
                     <button id="send">Wyślij do zatwierdzenia</button>
                 </div>
-                <p>Jeśli jeszcze tego nie zrobiłeś, załącz zgodę opiekuna i wszystkich Waszych prowadzących przedmiot na realizację tematu (dozwolony format to .png, .jpg, .pdf)</p>
-            </section>
+                <p>Jeśli jeszcze tego nie zrobiłeś, załącz zgodę opiekuna i wszystkich Waszych prowadzących przedmiot na realizację tematu (dozwolony format to.pdf)</p>
+            </div>
             <section class="rest-info">
                 <h3>Stan rezerwacji</h3>
-                <p><strong>Temat:</strong> Nazwa tematu (lub brak gdy jeszcze nie wybrano)</p>
-                <p><strong>Status:</strong> Bez rezerwacji/zarezerwowany/zatwierdzony</p>
-                <p><strong>Opiekun:</strong> Imię i nazwisko i mail (lub brak gdy jeszcze nie wybrano)</p>
+                <p><strong>Temat:</strong> </p>
+                <p><strong>Status:</strong> </p>
+                <p><strong>Opiekun:</strong> </p>
 
                 <h3>Kontakt z firmą</h3>
-                <p><strong>Osoba kontaktowa:</strong> imię i nazwisko</p>
-                <p><strong>Kontakt:</strong> adres e-mail</p>
+                <p><strong>Osoba kontaktowa:</strong> </p>
+                <p><strong>Kontakt:</strong> </p>
 
                 <div class="button-container">
-                    <button id="change">Zarządzaj swoim stanowiskiem w grupie</button>
+                    <button id="change">Zarządzaj stanowiskiem</button>
+                    <button id="leaveButton" class="leave-group" onclick="leaveGroup()">Opuść grupę</button>
                 </div>
             </section>
 
-
         </div>
 
-        <div id="formModal" class="modal">
-            <div class="modal-content">
+        <div id="formModal" class="modalData">
+            <div class="modal-content-data">
                 <span class="close">&times;</span>
                 <form id="opiekunForm">
                     <label for="imie">Imię:</label>
@@ -90,19 +82,22 @@
             </div>
         </div>
         <div id="fileModal" class="modalFile">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <form id="uploadForm">
-                    <input type="file" id="fileInput" multiple>
-                    <button id="deleteButton" onclick="deleteFile()">🗑️</button>
-                    <button id="button-upl" onclick="uploadFiles()">Upload</button>
-                </form>
+            <div class="modal-content-file">
+            <span class="close" onclick="closeFileModal()">&times;</span>
+            <form id="uploadForm">
+                <input type="file" id="fileInput" accept="application/pdf">
+                <button class="button-upl-file" onclick="uploadFiles()">Upload</button>
+                <button class="deleteButtonFile" onclick="deleteFile()">🗑️ Usuń plik</button>
+            </form>
+            <div id="fileList"></div>
+            <button class="button-get" onclick="getPDFList()">Pokaż listę plików</button>
             </div>
         </div>
     </div>
     </div>
 </section>
 
+<script src="Scripts/YourGroupLeader.js"></script>
 <script src="studentScript.js"></script>
 </body>
 </html>

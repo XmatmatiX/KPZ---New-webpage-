@@ -42,7 +42,7 @@
         <div class="uploadFiles">
             <div class="file-input-container">
                 <label class="file-label">WYBIERZ</label>
-                <input type="file" id="pdf-upload" accept="application/pdf" style="display: none;">
+                <input type="file" id="pdf-upload" style="display: none;">
                 <span class="file-name" id="file-name">Nie wybrano pliku</span>
                 <button class="file-remove" id="remove-file" style="display: none;">
                     <img src="../Images/blackTrash.png">
@@ -51,21 +51,45 @@
             <button id="excelFiles" class="fileButton">Załaduj EXCEL</button>
         </div>
 
+        <h1>Usunięcie załadowanego pliku Excel</h1>
+        <article>
+            <p class="pp">Usuwanie pliku</p>
+        </article>
+        <button id="deleteExcel" class="excelButton">Usuń plik EXCEL</button>
+
         <h1>Załadowanie tematów projektowych</h1>
         <article>
             <p class="pp">Załadowanie tematów z arkusza kalkulacyjnego</p>
             <p class="pp"></p>
         </article>
-        <button id="uploadFiles" class="uploadButton">Załaduj tematy</button>
+        <button id="uploadFiles" class="excelButton">Załaduj tematy</button>
+
+        <h1>Data zapisów</h1>
+        <article>
+            <div style="display: flex; height: 40px; align-items: center">
+                <p style="display: inline-block; margin-right: 20px; font-size: 20px;">Aktualna data zapisów:</p>
+                <label id="enrollmentTime" class="dateLabel"></label>
+            </div>
+            <p class="pp">Ustawienie dokładnej daty rozpoczęcia zapisów</p>
+            <p class="pp"></p>
+        </article>
+        <div class="uploadFiles">
+            <input type="datetime-local" id="datetime" class="datetime-picker">
+            <button id="setTime" class="fileButton">Zatwierdź</button>
+        </div>
 
         <h1>Wyczyszczenie bazy danych</h1>
         <article>
-            <p class="pp">Uwaga, ta funkcja usunie wszystkie tematy projektów, które zostały zaprezentowane przez firmy w bieżącym roku akademickim. Ponadto doprowadzi do usunięcia wszystkich studentów oraz grup biorących udział w zapisach tego roku akademickiego. W bazie danych pozostaną tylko informacje na temat administratorów.</p>
-            <p class="pp">Prosimy o zachowanie ostrożności podczas korzystania z tej funkcji, ponieważ jej wykonanie jest nieodwracalne. Po wyczyszczeniu danych, tematy projektów nie będą już dostępne w systemie, a wszelkie powiązane informacje zostaną trwale usunięte.</p>
+            <p class="formattedP">Uwaga, ta funkcja usunie wszystkie tematy projektów, które zostały zaprezentowane przez firmy w bieżącym roku akademickim. Ponadto doprowadzi do usunięcia wszystkich studentów oraz grup biorących udział w zapisach tego roku akademickiego. W bazie danych pozostaną tylko informacje na temat administratorów.</p>
+            <p class="formattedP">Prosimy o zachowanie ostrożności podczas korzystania z tej funkcji, ponieważ jej wykonanie jest nieodwracalne. Po wyczyszczeniu danych, tematy projektów nie będą już dostępne w systemie, a wszelkie powiązane informacje zostaną trwale usunięte.</p>
         </article>
         <button id="cleanDatabase" class="cleanButton">Wyczyść bazę danych</button>
 
         <h1>Administratorzy</h1>
+        <article>
+            <p class="ppp">Uwaga! Nie mozna usunac konta kpz@pwr.edu.pl !! </p>
+
+        </article>
 
         <section class="headerAdmin">
             <input id="newAdmin" class="adminInput" placeholder="Wpisz mail nowego administratora">
@@ -87,6 +111,19 @@
             </div>
         </div>
 
+        <div id="deleteExcelFile" class="deleteModal">
+            <div class="modal-content">
+                <span id="closeButton2" class="close">&times;</span>
+                <div class="textModal">
+                    <p>Czy na pewno chcesz usunąć aktualny plik Excel?</p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confirmButton2">Potwierdź</button>
+                    <button id="cancelButton2">Anuluj</button>
+                </div>
+            </div>
+        </div>
+
         <div id="deleteAdmin" class="deleteModal">
             <div class="modal-content">
                 <span id="closeButton" class="close">&times;</span>
@@ -96,6 +133,30 @@
                 <div class="buttonModal">
                     <button id="confirmButton">Potwierdź</button>
                     <button id="cancelButton">Anuluj</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="warningModal" class="deleteModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="textModal">
+                    <p></p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confButton1">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="errorModal" class="deleteModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="textModal">
+                    <p></p>
+                </div>
+                <div class="buttonModal">
+                    <button id="confButton">Potwierdź</button>
                 </div>
             </div>
         </div>

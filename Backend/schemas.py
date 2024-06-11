@@ -21,6 +21,7 @@ class ProjectBase(BaseModel):
     englishgroup: str
     remarks: str = None
     cooperationtype: Optional[str] = None
+    person: str
 
 
 class ProjectCreate(ProjectBase):

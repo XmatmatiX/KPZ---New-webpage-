@@ -4,18 +4,28 @@ document.addEventListener("DOMContentLoaded", function() {
     // Odczytanie ID projektu z adresu URL
     const urlParams = new URLSearchParams(window.location.search);
     const projectId = urlParams.get('id');
-    console.log("ID: ", projectId)
+
+    const button = document.getElementById("backButton")
+
+    button.addEventListener("click", function() {
+        window.location.href = "landingPage.html";
+    })
 
     fetch(`http://127.0.0.1:8000/Project/${projectId}`)
         .then(response => response.json())
         .then(projectData => {
 
-            console.log("Project")
-            console.log(projectData)
-
             const projectDetailsElement = document.getElementById('topicHeader');
+
+            let logoHTML = '';
+            if (projectData.logo === null) {
+                logoHTML = 'BRAK';
+            } else {
+                logoHTML = `<img class="logo" src="../../../Backend/${projectData.logo}" alt="There should be a photo">`;
+            }
+
             projectDetailsElement.innerHTML = `
-                <img class="logo" src="Images/logo.png" alt="There should be a logo here">
+                ${logoHTML}
                 <p class="companyName">${projectData.companyname}</p>
             `;
 
@@ -32,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const topicDetails = document.getElementById('topicDetails')
             topicDetails.innerHTML = `
                 <p class="topicName">${projectData.title}</p>
-                <p class="topicDescription">${projectData.description}</p>
+                <pre class="topicDescription">${projectData.description}</pre>
                  ${projectData.cooperationtype ? `
                     <p class="topicLabel">Planowane formy współpracy:</p>
                     <p class="details">${projectData.cooperationtype}</p>` : ''}

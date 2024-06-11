@@ -26,6 +26,7 @@ class Project(Base):
     englishgroup = Column(Text)
     remarks = Column(Text)
     cooperationtype = Column(Text)
+    person = Column(String(255), nullable=False)
 
     reservations = relationship("ProjectReservation", back_populates="project")
 
