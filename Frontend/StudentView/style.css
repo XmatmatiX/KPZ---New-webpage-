@@ -1106,7 +1106,7 @@ input[type="text"] {
 }
 
 .group-info-leader, .rest-info {
-    background-color: #bbdefb;
+    background-color: #f4f4f4;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
@@ -1278,7 +1278,14 @@ h3 {
     width: 50%; /* Adjust based on your layout needs */
     margin: 40px;
 }
-
+.details-container-member2{
+    background-color: var(--primary-light);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 80%; /* Adjust based on your layout needs */
+    margin: 40px;
+}
 .details-container h2 {
     color: #333;
     margin-bottom: 40px;
