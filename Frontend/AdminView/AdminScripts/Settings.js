@@ -8,7 +8,29 @@ document.addEventListener("DOMContentLoaded", function() {
     const excelButton = document.getElementById("excelFiles");
     const adminList = document.getElementById("adminList");
     const deleteExcel = document.getElementById("deleteExcel");
+    const enrollmentTime = document.getElementById("enrollmentTime");
     const setTime = document.getElementById("setTime");
+
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/TimeReservation`)
+        .then(response => response.json())
+        .then(data => {
+
+            const datetime = new Date(data['datatime']);
+            const formattedDate = datetime.toLocaleString('default', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+            });
+
+            enrollmentTime.textContent = formattedDate;
+
+        })
+        .catch(error => {
+            console.log(error);
+        });
 
     const errorModal = document.getElementById('errorModal');
     const modalText = errorModal.querySelector('.textModal p');
@@ -57,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     confirmButton2.addEventListener('click', function() {
 
-        fetch(`http://127.0.0.1:8000/Admin/ExcelFile`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/ExcelFile`, {
             method: 'DELETE'
         })
             .then(response => {
@@ -119,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function() {
         span.onclick = closeModal;
         confirmBtn.onclick = function() {
 
-            fetch(`http://127.0.0.1:8000/Admin/database-clear`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/database-clear`, {
                 method: 'DELETE'
             })
                 .then(response => {
@@ -144,8 +166,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const fileInput = document.getElementById('pdf-upload');
         const file = fileInput.files[0];
-        console.log("File")
-        console.log(file);
 
         if (!file) {
             errorModal.style.display = 'block';
@@ -155,9 +175,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Utwórz obiekt FormData
         const formData = new FormData();
-        formData.append('pdf_file', file);
+        formData.append('excel_file', file);
 
-        fetch(`http://127.0.0.1:8000/Admin/ExcelFile`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/ExcelFile`, {
             method: 'POST',
             body: formData
         })
@@ -170,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 } else {
                     return response.json().then(data => {
                         let errorMsg = data.detail || 'Wystąpił błąd podczas próby załadowania pliku';
-                        if(data.error == "409: File already exists. If you want to replace it, please delete and upload a new one.") {
+                        if(data.error === "409: File already exists. If you want to replace it, please delete and upload a new one.") {
                             errorMsg = "409: Plik został już załadowany. Jeżeli chcesz go zmienić, musisz najpierw usunąć aktualny plik"
                         }
                         else if (data.error) {
@@ -195,7 +215,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     uploadButton.addEventListener("click", function() {
 
-        fetch(`http://127.0.0.1:8000/Admin/UploadProjects`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/UploadProjects`, {
             method: 'POST'
         })
             .then(response => {
@@ -205,8 +225,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 return response.json();
             })
             .then(data => {
-                errorModal.style.display = 'block';
-                modalText.textContent = `Prawidłowo załadowano plik`;
+                if (data.message === "Successfully submitted projects") {
+                    // Jeśli otrzymano komunikat o sukcesie
+                    errorModal.style.display = 'block';
+                    modalText.textContent = `Prawidłowo załadowano plik`;
+                } else {
+                    // Jeśli otrzymano inny komunikat
+                    errorModal.style.display = 'block';
+                    modalText.textContent = data.message; // Wyświetl komunikat o błędzie
+                }
+
             })
             .catch(error => {
                 errorModal.style.display = 'block';
@@ -229,7 +257,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const minute = String(date.getMinutes()).padStart(2, '0');
             const second = String(date.getSeconds()).padStart(2, '0');
 
-            fetch(`http://127.0.0.1:8000/Admin/setTime/${year}:${month}:${day}:${hour}:${minute}:${second}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/setTime/${year}:${month}:${day}:${hour}:${minute}:${second}`, {
                 method: 'POST', // lub 'GET', zależnie od API
                 headers: {
                     'Content-Type': 'application/json'
@@ -238,8 +266,8 @@ document.addEventListener("DOMContentLoaded", function() {
             })
                 .then(response => response.json())
                 .then(data => {
-                    errorModal.style.display = 'block';
-                    modalText.textContent = `Ustawiono datę na: ${date}`;
+                    warningModal.style.display = 'block';
+                    modalText1.textContent = `Ustawiono datę na: ${date}`;
                 })
                 .catch((error) => {
                     errorModal.style.display = 'block';
@@ -256,7 +284,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const emailInput = document.getElementById('newAdmin')
         const email = emailInput.value;
 
-        fetch(`http://127.0.0.1:8000/Admin/AdminCreate/${email}`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/AdminCreate/${email}`, {
             method: 'PUT'
         })
             .then(response => {
@@ -280,7 +308,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // AdminList
 
-    fetch(`http://127.0.0.1:8000/Admin/AdminList`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/AdminList`)
         .then(response => response.json())
         .then(data => {
 
@@ -322,7 +350,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     span.onclick = closeModal;
                     confirmBtn.onclick = function() {
 
-                        fetch(`http://127.0.0.1:8000/Admin/AdminDelete/${ids[i]}`, {
+                        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/AdminDelete/${ids[i]}`, {
                             method: 'PUT'
                         })
                             .then(response => {

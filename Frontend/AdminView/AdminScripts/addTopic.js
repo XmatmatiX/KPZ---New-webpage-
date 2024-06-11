@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/Admin/AddProject', {
+            const response = await fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/AddProject', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

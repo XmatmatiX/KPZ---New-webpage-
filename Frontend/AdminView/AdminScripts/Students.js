@@ -8,19 +8,12 @@ function addButtonListener(studentItem, userId) {
     });
 }
 
-function updateGroupSize(groupId) {
-    const groupSizeElement = document.querySelector(`#groupSize_${groupId}`);
-    const currentGroupSize = parseInt(groupSizeElement.textContent);
-    const updatedGroupSize = currentGroupSize + 1; // Dodaj 1
-    groupSizeElement.textContent = updatedGroupSize.toString();
-}
-
 function displayGroups(userID) {
 
     const groupList = document.getElementById('groupList');
     groupList.innerHTML = '';
 
-    fetch('http://127.0.0.1:8000/Admin/Groups')
+    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/Groups')
         .then(response => response.json())
         .then(data => {
             const groups = data['groups:']; // Pobranie tablicy projektów
@@ -61,7 +54,7 @@ function displayGroups(userID) {
                     console.log('Wybrano user:', userID);
                     console.log('Wybrano grupę:', groupids[i]);
 
-                    fetch(`http://127.0.0.1:8000/Admin/SignToGroup/${userID}${groupids[i]}`, {
+                    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/SignToGroup/${userID}${groupids[i]}`, {
                         method: 'POST'
                     })
                         .then(response => {
@@ -119,7 +112,7 @@ function openModal(userID) {
 }
 
 function allStudents(students) {
-    fetch(`http://127.0.0.1:8000/Admin/Students`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Students`)
         .then(response => response.json())
         .then(data => {
 
@@ -134,7 +127,8 @@ function allStudents(students) {
                 const studentItem = document.createElement('div');
                 studentItem.classList.add('studentItem');
 
-                const groupContent = groups[i] !== null ? groups[i] : `<button class="groupButton">Przypisz grupę</button>`;
+                // const groupContent = groups[i] !== null ? groups[i] : `<button class="groupButton">Przypisz grupę</button>`;
+                const groupContent = groups[i] !== null ? groups[i] : `BRAK`;
 
                 // Utworzenie HTML dla pojedynczego projektu
                 studentItem.innerHTML = `
@@ -150,11 +144,11 @@ function allStudents(students) {
                 //     window.location.href = `reservationDetails.html?id=${projecstid[i]}`;
                 // });
 
-                const groupButton = studentItem.querySelector('.groupButton');
-                if (groupButton) {
-                    // Dodanie nasłuchiwania zdarzenia kliknięcia tylko gdy istnieje element .groupButton
-                    addButtonListener(studentItem, ids[i]);
-                }
+                // const groupButton = studentItem.querySelector('.groupButton');
+                // if (groupButton) {
+                //     // Dodanie nasłuchiwania zdarzenia kliknięcia tylko gdy istnieje element .groupButton
+                //     addButtonListener(studentItem, ids[i]);
+                // }
                 students.appendChild(studentItem);
             }
 
@@ -163,7 +157,7 @@ function allStudents(students) {
 }
 
 function freeStudents(students) {
-    fetch(`http://127.0.0.1:8000/Admin/FreeStudents`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/FreeStudents`)
         .then(response => response.json())
         .then(details => {
 
@@ -193,10 +187,11 @@ function freeStudents(students) {
                     <p>${student.email}</p>
                     <p>${student.name}</p>
                     <p>${student.surname}</p>
-                    <button class="groupButton">Przypisz grupę</button>
+<!--                    <button class="groupButton">Przypisz grupę</button>-->
+                    <p>BRAK</p>
                 `;
 
-                addButtonListener(studentItem, student.userid);
+                //addButtonListener(studentItem, student.userid);
                 students.appendChild(studentItem);
 
             });
@@ -230,7 +225,8 @@ function displaySearchedStudents(students, searchData) {
         const studentItem = document.createElement('div');
         studentItem.classList.add('studentItem');
 
-        const groupContent = groups[i] !== null ? groups[i] : `<button class="groupButton">Przypisz grupę</button>`;
+        // const groupContent = groups[i] !== null ? groups[i] : `<button class="groupButton">Przypisz grupę</button>`;
+        const groupContent = groups[i] !== null ? groups[i] : `BRAK`;
 
         // Utworzenie HTML dla pojedynczego projektu
         studentItem.innerHTML = `
@@ -240,11 +236,11 @@ function displaySearchedStudents(students, searchData) {
             <p>${groupContent}</p>
         `;
 
-        const groupButton = studentItem.querySelector('.groupButton');
-        if (groupButton) {
-            // Dodanie nasłuchiwania zdarzenia kliknięcia tylko gdy istnieje element .groupButton
-            addButtonListener(studentItem, ids[i]);
-        }
+        // const groupButton = studentItem.querySelector('.groupButton');
+        // if (groupButton) {
+        //     // Dodanie nasłuchiwania zdarzenia kliknięcia tylko gdy istnieje element .groupButton
+        //     addButtonListener(studentItem, ids[i]);
+        // }
         students.appendChild(studentItem);
     }
 }
@@ -302,7 +298,7 @@ document.addEventListener("DOMContentLoaded", function() {
             allStudents(students);
         }
         else {
-            fetch(`http://127.0.0.1:8000/Admin/SearchStudent/${student}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/SearchStudent/${student}`, {
                 method: 'POST'
             })
                 .then(response => {

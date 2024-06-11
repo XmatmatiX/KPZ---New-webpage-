@@ -565,4 +565,3 @@ def test_group_functionality():
     CRUD.update_user_group_id(db, user3, None)
     group = CRUD.get_group(db, gid)
     assert group is None
-

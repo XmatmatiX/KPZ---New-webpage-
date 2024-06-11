@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function() {
         errorModal.style.display = 'none';
     });
 
-    fetch('http://127.0.0.1:8000/Admin/Notification')
+    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/Notification')
         .then(response => response.json())
         .then(data => {
 
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     event.stopPropagation();
 
-                    fetch(`http://127.0.0.1:8000/Admin/Notification/${notification.historyid}`)
+                    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Notification/${notification.historyid}`)
                         .then(response => response.json())
                         .then(details => {
 
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     span.onclick = closeModal;
                     confirmBtn.onclick = function() {
 
-                        fetch(`http://127.0.0.1:8000/Admin/Notification/${notification.historyid}`, {
+                        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Notification/${notification.historyid}`, {
                             method: 'DELETE'
                         })
                             .then(response => {

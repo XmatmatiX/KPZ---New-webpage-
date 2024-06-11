@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        fetch(`http://127.0.0.1:8000/Student/${studentId}/CreateGroup`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${studentId}/CreateGroup`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        fetch(`http://127.0.0.1:8000/Student/${studentId}/JoinGroup/${inviteCode}`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${studentId}/JoinGroup/${inviteCode}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

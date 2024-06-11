@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Funkcja do pobierania członków grupy z serwera
     function fetchGroupMembers(studentId) {
-        fetch(`http://127.0.0.1:8000/Student/Group/${studentId}`)
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group/${studentId}`)
             .then(response => response.json())
             .then(data => {
                 leaderForm.innerHTML = '';  // Wyczyść formularz przed dodaniem nowych elementów
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const leaderId = selectedLeader.value;
 
-        fetch(`http://127.0.0.1:8000/Student/ChangeLeader/${leaderId}`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/ChangeLeader/${leaderId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     deleteReservationButton.addEventListener('click', function() {
         if (confirm('Czy na pewno chcesz usunąć rezerwację?')) {
-            fetch(`http://127.0.0.1:8000/Student/${userId}/QuitProject`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${userId}/QuitProject`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'

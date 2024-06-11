@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const reservationId = urlParams.get('id');
 
-    fetch(`http://127.0.0.1:8000/Admin/Reservation/${reservationId}`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Reservation/${reservationId}`)
         .then(response => response.json())
         .then(data => {
 
@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         return 'Zajęty';
                     case 'confirmed':
                         return 'Zatwierdzony';
+                    case 'waiting':
+                        return 'Oczekujący na zatwierdzenie';
                     default:
                         return 'Nieznany';
                 }
@@ -51,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const themaElement = themaDetails.querySelector('.group2');
 
             themaElement.addEventListener('click', () => {
-                window.location.href = `topicDetails.html?id=${topic.projectid}`;
+                window.location.href = `topicDetails.html?id=${data.pid}`;
             });
 
             const companyDetails = document.getElementById('company')

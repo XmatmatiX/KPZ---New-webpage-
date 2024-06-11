@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var confirmBtn = document.getElementById("confirmBtn");
     confirmBtn.addEventListener("click", function() {
 
-        fetch(`http://127.0.0.1:8000/Admin/Group/${groupId}/Confirm`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Group/${groupId}/Confirm`, {
             method: 'PUT'
         })
             .then(response => {
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const groupId = urlParams.get('id');
 
-    fetch(`http://127.0.0.1:8000/Admin/Group/${groupId}`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Group/${groupId}`)
         .then(response => response.json())
         .then(data => {
 
@@ -100,6 +100,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         return 'Zajęty';
                     case 'confirmed':
                         return 'Zatwierdzony';
+                    case 'waiting':
+                        return 'Oczekujący na zatwierdzenie';
                     default:
                         return 'Nieznany';
                 }
@@ -111,20 +113,22 @@ document.addEventListener("DOMContentLoaded", function() {
             groupid.textContent = 'Grupa ' + data.id;
 
             const themaDetails = document.getElementById('thema')
+            const thema = data.thema || 'BRAK';
             themaDetails.innerHTML = `
                 <p>Temat</p>
-                <p class="group">${data.thema}</p>
+                <p class="group">${thema}</p>
             `;
             const companyDetails = document.getElementById('company')
+            const company = data.company || 'BRAK';
             companyDetails.innerHTML = `
                 <p>Firma</p>
-                <p class="group">${data.company}</p>
+                <p class="group">${company}</p>
             `;
 
             const guardianDetails = document.getElementById('guardian');
 
             if(guardianId) {
-                fetch(`http://127.0.0.1:8000/Admin/Guardian/${guardianId}`)
+                fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Guardian/${guardianId}`)
                     .then(response => response.json())
                     .then(data => {
                         const guardianName = `${data.name} ${data.surname}`;
@@ -149,6 +153,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 <p>Status</p>
                 <p class="group">${translatdeStatus}</p>
             `;
+
+            const confirmationSection = document.getElementById("confirmationSection");
+            if (!data.thema) {
+                confirmationSection.style.display = 'none';
+            } else {
+                confirmationSection.style.display = 'article';
+
+                const confirmation = document.getElementById("confirmation");
+                const conf = data['confirmation-path'] || 'BRAK';
+                confirmation.textContent = `${conf}`;
+            }
 
             const students = document.getElementById('studentGroupList');
 
