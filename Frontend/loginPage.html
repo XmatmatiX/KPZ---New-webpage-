@@ -9,30 +9,39 @@
     <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Roboto+Flex:opsz,wght@8..144,300&display=swap" rel="stylesheet">
 
     <title>KPZ</title>
+    <script src="keycloak_modules/keycloak-js/dist/keycloak.js"></script>
+    <script>
+        const keycloak = new Keycloak({
+                url: 'https://login.pwr.edu.pl/auth/realms/pwr.edu.pl/protocol/openid-connect/',
+                realm: 'PWr',
+                clientId: 'projekty.kpz.pwr.edu.pl',
+
+            });
+
+        var userRegister;
+
+        function initKeycloak() {
+            keycloak.init({onLoad: 'login-required'}).then(function(authenticated) {
+                if(authenticated)
+                {
+                    Login();
+                }
+            }).catch(function() {
+                alert('failed to initialize');
+            });
+        }
+
+        function Login(){
+            var jsonString = JSON.stringify(keycloak.tokenParsed);
+            var data = JSON.parse(jsonString);
+            console.log(data);
+        }
+
+    </script>
+
 </head>
 <body>
-
-<section class="header">
-    <img id="mainLogo" src="Images/logo.png" class="logoImage" alt="There should be a logo here">
-    <div class="title">
-        <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
-        <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
-    </div>
-</section>
-
-<div class="loginHeader">Do logowania wykorzystaj konto AD</div>
-
-<div id="errorLogin" class="errorMessage">
-    Nieprawidłowy login lub hasło
-</div>
-
-<section class="loginSection">
-    <input id="login" placeholder="Login">
-    <input id="password" placeholder="Hasło">
-    <button onclick="login()">Zaloguj się</button>
-</section>
-
-<script src="script.js"></script>
-
 </body>
+
+<button onclick="initKeycloak()">zaloguj</button>
 </html>
