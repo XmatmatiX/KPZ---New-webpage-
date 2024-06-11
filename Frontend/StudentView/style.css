@@ -157,7 +157,11 @@ input[type="checkbox"] {
     height: 20px;
     margin-right: 10px;
 }
-
+input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
 .searchInput {
     width: 400px;
 }
@@ -372,7 +376,7 @@ input[type="checkbox"] {
     padding: 10px;
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
-    grid-template-columns: 1fr 2fr 4fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 2fr 4fr 1fr 2fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
 }
@@ -470,7 +474,7 @@ input[type="checkbox"] {
     height: 55px;
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
-    grid-template-columns: 1fr 2fr 4fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 2fr 4fr 1fr 2fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
     align-items: center;
@@ -943,6 +947,9 @@ article {
     width: 30px;
     height: 30px;
     margin-right: 10px;
+}
+.member[data-role="leader"] {
+    border: 2px solid black;
 }
 
 h7 {

@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Funkcja do tworzenia nowej grupy
     function createGroup() {
         const studentId = document.getElementById('createStudentIdInput').value;
+
         if (!studentId) {
             alert('Please enter your student ID.');
             return;
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-            alert(data.message);
+            alert(data.messsage);
             window.location.href = 'yourGroup.html';
         })
         .catch(error => {
@@ -58,8 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-            alert(data.message);
-            alert('Udało się stworzyć grupę!')
+            //alert(data.message);
+            alert('Udało się dołączyć do grupy!')
             window.location.href = 'yourGroup.html';
         })
         .catch(error => {
