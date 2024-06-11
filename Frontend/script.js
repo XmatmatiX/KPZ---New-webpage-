@@ -47,7 +47,7 @@ logo.addEventListener('click', () => {
 
 function allProjects(topicList) {
 
-    fetch('http://127.0.0.1:8000/ProjectList')
+    fetch('https://projekty.kpz.pwr.edu.pl/api/ProjectList')
         .then(response => response.json())
         .then(data => {
 
@@ -117,7 +117,7 @@ function allProjects(topicList) {
 
 function freeProjects(topics) {
 
-    fetch(`http://127.0.0.1:8000/ProjectListFree`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/ProjectListFree`)
         .then(response => response.json())
         .then(details => {
 

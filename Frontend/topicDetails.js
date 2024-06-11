@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const projectId = urlParams.get('id');
 
-    fetch(`http://127.0.0.1:8000/Project/${projectId}`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Project/${projectId}`)
         .then(response => response.json())
         .then(projectData => {
 
