@@ -880,6 +880,7 @@ def get_student_group(id: int, db: Session = Depends(get_db)):
     # Iterate over group members and get their details
     for member in members:
         member_details.append({
+            "id":member.userid,
             "name": member.name,
             "surname": member.surname,
             "email":member.email,
