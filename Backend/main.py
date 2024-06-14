@@ -216,6 +216,33 @@ def project_list(db: Session = Depends(get_db)):
     return {"logos": logos, "companynames": companynames, "titles": titles, "projecstid": pid, "minsizes": minsizes,
             "maxsizes": maxsizes, "status": stats}
 
+@app.get("/ProjectListSearch/{parameter}")
+def project_list(parameter:str,db: Session = Depends(get_db)):
+    projects = CRUD.project_search(db, parameter)
+
+    logos = []
+    companynames = []
+    titles = []
+    pid = []
+    minsizes = []
+    maxsizes = []
+    stats = []
+    for project in projects:
+        n = CRUD.number_project_reserved(db, project.projectid)
+        for i in range(project.groupnumber):
+            logos.append(project.logopath)
+            companynames.append(project.companyname)
+            titles.append(project.projecttitle)
+            pid.append(project.projectid)
+            minsizes.append(project.mingroupsize)
+            maxsizes.append(project.maxgroupsize)
+            if i < n:
+                stats.append(ProjectStatus.reserved)
+            else:
+                stats.append(ProjectStatus.available)
+    return {"logos": logos, "companynames": companynames, "titles": titles, "projecstid": pid, "minsizes": minsizes,
+            "maxsizes": maxsizes, "status": stats}
+
 
 @app.get("/ProjectListFree")
 def project_list( db: Session = Depends(get_db)):
@@ -289,6 +316,12 @@ def admin_project_list(db: Session = Depends(get_db)):
     #             groups.append(None)
     # return {"logos": logos, "companynames": companynames, "titles": titles, "projecstid": pid, "minsizes": minsizes,
     #         "maxsizes": maxsizes, "status": stats, "group": groups}
+
+@app.get("/Admin/ProjectListSearch/{parameter}")
+def admin_project_list(parameter:str, db: Session = Depends(get_db)):
+    projects = CRUD.project_search(db, parameter)
+
+    return {"projects:": projects}
 
 
 @app.get("/Admin/Project/{id}")

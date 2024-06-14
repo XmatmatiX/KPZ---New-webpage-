@@ -365,6 +365,13 @@ def get_group_members(db: Session, groupid: int) -> list[models.Users] | None:
     return db.query(models.Users).filter(models.Users.groupid == groupid).all()
 
 
+def project_search(db:Session, text:str) -> list[models.Project] | None:
+    projects=[]
+    projectName= db.query(models.Project).filter(models.Project.projecttitle.icontains(text)).all()
+    projectCompany=db.query(models.Project).filter(models.Project.companyname.icontains(text)).all()
+    projects= list(set(projectCompany) | set(projectName))
+    return projects
+
 def group_search(db: Session, text: str) -> list[models.ProjectGroup] | None:
     groups = []
     match = []
