@@ -24,10 +24,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
 
                 let logoHTML = '';
-                if (topic.logopath === null) {
+                if (topic.logopath === null || topic.logopath === '') {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo" src="../../../Backend/${topic.logopath}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="../../../Backend/${topic.logopath}" alt="There should be a photo">`;
                 }
 
                 topicItem.innerHTML = `

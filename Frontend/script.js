@@ -115,7 +115,7 @@ function allProjects(topicList) {
                 if (logos[i] === null) {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
                 }
 
                 // Utworzenie HTML dla pojedynczego projektu
@@ -197,7 +197,7 @@ function freeProjects(topics) {
                 if (logos[i] === null) {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
                 }
 
                 // Utworzenie HTML dla pojedynczego projektu
