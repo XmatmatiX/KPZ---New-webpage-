@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
         window.location.href = "landingPage.html";
     })
 
-    fetch(`http://127.0.0.1:8000/Project/${projectId}`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Project/${projectId}`)
         .then(response => response.json())
         .then(projectData => {
 

@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function() {
             allProjects(topicList);
         }
         else {
-            fetch(`http://127.0.0.1:8000/Admin/ProjectListSearch/${topic}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/ProjectListSearch/${topic}`, {
             })
                 .then(response => {
                     if (!response.ok) {

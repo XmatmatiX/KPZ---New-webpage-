@@ -263,7 +263,7 @@ document.addEventListener("DOMContentLoaded", function() {
             allProjects(adminTopics);
         }
         else {
-            fetch(`http://127.0.0.1:8000/Admin/ReservationSearch/${reservation}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/ReservationSearch/${reservation}`, {
             })
                 .then(response => {
                     if (!response.ok) {

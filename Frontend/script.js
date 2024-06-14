@@ -37,7 +37,7 @@ function translateStatus(status) {
 document.addEventListener("DOMContentLoaded", function () {
     const enrollmentTime = document.getElementById("enrollmentTime");
 
-    fetch(`http://127.0.0.1:8000/TimeReservation`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/TimeReservation`)
         .then(response => response.json())
         .then(data => {
 
@@ -327,7 +327,7 @@ document.addEventListener("DOMContentLoaded", function() {
             allProjects(topicList)
         }
         else {
-            fetch(`http://127.0.0.1:8000/ProjectListSearch/${topic}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/ProjectListSearch/${topic}`, {
             })
                 .then(response => {
                     if (!response.ok) {
