@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 confirmationSection.style.display = 'article';
 
                 const confirmation = document.getElementById("confirmation");
-                const conf = data['confirmation-path'] || 'BRAK';
+                const conf = data['confirmation-path'] || 'BRAK PLIKÓW';
                 confirmation.textContent = `${conf}`;
             }
 

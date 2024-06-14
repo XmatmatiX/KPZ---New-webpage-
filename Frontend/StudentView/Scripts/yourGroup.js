@@ -44,10 +44,10 @@ document.addEventListener("DOMContentLoaded", function() {
             let membersHtml = '<h7>Członkowie grupy</h7>';
             members.forEach(member => {
                 membersHtml += `
-                    <div class="member">
-                        <img src="../Images/Vector.jpg" alt="Avatar studenta">
-                        <p>${member.name} ${member.surname} - ${member.role}</p>
-                    </div>
+                        <div id="${member.role}" class="member" data-role="${member.role}">
+                            <img src="../Images/Vector.jpg" alt="Avatar studenta">
+                            <p>${member.name} ${member.surname} - ${member.role} <br>${member.email}</br></p>
+                        </div>
                 `;
             });
             memberDetailsContainer.innerHTML = membersHtml;
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function updateProjectDetails(data) {
-        const projectDetailsContainer = document.getElementById('project-details');
+        const projectDetailsContainer = document.getElementById('project-details-div');
         if (projectDetailsContainer) {
             projectDetailsContainer.innerHTML = `
                 <h7>Opiekun grupy</h7>

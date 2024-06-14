@@ -53,36 +53,7 @@ def create_project_reservation(db: Session, project: models.Project,
     raise exceptions.NotTimeForReservationException
 
 
-"""def create_project_reservation(db: Session,
-                           reservation: schemas.ProjectReservationCreate) -> models.ProjectReservation | exceptions.ProjectNotAvailableException:
-"""
-#Checks if project can be reserved and if yes, checks if group's size is adecuate for this project creates new project reservation,
-#if not returns None
-#:param db: Session
-#:param reservation: schemas of reservation to be made
-#:return: return the reservation
-#:raise exceptions.ProjectNotAvailableException : if project cannot be reserved - all the group projects were taken
-"""
-if is_project_available(db, reservation.projectid):
-    db_reservation = models.ProjectReservation(projectid=reservation.projectid, groupid=reservation.groupid,
-                                               isconfirmed=False, status="reserved")
-    db.add(db_reservation)
-    db.commit()
-    db.refresh(db_reservation)
-    create_action_history_short(db, db_reservation.projectreservationid, "Zarezerwowano projekt")
-    return db_reservation
-raise exceptions.ProjectNotAvailableException"""
 
-"""
-Schemas Action Hisotry nakazuje podanie kazdorazowo czasu, ktory i tak jest przypisywany w create
-def create_action_history(db: Session, action_history: schemas.ActionHistoryCreate):
-    db_action_history = models.ActionHistory(groupid=action_history.groupid, datatime=datetime.now(),
-                                             content=action_history.content, displayed=False)
-    db.add(db_action_history)
-    db.commit()
-    db.refresh(db_action_history)
-    return db_action_history
-"""
 
 
 def create_action_history(db: Session, gid: int, contentA: str) -> models.ActionHistory:
@@ -135,7 +106,7 @@ def create_guardian(db: Session, guardian: schemas.GuardianCreate):
 def create_project(db: Session, project: schemas.ProjectCreate):
     # Walidacja pól
     if not project.companyname or not project.projecttitle or not project.email or not project.phonenumber or not project.description or project.mingroupsize is None or project.maxgroupsize is None or project.groupnumber is None or not project.englishgroup:
-        raise HTTPException(status_code=400, detail="All required fields must be filled")
+        raise HTTPException(status_code=400, detail="Wszytskie pola są wymagane")
 
     try:
         db_project = models.Project(companyname=project.companyname, projecttitle=project.projecttitle,
@@ -152,7 +123,7 @@ def create_project(db: Session, project: schemas.ProjectCreate):
         db.refresh(db_project)
         return db_project
     except IntegrityError:
-        raise HTTPException(status_code=400, detail="Integrity error occurred, project not added")
+        raise HTTPException(status_code=400, detail="Podczas dodawania tematu wystąpił błąd. Projekt nie został utworzony")
 
 
 
@@ -270,7 +241,9 @@ def get_user_by_something(db: Session, text: str) -> list[models.Users] | None:
     match = db.query(models.Users).filter(models.Users.name.icontains(text), models.Users.rolename != "admin").all()
     match2 = db.query(models.Users).filter(models.Users.surname.icontains(text), models.Users.rolename != "admin").all()
     match3 = db.query(models.Users).filter(models.Users.email.icontains(text), models.Users.rolename != "admin").all()
-    result = match + match2 + match3 + members
+    match4 = db.query(models.Users).filter((models.Users.name+models.Users.surname).icontains(text),  models.Users.rolename != "admin").all()
+    #result = match + match2 + match3 + match4 + members
+    result = list(set(match) | set(match2) | set(match3) | set(match4) | set(members))
     result.sort(key=lambda x: x.surname)
     return result
 
@@ -392,6 +365,13 @@ def get_group_members(db: Session, groupid: int) -> list[models.Users] | None:
     return db.query(models.Users).filter(models.Users.groupid == groupid).all()
 
 
+def project_search(db:Session, text:str) -> list[models.Project] | None:
+    projects=[]
+    projectName= db.query(models.Project).filter(models.Project.projecttitle.icontains(text)).all()
+    projectCompany=db.query(models.Project).filter(models.Project.companyname.icontains(text)).all()
+    projects= list(set(projectCompany) | set(projectName))
+    return projects
+
 def group_search(db: Session, text: str) -> list[models.ProjectGroup] | None:
     groups = []
     match = []
@@ -410,7 +390,8 @@ def group_search(db: Session, text: str) -> list[models.ProjectGroup] | None:
             if text in project.projecttitle:
                 groups.append(group)
 
-    groups = groups+match
+    #groups = groups+match
+    groups =list( set(groups)| set(match))
     if groups:
         groups.sort(key=lambda x: x.groupid)
     return get_groups_info(db, groups)
@@ -431,7 +412,8 @@ def reservation_search(db: Session, text: str) -> list[models.ProjectReservation
         if text in project.projecttitle:
             reservations.append(reservation)
 
-    reservations = reservations+match
+    #reservations = reservations+match
+    reservations =list(set(reservations)|set(match))
     return reservations
 
 
@@ -651,17 +633,20 @@ def update_project_reservation_isConfirmed(db: Session, reservation: schemas.Pro
     create_action_history(db, reservation.groupid, contentA=f"Zatwierdzono realizacje tematu {reservation.projectid}.")
     return reservation
 
-def update_project_logopath(db: Session, company: schemas.ProjectBase, path ):
+def update_project_logopath(db: Session, project_name: schemas.ProjectBase, path: str):
     """
     Update project logopath- action made by admin
     """
+    projects =get_project_by_company(db,project_name.companyname)
 
-    company.logopath= path
-    db.commit()
-    db.refresh(company)
-    return company
+    for project in projects:
+        project.logopath = path
+        db.commit()
+        db.refresh(project)
 
-"""
+    return projects
+
+"""stu
 Delete
 """
 

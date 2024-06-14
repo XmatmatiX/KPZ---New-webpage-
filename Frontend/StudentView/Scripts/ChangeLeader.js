@@ -5,17 +5,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Funkcja do pobierania członków grupy z serwera
     function fetchGroupMembers(studentId) {
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group/${studentId}`)
+        fetch(`http://127.0.0.1:8000/Student/Group/${studentId}`)
             .then(response => response.json())
             .then(data => {
                 leaderForm.innerHTML = '';  // Wyczyść formularz przed dodaniem nowych elementów
                 data.members.forEach(member => {
+                    console.log();
                     const div = document.createElement('div');
                     div.innerHTML = `
-                        
-                            <input type="checkbox" id="user${member.id}" name="leader" value="${member.id}">
+                        <label>
+                            <input type="radio" name="leader" value="${member.id}">
                             <img src="../Images/Vector.jpg" alt="Avatar studenta">
                             <p>${member.name} ${member.surname} - ${member.role}</p>
+                        </label>
                     `;
                     leaderForm.appendChild(div);
                 });
@@ -35,10 +37,11 @@ document.addEventListener('DOMContentLoaded', function() {
             alert("Please select a new leader.");
             return;
         }
+        alert(selectedLeader.value);
 
         const leaderId = selectedLeader.value;
 
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/ChangeLeader/${leaderId}`, {
+        fetch(`http://127.0.0.1:8000/Student/ChangeLeader/${leaderId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -73,37 +76,3 @@ document.addEventListener('DOMContentLoaded', function() {
     // Dodaj nasłuchiwacz zdarzeń do przycisku "Nominuj lidera"
     nominateButton.addEventListener('click', changeLeader);
 });
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteReservationButton = document.getElementById('unsubscribeButton');
-    const userId = 1; // Replace with actual user ID
-
-    deleteReservationButton.addEventListener('click', function() {
-        if (confirm('Czy na pewno chcesz usunąć rezerwację?')) {
-            fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${userId}/QuitProject`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.detail);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message);
-                window.location.href = 'enrollment.html';
-            })
-            .catch(error => {
-                console.error('There was a problem with the delete operation:', error);
-                alert('Failed to delete reservation: ' + error.message);
-            });
-        }
-    });
-});
-
-
-
