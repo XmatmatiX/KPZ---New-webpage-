@@ -311,7 +311,9 @@ def get_groups_assigned_to_projects(db, project):
 def get_project_reservation_by_id(db: Session, project_reservation_id: int) -> schemas.ProjectReservationReturn | None:
     return db.query(models.ProjectReservation).filter(
         models.ProjectReservation.projectreservationid == project_reservation_id).first()
-
+def get_project_reservation_by_projecttitle(db: Session, projecttitle: str) -> models.ProjectReservation | None:
+    return db.query(models.ProjectReservation).join(models.Project).filter(
+        models.Project.projecttitle == projecttitle).first()
 
 def get_project_reservation_by_group(db: Session, group_id: int) -> models.ProjectReservation | None:
     return db.query(models.ProjectReservation).filter(
