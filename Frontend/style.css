@@ -130,6 +130,10 @@ button:hover {
     background-color: var(--hover); /* Tło po najechaniu myszą */
 }
 
+.groupHeader {
+    margin-bottom: 20px;
+}
+
 .cleanButton {
     margin: 20px auto;
     width: 200px;
