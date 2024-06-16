@@ -115,7 +115,7 @@ function allProjects(topicList) {
                 if (logos[i] === null) {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
                 }
 
                 // Utworzenie HTML dla pojedynczego projektu
@@ -184,7 +184,7 @@ function freeProjects(topics) {
                 if (logos[i] === null) {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
                 }
 
                 // Utworzenie HTML dla pojedynczego projektu
@@ -249,7 +249,7 @@ function displaySearchedTopics(topics, data) {
         if (logos[i] === null) {
             logoHTML = 'BRAK';
         } else {
-            logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+            logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
         }
 
         // Utworzenie HTML dla pojedynczego projektu

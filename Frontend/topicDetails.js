@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (projectData.logo === null) {
                 logoHTML = 'BRAK';
             } else {
-                logoHTML = `<img class="logo" src="../../../Backend/${projectData.logo}" alt="There should be a photo">`;
+                logoHTML = `<img class="logo" src="https://projekty.kpz.pwr.edu.pl/${projectData.logo}" alt="There should be a photo">`;
             }
 
             projectDetailsElement.innerHTML = `

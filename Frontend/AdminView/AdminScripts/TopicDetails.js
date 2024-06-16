@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (projectData.logopath === null || projectData.logopath == '') {
                 logoHTML = 'BRAK';
             } else {
-                logoHTML = `<img class="logo" src="../../../Backend/${projectData.logopath}" alt="There should be a photo">`;
+                logoHTML = `<img class="logo" src="https://projekty.kpz.pwr.edu.pl/${projectData.logopath}" alt="There should be a photo">`;
             }
 
             projectDetailsElement.innerHTML = `
