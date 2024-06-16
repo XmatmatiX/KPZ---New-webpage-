@@ -1,45 +1,45 @@
 class ProjectNotAvailableException(Exception):
-    "The project is not available"
+    "Projekt nie jest dostepny"
     pass
 
 
 class GroupSizeExccededException(Exception):
-    "The group size is exceeded"
+    "Rozmiar grupy osiagnal maksimum i nie mozna dodawac wiecej uzytkownikow"
     pass
 
 
 class MinimumSizeGroupException(Exception):
-    "The group must have at least one member"
+    "Grupa musi posiadac co najmniej jednego uzytkownika"
     pass
 
 
 class LeaderException(Exception):
-    "The leader of the group cant leave a group unless the group has no other member"
+    "Lider grupy nie moze jej opuscisc, chyba ze jest jej jedynym czlonkiem"
     pass
 
 
 class AssignedProjectException(Exception):
-    "The assigned project cant be deleted"
+    "Projekt posiada rezerwacje i nie moze zostac usuniety"
     pass
 
 
 class GroupWithReservation(Exception):
-    "The group with reservation can not be changed"
+    "Sklad grupy z rezerwacja nie moze zostac zmieniony"
     pass
 
 class DeleteGroupException(Exception):
-    "The group cannot be deleted"
+    "Grupa nie moze zostac usunieta"
     pass
 
 class GuardianAssignedException(Exception):
-    "The guardian is assigned to a group and cannot be deleted"
+    "Opiekun jest przypisany do grupy i nie moze zostac usuniety"
     pass
 
 class GroupSizeNotValidForProjectException(Exception):
-    "The group size is not valid for project"
+    "Rozmiar grupy nie odpowiada wymaganiom projektu"
     pass
 
 
 class NotTimeForReservationException(Exception):
-    "Time for subscribtion has yet to come"
+    "Nie mozna dokonac rezerwacji, poniewaz czas na zapisy jeszcze nie nadszedl"
     pass

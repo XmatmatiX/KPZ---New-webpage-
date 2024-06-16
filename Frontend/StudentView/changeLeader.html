@@ -28,21 +28,39 @@
     <button id="enrollmentButton" class="menuButton"><img src="../Images/signin.png" alt="There should be home photo"> Zapisy </button>
   </div>
   <div class="page">
-    <section class="main-content">
-      <div class="info-box">
-         <section class="headerAdmin">
-            <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">
-            <button id="searchGroupButton" class="searchButton">Szukaj</button>
-        </section>
-        <div class="alert-box">
-          <p>Nie możesz opuścić grupy, dopóki jesteś jej liderem. Aby opuścić grupę, która oprócz Ciebie ma innych członków, musisz nominować innego członka na lidera. <em>Nominowany/a musi wyrazić zgodę na zostanie liderem.</em> Opuszczenie grupy, której jesteś jedynym członkiem, spowoduje usunięcie grupy.</p>
+
+      <section class="headerAdmin">
+        <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">
+        <button id="searchGroupButton" class="searchButton">Szukaj</button>
+      </section>
+
+      <article class="backgroundArticle">
+        <p class="formattedP">Nie możesz opuścić grupy, dopóki jesteś jej liderem. Aby opuścić grupę, która oprócz Ciebie ma innych członków, musisz nominować innego członka na lidera. <em>Nominowany/a musi wyrazić zgodę na zostanie liderem.</em> Opuszczenie grupy, której jesteś jedynym członkiem, spowoduje usunięcie grupy.</p>
+      </article>
+
+    <h1>Studenci</h1>
+
+    <section class="addGroup">
+
+      <section id="studentGroupList" class="studentGroupList3">
+
+        <div class="borderStudent3">
+          <p>Email</p>
+          <p>Imię</p>
+          <p>Nazwisko</p>
+          <p>Rola</p>
+          <p></p>
         </div>
-        <form id="leader-form">
-        </form>
-         <button id = "nominate" class="nominate-button">Nominuj lidera</button>
-        <button id="unsubscribeButton" class="delete-group">Usuń grupę</button>
-      </div>
+
+      </section>
+
     </section>
+
+      <form id="leader-form">
+      </form>
+
+      <button id="unsubscribeButton" class="deleteButton">Usuń grupę</button>
+
   </div>
 </section>
 <script src="Scripts/ChangeLeader.js"></script>

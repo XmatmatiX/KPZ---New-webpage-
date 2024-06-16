@@ -39,10 +39,10 @@ function allProjects(projects) {
                 const translatedStatus = translateStatus(status[i]);
 
                 let logoHTML = '';
-                if (logos[i] === null) {
+                if (logos[i] === null || logos[i] === '') {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
                 }
 
                 topicItem.innerHTML = `
@@ -100,10 +100,10 @@ function chosenProjects(projects, state) {
                 const translatedStatus = translateStatus(status[i]);
 
                 let logoHTML = '';
-                if (logos[i] === null) {
+                if (logos[i] === null || logos[i] === '') {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
                 }
 
                 topicItem.innerHTML = `
@@ -158,10 +158,10 @@ function displaySearchedReservations(reservations, data) {
         const translatedStatus = translateStatus(status[i]);
 
         let logoHTML = '';
-        if (logos[i] === null) {
+        if (logos[i] === null || logos[i] === '') {
             logoHTML = 'BRAK';
         } else {
-            logoHTML = `<img class="logo" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+            logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
         }
 
         topicItem.innerHTML = `
@@ -190,13 +190,14 @@ document.addEventListener("DOMContentLoaded", function() {
     const reservedCheckbox = document.getElementById('reservedCheckbox');
     const waitingCheckbox = document.getElementById('waitingCheckbox');
     const searchReservation = document.getElementById('findReservation');
+    const reservationInput = document.getElementById('reservationInput');
 
     allProjects(adminTopics);
 
     reservedCheckbox.addEventListener('change', function() {
         // Sprawdź, czy checkbox jest zaznaczony
         if (this.checked) {
-
+            waitingCheckbox.checked = false;
             chosenProjects(adminTopics, "reserved")
 
         } else {
@@ -220,7 +221,7 @@ document.addEventListener("DOMContentLoaded", function() {
     waitingCheckbox.addEventListener('change', function() {
         // Sprawdź, czy checkbox jest zaznaczony
         if (this.checked) {
-
+            reservedCheckbox.checked = false;
             chosenProjects(adminTopics, "waiting")
 
         } else {
@@ -241,7 +242,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     });
 
-    searchReservation.addEventListener("click", function() {
+    function searching() {
 
         const reservationInput = document.getElementById('reservationInput')
         const reservation = reservationInput.value;
@@ -274,6 +275,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     displaySearchedReservations(adminTopics, data);
                 })
                 .catch(error => console.error('Błąd pobierania danych:', error));
+        }
+    }
+
+    searchReservation.addEventListener("click", function() {
+        searching()
+    });
+
+    reservationInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            searching();
         }
     });
 

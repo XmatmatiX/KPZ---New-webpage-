@@ -1,3 +1,15 @@
+
+function translateRole(role) {
+    switch(role) {
+        case 'leader':
+            return 'Lider';
+        case 'student':
+            return 'Student';
+        default:
+            return 'Nieznany';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const leaderForm = document.getElementById('leader-form');
     const searchGroupButton = document.getElementById('searchGroupButton');
@@ -10,6 +22,32 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 leaderForm.innerHTML = '';  // Wyczyść formularz przed dodaniem nowych elementów
+
+                const students = document.getElementById('studentGroupList');
+
+                const members = data['members'];
+                console.log(members);
+
+                members.forEach(member => {
+                    const memberItem = document.createElement('div');
+                    memberItem.classList.add('studentGroupItem3')
+
+                    const roleClass = member.rolename === 'leader' ? 'leader' : 'student';
+                    memberItem.classList.add('studentGroupItem', roleClass);
+
+                    const translatdeRole = translateRole(member.role);
+
+                    memberItem.innerHTML = `
+                            <p>${member.email}</p>
+                            <p>${member.name}</p>
+                            <p>${member.surname}</p>
+                            <p>${translatdeRole}</p>
+                            <button id = "nominate" class="nominate-button">Nominuj lidera</button>
+                        `;
+
+                    students.appendChild(memberItem)
+                });
+
                 data.members.forEach(member => {
                     console.log();
                     const div = document.createElement('div');

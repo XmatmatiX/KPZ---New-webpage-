@@ -1,6 +1,7 @@
 :root {
-    --primary-dark: #7cd7fa;
-    --primary-light: #ddf5fa;
+    --primary-dark: #63ccf5;
+    /* 7cd7fa*/
+    --primary-light: #bae7f3;
     --neutral: #48c1e1;
     --hover: #949191;   /* po najechaniu na zmienna */
     --hover2: #e5e5e5;
@@ -127,6 +128,10 @@ button {
 
 button:hover {
     background-color: var(--hover); /* Tło po najechaniu myszą */
+}
+
+.groupHeader {
+    margin-bottom: 20px;
 }
 
 .cleanButton {
@@ -322,10 +327,10 @@ input[type="checkbox"] {
     background-color: #bae7f3;
     padding: 10px 40px;
     display: grid;
-    grid-template-columns: 1fr 7fr 2fr 2fr;
+    grid-template-columns: 2fr 7fr 2fr 2fr;
     gap: 20px;
     align-items: center;
-    height: 80px;
+    height: 100px;
 }
 
 .detailsHeader {
@@ -335,7 +340,7 @@ input[type="checkbox"] {
     grid-template-columns: 1fr 8fr;
     gap: 20px;
     align-items: center;
-    height: 80px;
+    height: 100px;
     margin: 20px 0;
 }
 
@@ -345,11 +350,21 @@ input[type="checkbox"] {
 }
 
 .logo {
-    max-width: 50%;
-    max-height: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+    height: 80px;
+    width: auto;
+    max-width: 100%;
+    object-fit: cover; /* Skaluje obraz, zachowując proporcje, aby wypełnić obszar */
+    margin: 0 auto;
+}
+
+.logo-main {
+
+    height: 30px;
+    width: auto;
+    max-width: 100%;
+    object-fit: cover; /* Skaluje obraz, zachowując proporcje, aby wypełnić obszar */
+    margin: 0 auto;
 }
 
 .companyName {
@@ -1134,6 +1149,14 @@ article {
 .headerAdmin {
     height: 40px;
     margin: 20px 40px 20px 30px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.headerLanding {
+    height: 40px;
+    margin: 30px 40px 30px 30px;
     padding: 10px;
     display: flex;
     align-items: center;
