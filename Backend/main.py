@@ -8,6 +8,7 @@ from fastapi import Depends, FastAPI, HTTPException, status, Security, UploadFil
 from fastapi.responses import JSONResponse
 # from magic import Magic
 import os
+import shutil
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, SecurityScopes
 #from jose import JWTError, jwt
 # from passlib.context import CryptContext
@@ -613,28 +614,37 @@ def post_add_project(project: schemas.ProjectCreate, groupID: Optional[int] = No
     Dodawanie nowego projektu przez admina
     z dodatkowa opcja przypisania do grupy
     """
-    # Sprawdzanie czy wszystkie pola wymagane są uzupełnione
-
     try:
-        CRUD.create_project(db, project)
         if groupID:
-            group= CRUD.get_group(db,groupID)
+            # Check if the group exists
+            group = CRUD.get_group(db, groupID)
+            if not group:
+                raise HTTPException(status_code=404, detail="Nie odnaleziono grupy")
+            print(f"Found group: {group}")
+
+            # Check if the group already has a reservation
             if CRUD.has_group_reservation(db, groupID):
-                raise HTTPException(status_code=404, detail="Grupa zarezerwowała już projekt")
+                raise HTTPException(status_code=400, detail="Grupa zarezerwowała już projekt")
+            print(f"Group {groupID} does not have a reservation")
+
+            # Create a new project reservation
             try:
-                new_reservation = CRUD.create_project_reservation(db, project, group)
+                # Create the project
+                created_project = CRUD.create_project(db, project)
+                print(f"Created project: {created_project}")
+                new_reservation = CRUD.create_project_reservation(db, created_project, group)
+                print(f"Created new reservation: {new_reservation}")
             except exceptions.NotTimeForReservationException:
                 raise HTTPException(status_code=400, detail="Nie mozna dokonac rezerwacji, poniewaz czas na zapisy jeszcze nie nadszedl")
             except exceptions.ProjectNotAvailableException:
                 raise HTTPException(status_code=400, detail="Projekt jest już zajęty")
             except exceptions.GroupSizeNotValidForProjectException:
                 raise HTTPException(status_code=400, detail="Rozmiar grupy nie odpowiada wymaganiom projektu")
-        return {"message": "Udało się dodać projektu"}
 
-    except HTTPException as e:
-        raise e
+        return {"message": "Udało się dodać projekt"}
     except Exception as e:
-        raise HTTPException(status_code=400, detail="Błąd podczas dodawania projektu")
+        return JSONResponse(status_code=500, content={"message": "Zaszedł błąd", "error": str(e)})
+
 
 
 @app.get("/Admin/Notification")
@@ -742,8 +752,9 @@ def delete_project(id:int, db: Session = Depends(get_db)):
     CRUD.delete_project(db, project)
     return {"message": "Usunięto projekt"}
 
+
 @app.put("/Admin/{project_id}/Logo")
-def put_logo(project_id: str, logo_file:UploadFile=File(...),db: Session = Depends(get_db) ):
+def put_logo(project_id: str, logo_file: UploadFile = File(...), db: Session = Depends(get_db)):
     """
     Dodawanie loga firmy przez podanie nazwy firmy.
     Dodanie pliku oznacza nadpisanie poprzedniego. Sciezka pliku zapisuje sie w project.logopath.
@@ -751,27 +762,31 @@ def put_logo(project_id: str, logo_file:UploadFile=File(...),db: Session = Depen
     """
     try:
         project = CRUD.get_project_by_id(db, project_id)
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
 
         save_path = os.path.join("docs", "logo", str(project.companyname))
         os.makedirs(save_path, exist_ok=True)
 
-        # Sprawdź, czy istnieje już plik logo firmy
-        existing_logo_path = os.path.join(save_path, str(project.logopath))
-        if os.path.exists(existing_logo_path):
-            os.remove(existing_logo_path)
+        # Check and remove existing logo files in the directory
+        for filename in os.listdir(save_path):
+            file_path = os.path.join(save_path, filename)
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
 
+        # Save the new logo file
         file_path = os.path.join(save_path, logo_file.filename)
-        # title= project.projecttitle
-        CRUD.update_project_logopath(db,project, str(file_path))
-
-        # Zapisz przesłany plik na dysku
         with open(file_path, "wb") as buffer:
             buffer.write(logo_file.file.read())
+
+        # Update the project with the new logo path
+        CRUD.update_project_logopath(db, project, str(file_path))
 
         return JSONResponse(status_code=200, content={"message": "Pomyślnie załadowano plik", "file_path": file_path})
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "Zaszedł błąd", "error": str(e)})
-
 @app.post("/Admin/ExcelFile")
 def post_excel(excel_file: UploadFile = File(...),db: Session = Depends(get_db)):
     """
