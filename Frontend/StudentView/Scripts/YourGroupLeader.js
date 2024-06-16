@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fileModal.style.display = 'none';
         });
     });
+});
 
     // Handle form submission for changing guardian
     document.getElementById('opiekunForm').addEventListener('submit', function(event) {
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const name = document.getElementById('imie').value;
         const surname = document.getElementById('nazwisko').value;
         const email = document.getElementById('email').value;
+
 
         fetch(`http://127.0.0.1:8000/Student/${userId}/Group/GuardianChange/${name}/${surname}/${email}`, {
             method: 'PUT',
@@ -47,15 +49,13 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             alert(data.message);
             formModal.style.display = 'none';
-            // ewentualnie aktualizacja
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
             alert('Failed to change guardian');
         });
-    });
 
-        function fetchGroupDetails(groupId) {
+             function fetchGroupDetails(groupId) {
         fetch(`http://127.0.0.1:8000/Student/Group/${groupId}`)
             .then(response => {
                 if (!response.ok) {
@@ -64,14 +64,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                console.log(data); // Log data to see its structure
-                updateMemberDetails(data.members); // Assume `members` is directly under `data`
+                console.log(data);
+                updateMemberDetails(data.member_get);
             })
             .catch(error => {
-                console.error('Błąd pobierania danych:', error);
+                console.error('Błąd pobierania danych:', error.message);
                 alert(`Nie udało się pobrać danych grupy: ${error.message}`);
             });
     }
+
         function updateMemberDetails(members) {
         const memberDetailsContainer = document.getElementById('member-details');
         if (memberDetailsContainer) {
@@ -89,20 +90,27 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Member details container not found');
         }
     }
-    fetchGroupDetails(1);
-});
+    fetchGroupDetails(userId);
+    });
 
 document.getElementById('file').addEventListener('click', function() {
     document.getElementById('fileModal').style.display = 'block';
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const userId = 62; // Replace with the actual user ID
+    const userId = 23; // Replace with the actual user ID
 
     // Function to upload PDF
     async function uploadFiles() {
         const fileInput = document.getElementById('fileInput');
         const pdfFile = fileInput.files;
+
+         // Walidacja, czy dane opiekuna zostały wypełnione
+        if (!guardianNameInput.value || !guardianSurnameInput.value || !guardianEmailInput.value) {
+            alert('Wszystkie dane opiekuna muszą być uzupełnione.');
+            return;
+        }
+
 
         if (!pdfFile) {
             alert('Proszę wybrać plik PDF');
@@ -185,18 +193,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 document.addEventListener('DOMContentLoaded', function() {
-    const leaveGroupButton = document.querySelector('.leave-group');
     const leaveButton = document.getElementById('leaveButton');
 
-    leaveButton.addEventListener('click', function() {
-        const confirmation = confirm('Czy na pewno chcesz opuścić grupę?');
-        if (confirmation) {
-            console.log('Użytkownik opuścił grupę.');
-            window.location.href = "enrollment.html";
-            location.reload(); // Odświeżenie bieżącej strony
-        }
-    });
+    if (leaveButton) {
+        leaveButton.addEventListener('click', leaveGroup);
+    }
 });
+
+function leaveGroup() {
+    const confirmation = confirm('Czy na pewno chcesz opuścić grupę?');
+    if (confirmation) {
+        console.log('Użytkownik opuścił grupę.');
+        window.location.href = "enrollment.html";
+    }
+}
+
 document.getElementById('send').addEventListener('click', function() {
     alert('Plik został wysłany do zatwierdzenia.');
 });

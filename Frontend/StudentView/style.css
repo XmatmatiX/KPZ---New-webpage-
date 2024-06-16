@@ -101,7 +101,6 @@ button {
     font-weight: bold;
     transition: background-color 0.3s; /* Efekt przejścia podczas zmiany tła */
 }
-
 .headerButton {
     margin-left: auto;
     margin-right: 30px;
@@ -1120,7 +1119,12 @@ input[type="text"] {
     width: 50%; /* Adjust based on your layout needs */
     margin: 40px;
 }
-
+.rest-info p{
+    font-size: 16px; /* Rozmiar czcionki */
+    color: #333; /* Kolor tekstu */
+    margin-bottom: 10px; /* Odległość między paragrafami */
+    line-height: 1.5; /* Wysokość linii */
+}
 .group-info p {
     margin: 10px 0;
     font-size: 16px;
@@ -1230,6 +1234,7 @@ h3 {
 }
 .button-upl-file, .deleteButtonFile, .button-get {
     display: block;
+    margin: 0 auto;
     width: 40%;
     padding: 10px;
     margin-top: 20px;

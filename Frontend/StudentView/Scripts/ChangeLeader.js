@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const leaderForm = document.getElementById('leader-form');
     const searchGroupButton = document.getElementById('searchGroupButton');
     const nominateButton = document.getElementById('nominate');
+    const unsubscribeButton = document.getElementById('delete-group');
 
     // Funkcja do pobierania członków grupy z serwera
     function fetchGroupMembers(studentId) {
@@ -72,7 +73,37 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please enter a student ID.');
         }
     });
+    // Funkcja do usunięcia rezerwacji projektu przez lidera grupy
+function deleteProjectReservation(userId) {
+    if (!confirm('Czy na pewno chcesz usunąć rezerwację projektu?')) {
+        return; // Jeśli użytkownik kliknie "Anuluj" w oknie dialogowym, funkcja zostanie przerwana.
+    }
+
+    fetch(`http://127.0.0.1:8000/Student/${userId}/QuitProject`, {
+        method: 'DELETE', // Metoda HTTP DELETE
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.detail);
+            });
+        }
+        return response.json(); // Jeśli odpowiedź jest 'ok', zwracamy JSON
+    })
+    .then(data => {
+        alert(data.message); // Wyświetlamy komunikat o sukcesie
+    })
+    .catch(error => {
+        console.error('Wystąpił problem z operacją usunięcia rezerwacji:', error);
+        alert('Wystąpił błąd: ' + error.message); // Wyświetlamy komunikat o błędzie
+    });
+}
 
     // Dodaj nasłuchiwacz zdarzeń do przycisku "Nominuj lidera"
     nominateButton.addEventListener('click', changeLeader);
+    unsubscribeButton.addEventListener('click', deleteProjectReservation);
 });
+

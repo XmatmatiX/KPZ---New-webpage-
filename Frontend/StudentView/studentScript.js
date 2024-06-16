@@ -25,17 +25,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 document.addEventListener("DOMContentLoaded", function() {
     // Pobierz przycisk "Wyloguj się"
-    var groupButton = document.getElementById("groupButton");
-
-    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
-    groupButton.addEventListener("click", function() {
-        // Przenieś użytkownika do strony landingPage.html
-        window.location.href = "yourGroup.html";
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function() {
-    // Pobierz przycisk "Wyloguj się"
     var enrollmentButton = document.getElementById("enrollmentButton");
 
     // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
@@ -123,8 +112,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
-
 
 /*student bez grupy*/
 
