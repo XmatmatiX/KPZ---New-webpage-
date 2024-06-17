@@ -1138,7 +1138,7 @@ def create_group(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
     try:
         group=CRUD.create_project_group_short(db, student)
-        return {"messsage": "the group was succesfully created, here is its inviteCode"+group.invitecode}
+        return {"messsage": "Stworzono grupę. Hasło wstępu to: "+group.invitecode}
     except Exception as e:
         print (e)
 
