@@ -1,5 +1,7 @@
 "use strict"
 
+const token = sessionStorage.getItem("JWT");
+
 document.addEventListener("DOMContentLoaded", function() {
     // Pobierz przycisk "Wyloguj się"
     var logoutButton = document.getElementById("logout");

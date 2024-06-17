@@ -41,7 +41,7 @@
                 email: data.email,
                 keycloackid: data.sub
             }
-            console.log(data.sid);
+            console.log(data.sub);
 
             fetch("http://127.0.0.1:8000/login", {
                 method: "POST",

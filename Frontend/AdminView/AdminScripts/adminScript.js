@@ -22,7 +22,7 @@ function checkRole()
                     return response.json();
                 }).then(data => {
                     if (data !== "admin")
-                        window.location.href = "../accessDenied.html";
+                        window.location.href = "../landingPage.html";
                 }).catch(error => {
                     console.error('Error:', error);
                 });
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
     logoutButton.addEventListener("click", function() {
         // Przenieś użytkownika do strony landingPage.html
-        window.location.href = "../Logout.html";
+        window.location.href = "../../Logout.html";
     });
 });
 

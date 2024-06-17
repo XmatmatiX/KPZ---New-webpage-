@@ -90,6 +90,7 @@ class UserBase(BaseModel):
 # trzymamy haslo tutaj zeby np nie bylo dostepne podczas pobierania danych z bazy
 class UserCreate(UserBase):
     keycloackid: str
+    pass
 
 
 class UserReturn(UserBase):
