@@ -61,7 +61,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (groupButton) {
         groupButton.addEventListener('click', function() {
-            window.location.href = `yourGroup.html?id=${id}`;
+            window.location.href = 'yourGroup.html';
+            //window.location.href = `yourGroup.html?id=${id}`;
         });
     }
 });

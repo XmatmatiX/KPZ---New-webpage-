@@ -29,40 +29,50 @@
   </div>
   <div class="page">
 
-      <section class="headerAdmin">
-        <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">
-        <button id="searchGroupButton" class="searchButton">Szukaj</button>
-      </section>
+<!--      <section class="headerAdmin">-->
+<!--        <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">-->
+<!--        <button id="searchGroupButton" class="searchButton">Szukaj</button>-->
+<!--      </section>-->
 
-      <article class="backgroundArticle">
-        <p class="formattedP">Nie możesz opuścić grupy, dopóki jesteś jej liderem. Aby opuścić grupę, która oprócz Ciebie ma innych członków, musisz nominować innego członka na lidera. <em>Nominowany/a musi wyrazić zgodę na zostanie liderem.</em> Opuszczenie grupy, której jesteś jedynym członkiem, spowoduje usunięcie grupy.</p>
-      </article>
+<!--      <article class="backgroundArticle">-->
+<!--        <p class="formattedP">Nie możesz opuścić grupy, dopóki jesteś jej liderem. Aby opuścić grupę, która oprócz Ciebie ma innych członków, musisz nominować innego członka na lidera. <em>Nominowany/a musi wyrazić zgodę na zostanie liderem.</em> Opuszczenie grupy, której jesteś jedynym członkiem, spowoduje usunięcie grupy.</p>-->
+<!--      </article>-->
 
-    <h1>Studenci</h1>
+<!--    <h1>Studenci</h1>-->
 
-    <section class="addGroup">
+<!--    <section class="addGroup">-->
 
-      <section id="studentGroupList" class="studentGroupList3">
+<!--      <section id="studentGroupList" class="studentGroupList3">-->
 
-        <div class="borderStudent3">
-          <p>Email</p>
-          <p>Imię</p>
-          <p>Nazwisko</p>
-          <p>Rola</p>
-          <p></p>
+<!--        <div class="borderStudent3">-->
+<!--          <p>Email</p>-->
+<!--          <p>Imię</p>-->
+<!--          <p>Nazwisko</p>-->
+<!--          <p>Rola</p>-->
+<!--          <p></p>-->
+<!--        </div>-->
+
+<!--      </section>-->
+
+<!--    </section>-->
+
+    <section class="main-content">
+      <div class="info-box">
+        <section class="headerAdmin">
+          <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">
+          <button id="searchGroupButton" class="searchButton">Szukaj</button>
+        </section>
+        <div class="alert-box">
+          <p>Nie możesz opuścić grupy, dopóki jesteś jej liderem. Aby opuścić grupę, która oprócz Ciebie ma innych członków, musisz nominować innego członka na lidera. <em>Nominowany/a musi wyrazić zgodę na zostanie liderem.</em> Opuszczenie grupy, której jesteś jedynym członkiem, spowoduje usunięcie grupy.</p>
         </div>
-
-      </section>
-
+        <form id="leader-form">
+        </form>
+        <button id = "nominate" class="nominate-button">Nominuj lidera</button>
+        <button id="unsubscribeButton" class="delete-group">Usuń grupę</button>
+      </div>
     </section>
-
-      <form id="leader-form">
-      </form>
-
-      <button id="unsubscribeButton" class="deleteButton">Usuń grupę</button>
-
   </div>
-</section>
+  </section>
 <script src="Scripts/ChangeLeader.js"></script>
 <script src="studentScript.js"></script>
 </body>
