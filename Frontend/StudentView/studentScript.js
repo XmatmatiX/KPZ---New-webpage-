@@ -98,9 +98,12 @@ document.addEventListener("DOMContentLoaded", function() {
 document.addEventListener('DOMContentLoaded', function() {
     const groupButton = document.getElementById('groupButton');
 
+    const id = 96;
+
     if (groupButton) {
         groupButton.addEventListener('click', function() {
             window.location.href = 'yourGroup.html';
+            //window.location.href = `yourGroup.html?id=${id}`;
         });
     }
 });

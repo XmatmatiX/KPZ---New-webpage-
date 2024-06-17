@@ -237,6 +237,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const groupList = document.getElementById('groupList');
     const freeCheckbox = document.getElementById('freeCheckbox');
     const searchGroup = document.getElementById('findGroup');
+    const groupInput = document.getElementById('groupInput');
 
     allGroups(groupList);
 
@@ -264,7 +265,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     });
 
-    searchGroup.addEventListener("click", function() {
+    function searching() {
 
         const groupInput = document.getElementById('groupInput')
         const group = groupInput.value;
@@ -301,6 +302,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     displaySearchedGroups(groupList, data);
                 })
                 .catch(error => console.error('Błąd pobierania danych:', error));
+        }
+    }
+
+    searchGroup.addEventListener("click", function() {
+        searching()
+    });
+
+    groupInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            searching();
         }
     });
 

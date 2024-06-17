@@ -1,5 +1,5 @@
-
-const leaderForm = document.getElementById('leader-form');
+document.addEventListener('DOMContentLoaded', function() {
+    const leaderForm = document.getElementById('leader-form');
     const searchGroupButton = document.getElementById('searchGroupButton');
     const nominateButton = document.getElementById('nominate');
 
@@ -32,9 +32,6 @@ const leaderForm = document.getElementById('leader-form');
                 alert('Failed to load group members');
             });
     }
-
-document.addEventListener('DOMContentLoaded', function() {
-
 
     // Funkcja do zmiany lidera grupy
     function changeLeader(event) {
@@ -72,9 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-
     // Pobierz członków grupy po kliknięciu przycisku "Szukaj"
-    /*
     searchGroupButton.addEventListener('click', function() {
         const studentId = document.getElementById('groupIdInput').value;
         if (studentId) {
@@ -83,7 +78,6 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please enter a student ID.');
         }
     });
-    */
 
     // Dodaj nasłuchiwacz zdarzeń do przycisku "Nominuj lidera"
     nominateButton.addEventListener('click', changeLeader);

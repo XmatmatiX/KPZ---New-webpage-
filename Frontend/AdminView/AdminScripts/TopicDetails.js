@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const projectDetailsElement = document.getElementById('topicHeader');
             let logoHTML = '';
-            if (projectData.logopath === null) {
+            if (projectData.logopath === null || projectData.logopath == '') {
                 logoHTML = 'BRAK';
             } else {
                 logoHTML = `<img class="logo" src="../../../Backend/${projectData.logopath}" alt="There should be a photo">`;

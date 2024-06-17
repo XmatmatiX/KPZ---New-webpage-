@@ -116,3 +116,146 @@ document.addEventListener('DOMContentLoaded', function() {
     // Dodaj nasłuchiwacz zdarzeń do przycisku "Opuść grupę"
     unsubscribeButton.addEventListener('click', leaveGroup);
 });
+
+// function translateRole(role) {
+//     switch(role) {
+//         case 'leader':
+//             return 'Lider';
+//         case 'student':
+//             return 'Student';
+//         default:
+//             return 'Nieznany';
+//     }
+// }
+//
+// function translateStatus(state) {
+//     switch(state) {
+//         case 'available':
+//             return 'Dostępny';
+//         case 'reserved':
+//             return 'Zarezerwowany';
+//         case 'taken':
+//             return 'Zajęty';
+//         case 'confirmed':
+//             return 'Zatwierdzony';
+//         case 'waiting':
+//             return 'Oczekujący na zatwierdzenie';
+//         default:
+//             return 'Nieznany';
+//     }
+// }
+//
+// document.addEventListener("DOMContentLoaded", function() {
+//
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const groupId = urlParams.get('id');
+//
+//     fetch(`http://127.0.0.1:8000/Student/Group/${groupId}`)
+//             .then(response => {
+//                 if (!response.ok) {
+//                     throw new Error(`HTTP error! Status: ${response.status}`);
+//                 }
+//                 return response.json();
+//             })
+//             .then(data => {
+//
+//                 const themaDetails = document.getElementById('thema')
+//                 const projectInfo = data['project-info'];
+//
+//                 const thema = projectInfo.project_title || 'BRAK';
+//                 themaDetails.innerHTML = `
+//                     <p>Temat</p>
+//                     <p class="group">${thema}</p>
+//                 `;
+//
+//                 const projectDetails = document.getElementById('projectId')
+//                 const id = projectInfo.project_id || 'BRAK';
+//                 projectDetails.innerHTML = `
+//                     <p>ID Projektu</p>
+//                     <p class="group">${id}</p>
+//                 `;
+//
+//                 const companyInfo = data['contact_info'];
+//
+//                 const companyDetails = document.getElementById('company')
+//                 const company = companyInfo.company || 'BRAK';
+//                 companyDetails.innerHTML = `
+//                     <p>Firma</p>
+//                     <p class="group">${company}</p>
+//                 `;
+//
+//                 const guardianInfo = data['guardian_info'];
+//                 const guardianDetails = document.getElementById('guardian')
+//                 const guardian = guardianInfo.guardian_name || 'BRAK';
+//                 const guardianEmail = guardianInfo.guardian_email || 'BRAK';
+//                 guardianDetails.innerHTML = `
+//                     <p>Prowadzący</p>
+//                     <p class="group">${guardian}, email: ${guardianEmail}</p>
+//                 `;
+//
+//                 const stateDetails = document.getElementById('state')
+//                 const status = data['reservation-status'];
+//                 const translatdeStatus = translateStatus(status);
+//                 stateDetails.innerHTML = `
+//                     <p>Status</p>
+//                     <p class="group">${translatdeStatus}</p>
+//                 `;
+//
+//                 const codeDetails = document.getElementById('code')
+//                 codeDetails.innerHTML = `
+//                     <p>Kod grupy</p>
+//                     <p class="group">${data.invite_code}</p>
+//                 `;
+//
+//                 const contactDetails = data['contact_info'];
+//                 const person = contactDetails.person || 'BRAK';
+//                 const personDetails = document.getElementById('person')
+//                 personDetails.innerHTML = `
+//                     <p>Imię i Nazwisko</p>
+//                     <p class="group">${person}</p>
+//                 `;
+//
+//                 const email = contactDetails.contact_email || 'BRAK';
+//                 const emailDetails = document.getElementById('email')
+//                 emailDetails.innerHTML = `
+//                     <p>Email</p>
+//                     <p class="group">${email}</p>
+//                 `;
+//
+//                 const phone = contactDetails.contact_phone || 'BRAK';
+//                 const phoneDetails = document.getElementById('phone')
+//                 phoneDetails.innerHTML = `
+//                     <p>Telefon</p>
+//                     <p class="group">${phone}</p>
+//                 `;
+//
+//                 const students = document.getElementById('studentGroupList');
+//
+//                 const members = data['members'];
+//
+//                 members.forEach(member => {
+//                     const memberItem = document.createElement('div');
+//                     memberItem.classList.add('studentGroupItem')
+//
+//                     const roleClass = member.rolename === 'leader' ? 'leader' : 'student';
+//                     memberItem.classList.add('studentGroupItem', roleClass);
+//
+//                     const translatdeRole = translateRole(member.role);
+//
+//                     memberItem.innerHTML = `
+//                     <p>${member.email}</p>
+//                     <p>${member.name}</p>
+//                     <p>${member.surname}</p>
+//                     <p>${translatdeRole}</p>
+//                 `;
+//
+//                     students.appendChild(memberItem)
+//                 });
+//
+//             })
+//             .catch(error => {
+//                 console.error('Błąd pobierania danych:', error);
+//                 alert(`Nie udało się pobrać danych grupy: ${error.message}`);
+//             });
+//
+// });

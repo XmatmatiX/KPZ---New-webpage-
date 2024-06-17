@@ -46,7 +46,7 @@ def create_project_reservation(db: Session, project: models.Project,
                 db.commit()
                 db.refresh(db_reservation)
                 create_action_history(db, group.groupid,
-                                      f"Zarezerwowano projekt id {project.projectid}: {project.projecttitle} zgloszony przez {project.companyname}")
+                                      f"Zarezerwowano projekt: {project.projecttitle} (firma: {project.companyname})")
                 return db_reservation
             raise exceptions.GroupSizeNotValidForProjectException
         raise exceptions.ProjectNotAvailableException
@@ -311,7 +311,9 @@ def get_groups_assigned_to_projects(db, project):
 def get_project_reservation_by_id(db: Session, project_reservation_id: int) -> schemas.ProjectReservationReturn | None:
     return db.query(models.ProjectReservation).filter(
         models.ProjectReservation.projectreservationid == project_reservation_id).first()
-
+def get_project_reservation_by_projecttitle(db: Session, projecttitle: str) -> models.ProjectReservation | None:
+    return db.query(models.ProjectReservation).join(models.Project).filter(
+        models.Project.projecttitle == projecttitle).first()
 
 def get_project_reservation_by_group(db: Session, group_id: int) -> models.ProjectReservation | None:
     return db.query(models.ProjectReservation).filter(
@@ -364,6 +366,13 @@ def get_group(db: Session, groupid: int):
 def get_group_members(db: Session, groupid: int) -> list[models.Users] | None:
     return db.query(models.Users).filter(models.Users.groupid == groupid).all()
 
+
+def project_search(db:Session, text:str) -> list[models.Project] | None:
+    projects=[]
+    projectName= db.query(models.Project).filter(models.Project.projecttitle.icontains(text)).all()
+    projectCompany=db.query(models.Project).filter(models.Project.companyname.icontains(text)).all()
+    projects= list(set(projectCompany) | set(projectName))
+    return projects
 
 def group_search(db: Session, text: str) -> list[models.ProjectGroup] | None:
     groups = []
@@ -604,14 +613,14 @@ def update_project_reservation_files(db: Session, reservation: schemas.ProjectRe
         db.commit()
         db.refresh(reservation)
         create_action_history(db, reservation.groupid,
-                              contentA=f"Dodano pliki. Znajduja sie w lokalizacji {reservation.confirmationpath}")
+                              contentA=f"Dodano pliki. Znajdują sie w lokalizacji {reservation.confirmationpath}")
     else:
         reservation.confirmationpath = path
         reservation.status = "reserved"
         db.commit()
         db.refresh(reservation)
         create_action_history(db, reservation.groupid,
-                              contentA="Plik potwierdzenia zostal usuniety")
+                              contentA="Plik potwierdzenia zostal usunięty")
     return reservation
 
 
@@ -623,7 +632,8 @@ def update_project_reservation_isConfirmed(db: Session, reservation: schemas.Pro
     # reservation.isconfirmed = True // NIE MAMY ISCONFIRMED
     db.commit()
     db.refresh(reservation)
-    create_action_history(db, reservation.groupid, contentA=f"Zatwierdzono realizacje tematu {reservation.projectid}.")
+    project=get_project_by_id(db,reservation.projectid )
+    create_action_history(db, reservation.groupid, contentA=f"Zatwierdzono realizację tematu {project.projecttitle} (firma: {project.companyname}).")
     return reservation
 
 def update_project_logopath(db: Session, project_name: schemas.ProjectBase, path: str):
@@ -729,7 +739,8 @@ def delete_project_reservation(db: Session, reservation: schemas.ProjectReservat
     :return:
     """
     #delete_ALL_action_history(db, reservation.groupid)
-    create_action_history(db, reservation.groupid, f"Usunieto rezerwacje projektu {reservation.projectid}")
+    project=get_project_by_id(db, reservation.projectid)
+    create_action_history(db, reservation.groupid, f"Usunieto rezerwacje projektu {project.projecttitle} (firma: {project.companyname}).)")
     db.delete(reservation)
     db.commit()
 

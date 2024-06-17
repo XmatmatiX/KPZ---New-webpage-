@@ -9,6 +9,7 @@ from fastapi import Depends, FastAPI, HTTPException, status, Security, UploadFil
 from fastapi.responses import JSONResponse
 # from magic import Magic
 import os
+import shutil
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, SecurityScopes
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -207,6 +208,33 @@ def project_list(db: Session = Depends(get_db)):
     return {"logos": logos, "companynames": companynames, "titles": titles, "projecstid": pid, "minsizes": minsizes,
             "maxsizes": maxsizes, "status": stats}
 
+@app.get("/ProjectListSearch/{parameter}")
+def project_list(parameter:str,db: Session = Depends(get_db)):
+    projects = CRUD.project_search(db, parameter)
+
+    logos = []
+    companynames = []
+    titles = []
+    pid = []
+    minsizes = []
+    maxsizes = []
+    stats = []
+    for project in projects:
+        n = CRUD.number_project_reserved(db, project.projectid)
+        for i in range(project.groupnumber):
+            logos.append(project.logopath)
+            companynames.append(project.companyname)
+            titles.append(project.projecttitle)
+            pid.append(project.projectid)
+            minsizes.append(project.mingroupsize)
+            maxsizes.append(project.maxgroupsize)
+            if i < n:
+                stats.append(ProjectStatus.reserved)
+            else:
+                stats.append(ProjectStatus.available)
+    return {"logos": logos, "companynames": companynames, "titles": titles, "projecstid": pid, "minsizes": minsizes,
+            "maxsizes": maxsizes, "status": stats}
+
 
 @app.get("/ProjectListFree")
 def project_list( db: Session = Depends(get_db)):
@@ -236,7 +264,7 @@ def project_list( db: Session = Depends(get_db)):
 def project_detail(id: int, db: Session = Depends(get_db)):
     project = CRUD.get_project_by_id(db, id)
     if project is None:
-        raise HTTPException(status_code=404, detail="Nie odnaleziono projektu")
+        raise HTTPException(status_code=404, detail="Project not not found")
     num_taken = CRUD.number_project_reserved(db, project.projectid)
     return {"id": id, "logo": project.logopath ,"companyname": project.companyname, "title": project.projecttitle,
             "description": project.description, "technologies": project.technologies, "minsize": project.mingroupsize, "maxsize": project.maxgroupsize,
@@ -249,7 +277,7 @@ def get_time_for_resrvation():
 
 ########### SEKCJA ADMIN ################
 @app.get("/Admin/ProjectList")
-def admin_project_list(role = Depends(is_admin), db: Session = Depends(get_db)):
+def admin_project_list(db: Session = Depends(get_db)):
     projects = CRUD.get_all_projects(db)
 
     return {"projects:": projects}
@@ -280,6 +308,12 @@ def admin_project_list(role = Depends(is_admin), db: Session = Depends(get_db)):
     #             groups.append(None)
     # return {"logos": logos, "companynames": companynames, "titles": titles, "projecstid": pid, "minsizes": minsizes,
     #         "maxsizes": maxsizes, "status": stats, "group": groups}
+
+@app.get("/Admin/ProjectListSearch/{parameter}")
+def admin_project_list(parameter:str, db: Session = Depends(get_db)):
+    projects = CRUD.project_search(db, parameter)
+
+    return {"projects:": projects}
 
 
 @app.get("/Admin/Project/{id}")
@@ -497,7 +531,7 @@ def get_student(id:int, role = Depends(is_admin), db:Session=Depends(get_db)):
     """
     student=CRUD.get_user_by_id(db,id)
     if not student:
-        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
+        raise HTTPException(status_code=404, detail="User not found")
     #return {"student":student}
     return {"name": student.name, "surname": student.surname, "email": student.email, "group": student.groupid }
 
@@ -505,7 +539,7 @@ def get_student(id:int, role = Depends(is_admin), db:Session=Depends(get_db)):
 def get_guardian(id:int, role = Depends(is_admin), db: Session=Depends(get_db)):
     guardian=CRUD.get_guardian(db, id)
     if not guardian:
-        raise HTTPException(status_code=404, detail="Nie odnaleziono opiekuna")
+        raise HTTPException(status_code=404, detail="Guardian not found")
     return {"name": guardian.name, "surname": guardian.surname, "email": guardian.email}
 
 @app.put("/Admin/AdminCreate/{email}")
@@ -515,14 +549,14 @@ def put_admin_create(email:str, role = Depends(is_admin), db:Session=Depends(get
     """
     student=CRUD.get_user_by_email(db,email)
     if not student:
-        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
+        raise HTTPException(status_code=404, detail="User not found")
     if student.rolename ==RoleEnum.admin.value:
-        raise HTTPException(status_code=404, detail="Użytkownik już posiada prawa administratora")
+        raise HTTPException(status_code=404, detail="User is alrady admin")
     if student.groupid:
-        raise HTTPException(status_code=404, detail="Admin nie może być zapisany do grupy projektowej")
+        raise HTTPException(status_code=404, detail="Admin can not be assigned to a project")
 
     CRUD.update_to_admin(db,email)
-    return {"message": "Udało się stworzyć admina"}
+    return {"message": " Admin changed succesfully"}
 
 @app.get("/Admin/AdminList")
 def get_admins(role = Depends(is_admin), db: Session = Depends(get_db)):
@@ -548,11 +582,11 @@ def post_sign_to_group(user_id:int, groupId:int, role = Depends(is_admin), db:Se
     """
     student=CRUD.get_user_by_id(db, user_id)
     if not student:
-        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
+        raise HTTPException(status_code=404, detail="User not found")
     group= CRUD.get_group(db, groupId)
 
     if not group:
-        raise HTTPException(status_code=404, detail="Grupa o podanym identyfikatorze nie istnieje")
+        raise HTTPException(status_code=404, detail="Group with such groupID doesnt exist")
     try:
         CRUD.update_user_group_id(db, student, group.groupid)
         return {"message": "Udało się dołączyć do  grupy"}
@@ -571,28 +605,37 @@ def post_add_project(project: schemas.ProjectCreate, groupID: Optional[int] = No
     Dodawanie nowego projektu przez admina
     z dodatkowa opcja przypisania do grupy
     """
-    # Sprawdzanie czy wszystkie pola wymagane są uzupełnione
-
     try:
-        CRUD.create_project(db, project)
         if groupID:
-            group= CRUD.get_group(db,groupID)
+            # Check if the group exists
+            group = CRUD.get_group(db, groupID)
+            if not group:
+                raise HTTPException(status_code=404, detail="Nie odnaleziono grupy")
+            print(f"Found group: {group}")
+
+            # Check if the group already has a reservation
             if CRUD.has_group_reservation(db, groupID):
-                raise HTTPException(status_code=404, detail="Grupa zarezerwowała już projekt")
+                raise HTTPException(status_code=400, detail="Grupa zarezerwowała już projekt")
+            print(f"Group {groupID} does not have a reservation")
+
+            # Create a new project reservation
             try:
-                new_reservation = CRUD.create_project_reservation(db, project, group)
+                # Create the project
+                created_project = CRUD.create_project(db, project)
+                print(f"Created project: {created_project}")
+                new_reservation = CRUD.create_project_reservation(db, created_project, group)
+                print(f"Created new reservation: {new_reservation}")
             except exceptions.NotTimeForReservationException:
-                raise HTTPException(status_code=400, detail="Nie mozna dokonac rezerwacji, poniewaz czas na zapisy jeszcze nie nadszedl")
+                raise HTTPException(status_code=400, detail="Project cannot be reserved at the moment")
             except exceptions.ProjectNotAvailableException:
-                raise HTTPException(status_code=400, detail="Projekt jest już zajęty")
+                raise HTTPException(status_code=400, detail="Project is already reserved")
             except exceptions.GroupSizeNotValidForProjectException:
                 raise HTTPException(status_code=400, detail="Rozmiar grupy nie odpowiada wymaganiom projektu")
-        return {"message": "Udało się dodać projektu"}
 
-    except HTTPException as e:
-        raise e
+        return {"message": "Udało się dodać projekt"}
     except Exception as e:
-        raise HTTPException(status_code=400, detail="Błąd podczas dodawania projektu")
+        return JSONResponse(status_code=500, content={"message": "Zaszedł błąd", "error": str(e)})
+
 
 
 @app.get("/Admin/Notification")
@@ -610,7 +653,7 @@ def get_notification_by_id(id: int, role = Depends(is_admin), db: Session = Depe
     """
     notification = CRUD.get_action_history_id(db, id)
     if notification is None:
-        raise HTTPException(status_code=404, detail="Nie odnaleziono powiadomienia")
+        raise HTTPException(status_code=404, detail="Notification not not found")
     CRUD.update_action_history_displayed(db, notification)
     return notification
 
@@ -621,10 +664,10 @@ def get_group_action_history(group_id: int, role = Depends(is_admin), db: Sessio
     """
     group = CRUD.get_group(db, group_id)
     if group is None:
-        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
+        raise HTTPException(status_code=404, detail="Group not not found")
     history = CRUD.get_action_history(db, group_id)
     if history is None:
-        raise HTTPException(status_code=404, detail="Nie odnaleziono powiadomienia")
+        raise HTTPException(status_code=404, detail="Action history not found")
     return history
 
 @app.delete("/Admin/Notification/{id}")
@@ -700,6 +743,7 @@ def delete_project(id:int, role = Depends(is_admin), db: Session = Depends(get_d
     CRUD.delete_project(db, project)
     return {"message": "Usunięto projekt"}
 
+
 @app.put("/Admin/{project_id}/Logo")
 def put_logo(project_id: str, logo_file:UploadFile=File(...), role = Depends(is_admin), db: Session = Depends(get_db) ):
     """
@@ -709,27 +753,31 @@ def put_logo(project_id: str, logo_file:UploadFile=File(...), role = Depends(is_
     """
     try:
         project = CRUD.get_project_by_id(db, project_id)
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
 
         save_path = os.path.join("docs", "logo", str(project.companyname))
         os.makedirs(save_path, exist_ok=True)
 
-        # Sprawdź, czy istnieje już plik logo firmy
-        existing_logo_path = os.path.join(save_path, str(project.logopath))
-        if os.path.exists(existing_logo_path):
-            os.remove(existing_logo_path)
+        # Check and remove existing logo files in the directory
+        for filename in os.listdir(save_path):
+            file_path = os.path.join(save_path, filename)
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
 
+        # Save the new logo file
         file_path = os.path.join(save_path, logo_file.filename)
-        # title= project.projecttitle
-        CRUD.update_project_logopath(db,project, str(file_path))
-
-        # Zapisz przesłany plik na dysku
         with open(file_path, "wb") as buffer:
             buffer.write(logo_file.file.read())
+
+        # Update the project with the new logo path
+        CRUD.update_project_logopath(db, project, str(file_path))
 
         return JSONResponse(status_code=200, content={"message": "Pomyślnie załadowano plik", "file_path": file_path})
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "Zaszedł błąd", "error": str(e)})
-
 @app.post("/Admin/ExcelFile")
 def post_excel(excel_file: UploadFile = File(...), role = Depends(is_admin), db: Session = Depends(get_db)):
     """
@@ -759,7 +807,7 @@ def post_excel(excel_file: UploadFile = File(...), role = Depends(is_admin), db:
         return JSONResponse(status_code=500, content={"message": "Zaszedł błąd", "error": str(e)})
 
 @app.delete("/Admin/ExcelFile")
-def delete_excel(role = Depends(is_admin), db: Session = Depends(get_db)):
+def delete_excel(db: Session = Depends(get_db)):
     """
     Usuwanie pliku excel
     """
@@ -799,6 +847,8 @@ def get_student_group(student = Depends(get_current_user), db: Session = Depends
     Returns information about a group to which student with id belong
     id jest studenta!
     """
+    # Get the student by their id
+    student = CRUD.get_user_by_id(db, id)
     if not student:
         raise HTTPException(status_code=404, detail="Nie odnaleziono studenta")
 
@@ -869,6 +919,7 @@ def get_student_group(student = Depends(get_current_user), db: Session = Depends
     # Iterate over group members and get their details
     for member in members:
         member_details.append({
+            "id":member.userid,
             "name": member.name,
             "surname": member.surname,
             "email":member.email,
@@ -891,7 +942,6 @@ def put_change_leader(id :int, student = Depends(get_current_user), db: Session 
     """
     Change leader of a group <- the ID is of a new leader
     """
-
     user = CRUD.get_user_by_id(db, id)
     if not user:
         raise HTTPException(status_code=404, detail="Nie odnalezioono użytkownika")
@@ -976,6 +1026,7 @@ def unsubscribe_from_group(user = Depends(get_current_user), db: Session = Depen
     W takim przypadku grupa zostanie usunięta
     """
     # Pobierz użytkownika
+    user = CRUD.get_user_by_id(db, id)
     if not user:
         raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
 
@@ -1072,7 +1123,7 @@ def create_group(student = Depends(get_current_user), db: Session = Depends(get_
         raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
     try:
         group=CRUD.create_project_group_short(db, student)
-        return {"messsage": "the group was succesfully created, here is its inviteCode"+group.invitecode}
+        return {"messsage": "Stworzono grupę. Hasło wstępu to: "+group.invitecode}
     except Exception as e:
         print (e)
 
@@ -1172,6 +1223,9 @@ def delete_pdf_file(user = Depends(get_current_user), db: Session = Depends(get_
     po poprawnym wgraniu pliku tworzone jest actionhistory
     """
     try:
+
+        # Pobierz użytkownika na podstawie jego ID
+        user = CRUD.get_user_by_id(db, user_id)
 
         if not user:
             raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")

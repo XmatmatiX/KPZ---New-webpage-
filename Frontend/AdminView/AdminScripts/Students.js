@@ -267,6 +267,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const students = document.getElementById('studentList');
     const freeCheckbox = document.getElementById('freeCheckbox');
     const searchStudent = document.getElementById('findStudent');
+    const studentInput = document.getElementById('studentSearch');
 
     allStudents(students)
 
@@ -294,9 +295,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     });
 
-    searchStudent.addEventListener("click", function() {
+    function searching() {
 
-        const studentInput = document.getElementById('student')
+        const studentInput = document.getElementById('studentSearch')
         const student = studentInput.value;
 
         if(student === '') {
@@ -331,6 +332,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     displaySearchedStudents(students, data);
                 })
                 .catch(error => console.error('Błąd pobierania danych:', error));
+        }
+    }
+
+    searchStudent.addEventListener("click", function() {
+        searching();
+    });
+
+    studentInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            searching();
         }
     });
 });
