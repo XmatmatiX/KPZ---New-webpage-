@@ -11,7 +11,7 @@
 <body>
 
 <section class="header">
-    <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
+    <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here" onclick="imageClick()">
     <div class="title">
         <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
         <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
@@ -83,7 +83,10 @@
          <section id="project-details" class="details-container">
                <div id="project-details-div">
                </div>
-                <button id="leaveButton" class="leave-group" onclick="leaveGroup()">Opuść grupę</button>
+             <div class="project-button">
+                 <button id="leaveButton" class="leave-group" onclick="leaveGroup()">Opuść grupę</button>
+                 <button id="change" class="change">Zarządzaj stanowiskiem</button>
+             </div>
          </section>
          </div>
     </div>

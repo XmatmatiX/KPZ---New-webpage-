@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Funkcja do rezygnacji z grupy
     function leaveGroup() {
-        const studentId = 44;
-
+        const studentId = document.getElementById('groupIdInput').value;
+        console.log(studentId);
         fetch(`http://127.0.0.1:8000/Student/unsubscribe/${studentId}`, {
             method: 'POST',
             headers: {
@@ -108,6 +108,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Dodaj nasłuchiwacz zdarzeń do przycisku "Opuść grupę"
     unsubscribeButton.addEventListener('click', leaveGroup);
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const changeButton = document.getElementById('change');
+    if (changeButton) {
+        changeButton.addEventListener('click', function() {
+            window.location.href = 'changeLeader.html';
+        });
+    }
 });
 
 // function translateRole(role) {

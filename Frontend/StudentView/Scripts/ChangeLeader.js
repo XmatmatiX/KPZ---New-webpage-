@@ -50,10 +50,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 // });
 
                 data.members.forEach(member => {
-                    console.log();
+                    console.log(member.role);
+                    const role = member.role;
                     const div = document.createElement('div');
                     div.innerHTML = `
-                        <label>
+                        <label id="${member.role}" class="member" data-role="${member.role}">
                             <input type="radio" name="leader" value="${member.id}">
                             <img src="../Images/Vector.jpg" alt="Avatar studenta">
                             <p>${member.name} ${member.surname} - ${member.role}</p>
@@ -96,6 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             alert(data.message);
+            window.location.href = 'yourGroup.html';
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -113,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     // Funkcja do usunięcia rezerwacji projektu przez lidera grupy
-    const userId = document.getElementById('groupIdInput').value;
 function deleteProjectReservation() {
     const userId = document.getElementById('groupIdInput').value;
     if (!confirm('Czy na pewno chcesz usunąć rezerwację projektu?')) {

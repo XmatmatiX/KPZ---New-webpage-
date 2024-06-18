@@ -230,11 +230,11 @@ document.getElementById('send').addEventListener('click', function() {
 });
 /*studentInGroup*/
 
-function leaveGroup(groupName, leaderName) {
-    document.getElementById('groupName').textContent = groupName;
-    document.getElementById('leaderName').textContent = leaderName;
-    document.getElementById('leaveModal').style.display = 'flex';
-}
+//function leaveGroup(groupName, leaderName) {
+    //document.getElementById('groupName').textContent = groupName;
+    //document.getElementById('leaderName').textContent = leaderName;
+    //document.getElementById('leaveModal').style.display = 'flex';
+//}
 
 function closeModal() {
     document.getElementById('leaveModal').style.display = 'none';
@@ -243,7 +243,10 @@ function closeModal() {
 document.querySelector('.modal .close').addEventListener('click', closeModal);
 
 
-
+function imageClick()
+{
+    window.location.href ="studentHome.html";
+}
 
 
 

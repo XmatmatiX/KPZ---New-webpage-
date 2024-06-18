@@ -150,7 +150,20 @@ button:hover {
     align-items: center;
     font-weight: normal;
 }
-
+label {
+    display: flex;
+    align-items: center; /* Wycentruje elementy w pionie */
+    padding: 10px; /* Dodaje odstęp wewnątrz etykiety */
+    margin: 5px; /* Dodaje odstęp między poszczególnymi elementami listy */
+    border: 1px solid #ccc; /* Dodaje subtelne obramowanie */
+    border-radius: 5px; /* Lekko zaokrągla rogi */
+    cursor: pointer; /* Wskazuje, że element jest klikalny */
+    background-color: #f9f9f9; /* Jasne tło dla lepszej czytelności */
+    transition: background-color 0.3s; /* Animacja tła przy hover */
+}
+label:hover {
+    background-color: #e0e0e0; /* Zmienia tło etykiety po najechaniu */
+}
 input[type="checkbox"] {
     width: 20px;
     height: 20px;
@@ -788,7 +801,7 @@ em {
     margin-bottom: 20px;
 }
 
-input {
+input{
     width: 250px;
     height: 35px;
     padding: 14px 20px;
@@ -851,6 +864,10 @@ input {
     grid-template-columns: repeat(12,1fr);  /*1 fr - fraction = podziel ekran na 12 czesci*/
     width: 100%;
     height: 100vh;  /*cała wysokość okna*/
+}
+
+.leader{
+    ;
 }
 
 .menu{
@@ -1075,6 +1092,7 @@ article {
 h7 {
     color: #333;
     font-size: 20px;
+    margin-bottom: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1096,6 +1114,17 @@ span {
 
 .leave-group:hover {
     background: #a4a4a4;
+}
+.change {
+    background: #000000;
+    color: #fffdfd;
+    padding: 10px 20px;
+    align-items: center;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 20px;
 }
 .modal {
     position: fixed;
@@ -1163,13 +1192,15 @@ span {
     align-items: center;
     grid-gap: 20px;
 }
-.delete-group2,.nominate-button {
+.delete-group2,.nominate-button  {
     background-color: #050505;
     border: none;
     display: inline-block;
     vertical-align: middle; /* Wyrównuje przyciski wertykalnie do środka */
-    margin-right: 10px; /* Opcjonalnie, dodaje odstęp między przyciskami */
-     border-radius: var(--radius-medium)
+    margin-top: 20px;
+    margin-right: auto; /* Opcjonalnie, dodaje odstęp między przyciskami */
+    margin-left: auto;
+    border-radius: var(--radius-medium)
 }
 .group-members {
     margin-top: 10px;
@@ -1315,7 +1346,12 @@ h3 {
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
     border-radius: 4px;
 }
-
+.project-button {
+    display: flex;        /* Ustawia flexbox, co pozwala na elastyczne rozmieszczenie elementów wewnątrz */
+    justify-content: center; /* Wyśrodkowuje przyciski w poziomie */
+    align-items: center;  /* Wyśrodkowuje przyciski w pionie */
+    gap: 20px;            /* Ustawia odstęp między przyciskami */
+}
 .close {
     color: #aaa;
     float: right;

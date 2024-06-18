@@ -10,10 +10,10 @@
 
     <title>KPZ</title>
 </head>
-<body>
+<body onload="getReservatinDate()">
 
 <section class="header">
-    <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
+    <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here" onclick="imageClick()">
     <div class="title">
         <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
         <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
@@ -35,7 +35,7 @@
         <article>
             <p class="pp">Student zakłada grupę jako lider i dodaje inne osoby. Aby to zrobic, nalezy...
             Po akceptacji tematu poprzez prowadzącego, studenci otrzymują kontakt do firmy.</p>
-            <p class="pp">Zapisy rozpoczynają się DD.MM.RR</p>
+            <p class="pp">Zapisy rozpoczynają się: </p> <p id="date" class="pp" ></p>
             <button id="signInHome" class="button">Zapisz się na kurs</button>
         </article>
 
@@ -47,6 +47,6 @@
 </section>
 
 <script src="studentScript.js"></script>
-
+<script src="Scripts/StudentHome.js"></script>
 </body>
 </html>
