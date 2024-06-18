@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const button = document.getElementById("backButton")
 
     button.addEventListener("click", function() {
-        window.location.href = "landingPage.html";
+        window.location.href = "StudentView/topicsView.html";
     })
 
     fetch(`http://127.0.0.1:8000/Project/${projectId}`)
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <p class="details2">${projectData.groupnumber}</p>
                 </div>
                 <div class="someDetails">
-                    <p class="topicLabel2">Ilość zajętych grup:</p>
+                    <p class="topicLabel2">Liczba zajętych grup:</p>
                     <p class="details2">${projectData.numertaken}</p>
                 </div>
                 
