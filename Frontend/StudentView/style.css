@@ -1137,14 +1137,14 @@ span {
 }
 
 .info-box {
-    background-color: #a1d3e5;
+    background-color: var(--primary-dark);
     border-radius: 5px;
     padding: 20px;
     margin-bottom: 20px;
 }
 .alert-box {
-    background-color: #fff3cd;
-    border-left: 4px solid #ffa502;
+    background-color: #ffffff;
+    border-left: 4px solid #f5d9a9;
     padding: 20px;
     margin: 20px 0;
     border-radius: 5px;
@@ -1154,14 +1154,23 @@ span {
     line-height: 1.5;
     color: #856404;
 }
-
-.nominate-button {
+.containerChangeLeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    grid-gap: 20px;
+}
+.delete-group2,.nominate-button {
     background-color: #050505;
     border: none;
-    padding: 10px;
-    border-radius: var(--radius-medium)
+    display: inline-block;
+    vertical-align: middle; /* Wyrównuje przyciski wertykalnie do środka */
+    margin-right: 10px; /* Opcjonalnie, dodaje odstęp między przyciskami */
+     border-radius: var(--radius-medium)
 }
-
 .group-members {
     margin-top: 10px;
 }

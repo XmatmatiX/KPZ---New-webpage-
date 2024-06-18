@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(`http://127.0.0.1:8000/Student/Group/${studentId}`)
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 leaderForm.innerHTML = '';  // Wyczyść formularz przed dodaniem nowych elementów
 
                 // const students = document.getElementById('studentGroupList');
@@ -76,9 +77,9 @@ document.addEventListener('DOMContentLoaded', function() {
             alert("Please select a new leader.");
             return;
         }
-        alert(selectedLeader.value);
 
         const leaderId = selectedLeader.value;
+
 
         fetch(`http://127.0.0.1:8000/Student/ChangeLeader/${leaderId}`, {
             method: 'PUT',
@@ -112,7 +113,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     // Funkcja do usunięcia rezerwacji projektu przez lidera grupy
-function deleteProjectReservation(userId) {
+    const userId = document.getElementById('groupIdInput').value;
+function deleteProjectReservation() {
+    const userId = document.getElementById('groupIdInput').value;
     if (!confirm('Czy na pewno chcesz usunąć rezerwację projektu?')) {
         return; // Jeśli użytkownik kliknie "Anuluj" w oknie dialogowym, funkcja zostanie przerwana.
     }
@@ -122,6 +125,7 @@ function deleteProjectReservation(userId) {
         headers: {
             'Content-Type': 'application/json'
         }
+
     })
     .then(response => {
         if (!response.ok) {
@@ -133,6 +137,7 @@ function deleteProjectReservation(userId) {
     })
     .then(data => {
         alert(data.message); // Wyświetlamy komunikat o sukcesie
+        window.location.href = 'studentHome.html';
     })
     .catch(error => {
         console.error('Wystąpił problem z operacją usunięcia rezerwacji:', error);
@@ -143,5 +148,6 @@ function deleteProjectReservation(userId) {
     // Dodaj nasłuchiwacz zdarzeń do przycisku "Nominuj lidera"
     nominateButton.addEventListener('click', changeLeader);
     unsubscribeButton.addEventListener('click', deleteProjectReservation);
+
 });
 
