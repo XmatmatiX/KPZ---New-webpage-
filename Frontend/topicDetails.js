@@ -8,9 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const button = document.getElementById("backButton")
 
     button.addEventListener("click", function() {
-        //tutaj trzebaby sprawdzac czy zalogowany czy nie -> jesli zalogowany jako student to 1, jesli nie to 2
-        window.location.href = "StudentView/topicsView.html";
-        //window.location.href = "landingPage.html";
+        window.location.href = "landingPage.html";
     })
 
     fetch(`http://127.0.0.1:8000/Project/${projectId}`)
