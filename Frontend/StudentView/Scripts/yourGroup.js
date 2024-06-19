@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <p><strong>Status projektu:</strong> ${data.contact_info?.status || 'Brak'}</p>
                 <p><strong>Email kontaktowy:</strong> ${data.contact_info?.contact_email || 'Brak'}</p>
                 <p><strong>Telefon kontaktowy:</strong> ${data.contact_info?.contact_phone || 'Brak'}</p>
+                <p><strong>Osoba kontaktowa:</strong> ${data.contact_info?.person || 'Brak'}</p>
             `;
         } else {
             console.error('Project details container not found');

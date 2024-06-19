@@ -52,20 +52,24 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({})
         })
-        .then(response => {
+        .then(async response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                const errorData = await response.json();
+                throw new Error(errorData.detail || response.statusText);
             }
             return response.json();
         })
         .then(data => {
             //alert(data.message);
-            alert('Udało się dołączyć do grupy!')
+            alert('Udało się dołączyć do grupy!');
             window.location.href = 'yourGroup.html';
         })
         .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-            alert('Failed to join group');
+           // console.log(data);
+           // console.error('There was a problem with the fetch operation:', error);
+           // alert('Failed to join group');
+           // alert(error);
+          //  alert(`Nie udało się pobrać danych grupy: ${error.message}`);
         });
     }
     // Zamknięcie modala
