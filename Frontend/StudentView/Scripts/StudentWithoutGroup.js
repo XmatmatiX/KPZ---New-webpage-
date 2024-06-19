@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
            // console.error('There was a problem with the fetch operation:', error);
            // alert('Failed to join group');
            // alert(error);
-          //  alert(`Nie udało się pobrać danych grupy: ${error.message}`);
+            alert(`Nie udało się pobrać danych grupy: ${error.message}`);
         });
     }
     // Zamknięcie modala
