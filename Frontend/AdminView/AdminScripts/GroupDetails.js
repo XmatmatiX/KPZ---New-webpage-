@@ -165,6 +165,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 confirmation.textContent = `${conf}`;
             }
 
+            var confirmationButton = document.getElementById("confirmationButton");
+
+            if (data.state === "reserved") {
+                confirmationButton.style.display = 'block';
+            } else {
+                confirmationButton.style.display = 'none';
+            }
+
             const students = document.getElementById('studentGroupList');
 
             const members = data['members'];
