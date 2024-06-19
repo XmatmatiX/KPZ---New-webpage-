@@ -10,11 +10,13 @@
 //     }
 // }
 
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const leaderForm = document.getElementById('leader-form');
     const searchGroupButton = document.getElementById('searchGroupButton');
     const nominateButton = document.getElementById('nominate');
-    const unsubscribeButton = document.getElementById('delete-group');
+    const unsubscribeButton = document.getElementById('delete-reservation');
 
     // Funkcja do pobierania członków grupy z serwera
     function fetchGroupMembers(studentId) {
@@ -138,7 +140,7 @@ function deleteProjectReservation() {
     })
     .then(data => {
         alert(data.message); // Wyświetlamy komunikat o sukcesie
-        window.location.href = 'studentHome.html';
+        window.location.href = 'yourGroup.html';
     })
     .catch(error => {
         console.error('Wystąpił problem z operacją usunięcia rezerwacji:', error);
@@ -146,9 +148,14 @@ function deleteProjectReservation() {
     });
 }
 
+
+
     // Dodaj nasłuchiwacz zdarzeń do przycisku "Nominuj lidera"
     nominateButton.addEventListener('click', changeLeader);
     unsubscribeButton.addEventListener('click', deleteProjectReservation);
 
 });
+
+
+
 

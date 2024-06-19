@@ -942,8 +942,8 @@ def get_student_group(id: int, db: Session = Depends(get_db)):
         "members": member_details,
         "invite_code": group.invitecode,
         "group_size": group.groupsize,
-        "reservation-status": status,
-        "project-info":project_info,
+        "reservation_status": status,
+        "project_info":project_info,
     }
 
 @app.put("/Student/ChangeLeader/{id}")
