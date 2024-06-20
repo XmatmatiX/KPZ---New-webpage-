@@ -1142,23 +1142,23 @@ def create_group(user_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         print (e)
 
-@app.post("/Student/{user_id}/Group/GuardianAdd/{name}/{surname}/{email}")
-def set_guardian(user_id: int, name: str, surname: str, email: str, db: Session = Depends(get_db)):
+@app.post("/Student/{user_id}/Group/GuardianAdd/{nameG}:{surname}:{email}")
+def set_guardian(user_id: int, nameG: str, surname: str, email: str, db: Session = Depends(get_db)):
     user = CRUD.get_user_by_id(db, user_id)
-    print(name)
+    print(nameG)
     if user is None:
         raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
     if user.rolename != "leader":
         raise HTTPException(status_code=404, detail="Tylko lider może wprowadzić dane opiekuna")
-    if name != "" and surname != "" and email != "":
+    if nameG != "" and surname != "" and email != "":
         guard=schemas.GuardianCreate(
-            name=name,
+            name=nameG,
             surname=surname,
             email=email
         )
         groupid = user.groupid
         guardian = CRUD.create_guardian(db, guard)
-        print(guardian.name)
+        print(guardian.nameG)
         group=CRUD.update_project_group_guardian(db, groupid, guardian.guardianid)
         print(group.guardianid)
         return {"message": "Udało się dodać opiekuna"}
