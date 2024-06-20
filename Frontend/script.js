@@ -66,7 +66,7 @@ const login=() => {
     const inputPassword = document.getElementById("password");
 
     let valueLogin = inputLogin.value;
-    let valuePassword = inputLogin.value;
+    let valuePassword = inputPassword.value;
 
     console.log("Login: ", valueLogin);
     console.log("Password: ", valuePassword);
@@ -105,7 +105,7 @@ const login=() => {
 
 
         })
-        .catch(error => console.error('Błąd pobierania danych:', error));
+        .catch(error => alert('Błąd pobierania danych:', error));
 
     }
 }
@@ -114,20 +114,55 @@ const register=()=>{
     //window.location.href="registerPage.html";
     const inputPassword = document.getElementById("password");
     const inputPassword2 = document.getElementById("password2");
+    const inputEmail = document.getElementById("email");
+    const inputName = document.getElementById("name");
+    const inputSurname=document.getElementById("surname");
+
     let valuePassword = inputPassword.value;
     let valuePassword2 = inputPassword2.value;
-    console.log("Password: ", valuePassword);
-    console.log("Password2: ", valuePassword2);
+    let email = inputEmail.value;
+    let name=inputName.value;
+    let surname=inputSurname.value;
+
     if(valuePassword==="" || valuePassword2==="")
         alert("Nie podano hasla")
     else if (valuePassword!==valuePassword2)
         alert("Hasła powinny być takie same!")
+    else if(name==="" || surname==="" || email==="")
+        alert("Podaj wszytskie wartości")
+
+    else if(!email.endsWith("pwr.edu.pl"))
+        alert("Jesteś z poza organzacji. Nie możesz się zarejestrować!")
     else
     {
-        const inputEmail = document.getElementById("email");
-        const inputName = document.getElementById("name");
-        const inputSurname=document.getElementById("surname");
+        console.log(email, name, surname, valuePassword)
+        fetch(`http://127.0.0.1:8000/Register${email}:${valuePassword}:${name}:${surname}`,{
+            method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => {
+                    console.log(error.detail);
+                    alert(error.detail)
+                    throw new Error(error.detail); // rzucenie błędu z szczegółami
+                });
 
+            }
+            return response.json();
+        })
+            .then(data => {
+                alert('Udało się stworzyć użytkownika! Teraz się zaloguj');
+                window.location.href = 'loginPage.html';
+                console.log(data);
+
+
+
+        })
+        .catch(error => alert('Błąd pobierania danych:', error));
 
     }
 

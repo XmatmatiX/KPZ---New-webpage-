@@ -203,6 +203,19 @@ def login(login: str, password: str, db: Session = Depends(get_db)):
     user_info ={"id":user.userid,"rolename": user.rolename}
     return user_info
 
+@app.post("/Register{email}:{password}:{name}:{surname}")
+def register(email: str, password: str, name:str, surname:str, db: Session = Depends(get_db)):
+    """
+    Zakladam ze login to email
+    """
+    user= CRUD.get_user_by_email(db, email)
+    if user is not None:
+        raise HTTPException(status_code=404, detail="Użytkownik o podanym emailu już istnieje w bazie")
+
+    user = models.Users(email=email, name=name, surname=surname, keycloackid=password, rolename=RoleEnum.student)
+    CRUD.create_user(db, user)
+
+    return {"message":"Pomyślnie utworzono użytkownika"}
 
 
 @app.get("/ProjectList")
