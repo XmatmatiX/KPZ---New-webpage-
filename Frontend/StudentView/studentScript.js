@@ -215,14 +215,16 @@ function uploadFiles() {
     var fileInput = document.getElementById('fileInput');
     var files = fileInput.files;
     var formData = new FormData();
+    var user_id = document.getElementById('groupIdInput').value;
 
     // Dodaje pliki do obiektu FormData
     for (let i = 0; i < files.length; i++) {
         formData.append('files[]', files[i]);
     }
 
+
     // Opcje fetch do wysłania plików
-    fetch('/upload', {  // Zakładam, że "/upload" to endpoint na Twoim serwerze
+    fetch(`http://127.0.0.1:7255/Student/${user_id}/PDF_file`, {  // Zakładam, że "/upload" to endpoint na Twoim serwerze
         method: 'POST',
         body: formData
     })

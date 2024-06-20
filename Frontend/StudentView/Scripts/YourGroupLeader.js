@@ -178,18 +178,18 @@ document.getElementById('file').addEventListener('click', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const userId = 23; // Replace with the actual user ID
+    const userId = document.getElementById('groupIdInput').value; // Replace with the actual user ID
 
     // Function to upload PDF
     async function uploadFiles() {
         const fileInput = document.getElementById('fileInput');
-        const pdfFile = fileInput.files;
+        const pdfFile = fileInput.files[0];
 
          // Walidacja, czy dane opiekuna zostały wypełnione
-        if (!guardianNameInput.value || !guardianSurnameInput.value || !guardianEmailInput.value) {
-            alert('Wszystkie dane opiekuna muszą być uzupełnione.');
-            return;
-        }
+        // if (!guardianNameInput.value || !guardianSurnameInput.value || !guardianEmailInput.value) {
+        //     alert('Wszystkie dane opiekuna muszą być uzupełnione.');
+        //     return;
+        // }
 
 
         if (!pdfFile) {
@@ -198,9 +198,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const formData = new FormData();
-         for (let i = 0; i < files.length; i++) {
-        formData.append('files[]', files[i]);
-        }
+        formData.append('pdf_file', pdfFile);
+       //  for (let i = 0; i < files.length; i++) {
+       // formData.append('files[]', files[i]);
+        //}
          fetch(`http://127.0.0.1:8000/Student/${userId}/PDF_file`, {
                 method: 'POST',
                 body: formData
@@ -242,6 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to get the list of PDF files
     async function getPDFList() {
         try {
+            alert(userId);
             const response = await fetch(`http://127.0.0.1:8000/Student/${userId}/PDF_file`, {
                 method: 'GET'
             });
