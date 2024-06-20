@@ -1207,7 +1207,7 @@ def post_pdf_file(user_id: int,pdf_file: UploadFile = File(...),db:Session =Depe
 
         if reservation is None:
             raise HTTPException(status_code=404, detail="Grupa nie posiada rezerwacji")
-        if reservation != "reserved":
+        if reservation.status != "reserved":
             raise HTTPException(status_code=404, detail="Status projektu nie pozwala na wysłanie zgody")
         # Pobierz groupID użytkownika
         groupID = user.groupid

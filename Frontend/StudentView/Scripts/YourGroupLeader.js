@@ -184,6 +184,8 @@ document.addEventListener('DOMContentLoaded', function() {
     async function uploadFiles() {
         const fileInput = document.getElementById('fileInput');
         const pdfFile = fileInput.files[0];
+        const userId = document.getElementById('groupIdInput').value;
+        console.log(userId);
 
          // Walidacja, czy dane opiekuna zostały wypełnione
         // if (!guardianNameInput.value || !guardianSurnameInput.value || !guardianEmailInput.value) {
@@ -206,15 +208,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 body: formData
             })
-             .then(response => response.json())  // Oczekuje, że serwer zwróci JSON
+             .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        console.log(data.detail);
+                        throw new Error(data.detail);
+                    });
+                }
+                return response.json(); // Jeśli odpowiedź jest 'ok', zwracamy JSON
+            })
             .then(data => {
-            console.log('Success:', data);
-            alert('Pliki zostały pomyślnie wysłane.');
+                console.log('Success:', data);
+                alert('Pliki zostały pomyślnie wysłane.');
             })
             .catch(error => {
-            console.error('Error:', error);
-            alert('Wystąpił błąd podczas przesyłania plików.');
+            console.error('Error:', error.message);
+            alert('Wystąpił błąd: ' + error.message);
             });
+         location.reload();
     }
 
     // Function to delete all PDF files
