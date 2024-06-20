@@ -78,6 +78,10 @@ const login=() => {
     }
 }
 
+const register=()=>{
+    window.location.href="registerPage.html";
+}
+
 const logo = document.querySelector('.logoImage');
 
 logo.addEventListener('click', () => {

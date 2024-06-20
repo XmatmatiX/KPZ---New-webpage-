@@ -20,18 +20,18 @@
     </div>
 </section>
 
-<div class="loginHeader">Do logowania wykorzystaj konto AD</div>
+<div class="loginHeader">Aby stworzyć konto wypełnij formularz</div>
 
-<div id="errorLogin" class="errorMessage">
-    Nieprawidłowy login lub hasło
-</div>
-
-<section class="loginSection">
-    <input id="login" placeholder="Login">
+<section class="registerSection">
+    <input id="name" placeholder="Imię">
+    <input id="surname" placeholder="Nazwisko">
+    <input id="email" placeholder="E-mail">
     <input id="password" placeholder="Hasło">
-    <button onclick="login()">Zaloguj się</button>
-    <button onclick="window.location.href='registerPage.html'">Nie masz konta? Zarejestruj się</button>
+    <input id="password2" placeholder="Powtórz hasło">
+    <button onclick="window.location.href = 'loginPage.html'">Masz już konto? Zaloguj się</button>
+    <button onclick="register()">Zarejestruj się</button>
 </section>
+
 
 <script src="script.js"></script>
 
