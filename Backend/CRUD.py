@@ -259,7 +259,7 @@ def get_user_by_surname(db: Session, surname: str):
     return users
 
 
-def get_user_by_email(db: Session, email: str):
+def get_user_by_email(db: Session, email: str) -> models.Users | None:
     return db.query(models.Users).filter(models.Users.email == email).first()
 
 

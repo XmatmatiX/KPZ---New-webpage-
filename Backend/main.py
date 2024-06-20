@@ -189,6 +189,21 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
 """
 
+@app.post("/Login{login}:{password}")
+def login(login: str, password: str, db: Session = Depends(get_db)):
+    """
+    Zakladam ze login to email
+    """
+    user= CRUD.get_user_by_email(db,login)
+    if user is None:
+        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
+    if user.keycloackid!=password:
+        raise HTTPException(status_code=404, detail="Nieprawidłowe hasło")
+
+    user_info ={"id":user.userid,"rolename": user.rolename}
+    return user_info
+
+
 
 @app.get("/ProjectList")
 def project_list(db: Session = Depends(get_db)):

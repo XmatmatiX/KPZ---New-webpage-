@@ -76,10 +76,61 @@ const login=() => {
         const message = document.getElementById("errorLogin");
         message.style.display = "flex";
     }
+    else
+    {
+        fetch(`http://127.0.0.1:8000/Login${valueLogin}:${valuePassword}`,{
+            method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+        })
+    .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => {
+                    throw new Error(error.detail); // rzucenie błędu z szczegółami
+                });
+
+            }
+            return response.json();
+        })
+            .then(data => {
+                let role=data.rolename;
+                alert('Udało się zalogować!', role);
+                if (role==="admin")
+                    window.location.href = 'AdminView/adminHome.html';
+                else
+                    window.location.href = 'StudentView/studentHome.html';
+
+
+
+        })
+        .catch(error => console.error('Błąd pobierania danych:', error));
+
+    }
 }
 
 const register=()=>{
-    window.location.href="registerPage.html";
+    //window.location.href="registerPage.html";
+    const inputPassword = document.getElementById("password");
+    const inputPassword2 = document.getElementById("password2");
+    let valuePassword = inputPassword.value;
+    let valuePassword2 = inputPassword2.value;
+    console.log("Password: ", valuePassword);
+    console.log("Password2: ", valuePassword2);
+    if(valuePassword==="" || valuePassword2==="")
+        alert("Nie podano hasla")
+    else if (valuePassword!==valuePassword2)
+        alert("Hasła powinny być takie same!")
+    else
+    {
+        const inputEmail = document.getElementById("email");
+        const inputName = document.getElementById("name");
+        const inputSurname=document.getElementById("surname");
+
+
+    }
+
 }
 
 const logo = document.querySelector('.logoImage');
