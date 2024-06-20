@@ -140,7 +140,7 @@ function submitForm() {
     var user_id = document.getElementById('groupIdInput').value;
     console.log(user_id);
     //alert('Imię: ' + imie + '\nNazwisko: ' + nazwisko + '\nEmail: ' + email);
-    const confirmation = confirm('Czy dane opiekuna się zgadzają:\n Imię:' + imie + '\nNazwisko: ' + nazwisko + '\nEmail: ' + email);
+    const confirmation = confirm('Czy dane opiekuna się zgadzają:\n Imię:' + nameG + '\nNazwisko: ' + surname + '\nEmail: ' + email);
         if (confirmation) {
             console.log("ok zmieniam");
             document.getElementById('formModal').style.display = 'none';

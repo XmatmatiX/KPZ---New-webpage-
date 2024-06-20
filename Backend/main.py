@@ -1158,7 +1158,7 @@ def set_guardian(user_id: int, nameG: str, surname: str, email: str, db: Session
         )
         groupid = user.groupid
         guardian = CRUD.create_guardian(db, guard)
-        print(guardian.nameG)
+        print(guardian.name)
         group=CRUD.update_project_group_guardian(db, groupid, guardian.guardianid)
         print(group.guardianid)
         return {"message": "Udało się dodać opiekuna"}
