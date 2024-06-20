@@ -60,14 +60,14 @@ document.addEventListener("DOMContentLoaded", function() {
         const projectDetailsContainer = document.getElementById('project-details-div');
         if (projectDetailsContainer) {
             projectDetailsContainer.innerHTML = `
-                <h7>Opiekun grupy</h7>
                 <p><strong>Kod zaproszenia:</strong> ${data.invite_code || 'Brak'}</p>
                 <p><strong>Rozmiar grupy:</strong> ${data.group_size || 'Brak'}</p>
+                <h7>Opiekun grupy</h7>
                 <p><strong>Imię i nazwisko:</strong> ${data.guardian_info?.guardian_name || 'Brak'}</p>
                 <p><strong>Email:</strong> ${data.guardian_info?.guardian_email || 'Brak'}</p>
                 <h7>Projekt</h7>
                 <p><strong>Firma:</strong> ${data.contact_info?.company || 'Brak'}</p>
-                <p><strong>Status projektu:</strong> ${data.contact_info?.status || 'Brak'}</p>
+                <p><strong>Status projektu:</strong> ${data.reservation_status || 'Brak'}</p>
                 <p><strong>Email kontaktowy:</strong> ${data.contact_info?.contact_email || 'Brak'}</p>
                 <p><strong>Telefon kontaktowy:</strong> ${data.contact_info?.contact_phone || 'Brak'}</p>
                 <p><strong>Osoba kontaktowa:</strong> ${data.contact_info?.person || 'Brak'}</p>
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             alert(data.message);
-              window.location.href = 'enrollment.html';
+              window.location.href = 'StudentHome.html';
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);

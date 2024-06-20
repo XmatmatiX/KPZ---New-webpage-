@@ -52,24 +52,22 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({})
         })
-        .then(async response => {
+        .then(response => {
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || response.statusText);
+                return response.json().then(error => {
+                    throw new Error(error.detail); // rzucenie błędu z szczegółami
+                });
+
             }
             return response.json();
         })
         .then(data => {
-            //alert(data.message);
-            alert('Udało się dołączyć do grupy!');
-            window.location.href = 'yourGroup.html';
+             alert('Udało się dołączyć do grupy!');
+             window.location.href = 'yourGroup.html';
+
         })
         .catch(error => {
-           // console.log(data);
-           // console.error('There was a problem with the fetch operation:', error);
-           // alert('Failed to join group');
-           // alert(error);
-            alert(`Nie udało się pobrać danych grupy: ${error.message}`);
+            alert(`Nie udało się dołączyć do grupy: ${error.message}`);
         });
     }
     // Zamknięcie modala
