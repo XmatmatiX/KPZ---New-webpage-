@@ -98,7 +98,12 @@ document.getElementById('file').addEventListener('click', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const userId = 23; // Replace with the actual user ID
+    const userId = document.getElementById('groupIdInput').value;
+     if (userId) {
+            fetchGroupMembers(userId);
+        } else {
+            alert('Please enter a student ID.');
+        }
 
     // Function to upload PDF
     async function uploadFiles() {
@@ -211,3 +216,28 @@ function leaveGroup() {
 document.getElementById('send').addEventListener('click', function() {
     alert('Plik został wysłany do zatwierdzenia.');
 });
+    function fetchGroupMembers(studentId) {
+        fetch(`http://127.0.0.1:8000/Student/Group/${studentId}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                leaderForm.innerHTML = '';  // Wyczyść formularz przed dodaniem nowych elementów
+                data.members.forEach(member => {
+                    console.log(member.role);
+                    const role = member.role;
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <label id="${member.role}" class="member" data-role="${member.role}">
+                            <input type="radio" name="leader" value="${member.id}">
+                            <img src="../Images/Vector.jpg" alt="Avatar studenta">
+                            <p>${member.name} ${member.surname} - ${member.role}</p>
+                        </label>
+                    `;
+                    leaderForm.appendChild(div);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching group members:', error);
+                alert('Failed to load group members');
+            });
+    }
