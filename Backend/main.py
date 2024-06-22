@@ -206,34 +206,6 @@ def authTest(current_user = Depends(get_current_user)):
     """
     return current_user.rolename;
 
-@app.post("/Login{login}:{password}")
-def login(login: str, password: str, db: Session = Depends(get_db)):
-    """
-    Zakladam ze login to email
-    """
-    user= CRUD.get_user_by_email(db,login)
-    if user is None:
-        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
-    if user.keycloackid!=password:
-        raise HTTPException(status_code=404, detail="Nieprawidłowe hasło")
-
-    user_info ={"id":user.userid,"rolename": user.rolename}
-    return user_info
-
-@app.post("/Register{email}:{password}:{name}:{surname}")
-def register(email: str, password: str, name:str, surname:str, db: Session = Depends(get_db)):
-    """
-    Zakladam ze login to email
-    """
-    user= CRUD.get_user_by_email(db, email)
-    if user is not None:
-        raise HTTPException(status_code=404, detail="Użytkownik o podanym emailu już istnieje w bazie")
-
-    user = models.Users(email=email, name=name, surname=surname, keycloackid=password, rolename=RoleEnum.student)
-    CRUD.create_user(db, user)
-
-    return {"message":"Pomyślnie utworzono użytkownika"}
-
 
 @app.get("/ProjectList")
 def project_list(db: Session = Depends(get_db)):
@@ -331,7 +303,7 @@ def get_time_for_resrvation():
 
 ########### SEKCJA ADMIN ################
 @app.get("/Admin/ProjectList")
-def admin_project_list(db: Session = Depends(get_db)):
+def admin_project_list(role = Depends(is_admin),db: Session = Depends(get_db)):
     projects = CRUD.get_all_projects(db)
 
     return {"projects:": projects}
@@ -364,7 +336,7 @@ def admin_project_list(db: Session = Depends(get_db)):
     #         "maxsizes": maxsizes, "status": stats, "group": groups}
 
 @app.get("/Admin/ProjectListSearch/{parameter}")
-def admin_project_list(parameter:str, db: Session = Depends(get_db)):
+def admin_project_list(parameter:str,role = Depends(is_admin), db: Session = Depends(get_db)):
     projects = CRUD.project_search(db, parameter)
 
     return {"projects:": projects}
@@ -861,7 +833,7 @@ def post_excel(excel_file: UploadFile = File(...), role = Depends(is_admin), db:
         return JSONResponse(status_code=500, content={"message": "Zaszedł błąd", "error": str(e)})
 
 @app.delete("/Admin/ExcelFile")
-def delete_excel(db: Session = Depends(get_db)):
+def delete_excel(role = Depends(is_admin), db: Session = Depends(get_db)):
     """
     Usuwanie pliku excel
     """
@@ -918,8 +890,6 @@ def get_student_group(student = Depends(get_current_user), db: Session = Depends
     Returns information about a group to which student with id belong
     id jest studenta!
     """
-    # Get the student by their id
-    student = CRUD.get_user_by_id(db, id)
     if not student:
         raise HTTPException(status_code=404, detail="Nie odnaleziono studenta")
 

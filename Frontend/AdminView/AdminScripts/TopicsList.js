@@ -143,6 +143,9 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         else {
             fetch(`http://127.0.0.1:8000/Admin/ProjectListSearch/${topic}`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
             })
                 .then(response => {
                     if (!response.ok) {

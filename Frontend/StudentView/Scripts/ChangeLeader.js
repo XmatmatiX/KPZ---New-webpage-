@@ -10,17 +10,12 @@
 //     }
 // }
 
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    const leaderForm = document.getElementById('leader-form');
-    const searchGroupButton = document.getElementById('searchGroupButton');
-    const nominateButton = document.getElementById('nominate');
-    const unsubscribeButton = document.getElementById('delete-reservation');
-
-    const token = sessionStorage.getItem("JWT");
+const leaderForm = document.getElementById('leader-form');
+const nominateButton = document.getElementById('nominate');
+const unsubscribeButton = document.getElementById('delete-reservation');
+const token = sessionStorage.getItem("JWT");
     // Funkcja do pobierania członków grupy z serwera
-    function fetchGroupMembers(studentId) {
+    function fetchGroupMembers() {
         fetch(`http://127.0.0.1:8000/Student/Group`, {
                     headers: {
                     "Authorization": `Bearer ${token}`
@@ -30,7 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 leaderForm.innerHTML = '';  // Wyczyść formularz przed dodaniem nowych elementów
                 data.members.forEach(member => {
-                    console.log(member.role);
                     const role = member.role;
                     const div = document.createElement('div');
                     div.innerHTML = `
@@ -48,6 +42,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Failed to load group members');
             });
     }
+
+document.addEventListener('DOMContentLoaded', function() {
+
+
+
 
     // Funkcja do zmiany lidera grupy
     function changeLeader(event) {
@@ -86,15 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Pobierz członków grupy po kliknięciu przycisku "Szukaj"
-    searchGroupButton.addEventListener('click', function() {
-        const studentId = document.getElementById('groupIdInput').value;
-        if (studentId) {
-            fetchGroupMembers(studentId);
-        } else {
-            alert('Please enter a student ID.');
-        }
-    });
+
     // Funkcja do usunięcia rezerwacji projektu przez lidera grupy
 function deleteProjectReservation() {
     const userId = document.getElementById('groupIdInput').value;
