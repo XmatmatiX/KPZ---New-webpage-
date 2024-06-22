@@ -158,3 +158,13 @@ class UserRegister(BaseModel):
     surname: str
     email: str
     keycloackid: str
+
+class UserRegisterPassword(BaseModel):
+    name: str
+    surname: str
+    email: str
+    password: str
+
+class UserLoginPassword(BaseModel):
+    email: str
+    password: str

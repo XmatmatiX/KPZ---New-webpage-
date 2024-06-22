@@ -994,6 +994,24 @@ textarea {
     width: 400px;
 }
 
+.registerSection {
+    background-color: var(--neutral);
+    width: 400px;
+    height: 500px;
+    margin: 20px auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Wyśrodkowanie zawartości na osi poziomej */
+}
+.registerSection input {
+    margin-bottom: 20px; /* Zwiększenie odstępu między inputami */
+}
+.registerSection button {
+    margin-bottom: 20px; /* Zwiększenie odstępu między inputami */
+}
+
 .loginSection {
     background-color: var(--neutral);
     width: 400px;
@@ -1007,6 +1025,9 @@ textarea {
 }
 
 .loginSection input {
+    margin-bottom: 20px; /* Zwiększenie odstępu między inputami */
+}
+.loginSection button {
     margin-bottom: 20px; /* Zwiększenie odstępu między inputami */
 }
 
@@ -1623,4 +1644,3 @@ h3 {
 .button-upl:hover {
     background-color: #aaa;
 }
-

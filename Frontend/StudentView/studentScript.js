@@ -1,6 +1,4 @@
-"use strict"
 
-const token = sessionStorage.getItem("JWT");
 
 function checkRole()
 {
@@ -60,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
     groupButton.addEventListener("click", function() {
         // Przenieś użytkownika do strony landingPage.html
-        window.location.href = "yourGroup.html";
+        window.location.href = "groupRedirect.html";
     });
 });
 
@@ -98,11 +96,9 @@ document.addEventListener("DOMContentLoaded", function() {
 document.addEventListener('DOMContentLoaded', function() {
     const groupButton = document.getElementById('groupButton');
 
-    const id = 96;
-
     if (groupButton) {
         groupButton.addEventListener('click', function() {
-            window.location.href = 'yourGroup.html';
+            window.location.href = 'groupRedirect.html';
             //window.location.href = `yourGroup.html?id=${id}`;
         });
     }

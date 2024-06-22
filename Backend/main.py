@@ -143,22 +143,48 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
 
     return user
 
+@app.post("/Register", response_model= schemas.Token)
+def register(newUser : schemas.UserRegisterPassword, db: Session = Depends(get_db)):
+    user_exist = CRUD.get_user_by_email(db, newUser.email)
+    if user_exist:
+      return {"message": "User already exists"}
+
+    new_user = schemas.UserCreate(
+        name=newUser.name,
+        surname=newUser.surname,
+        email=newUser.email,
+        rolename=RoleEnum.student,
+        keycloackid=newUser.password
+    )
+    CRUD.create_user(db, new_user)
+
+    user = authenticate_user(db, newUser.email, newUser.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    user_role = user.rolename
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email, "role": user_role}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/login", response_model= schemas.Token)
-def login(user_data: schemas.UserRegister = None, db: Session = Depends(get_db)):
-    #print(user_data.keycloackid)
-    user_exist = CRUD.get_user_by_email(db, user_data.email)
-    if not user_exist:
-        new_user = schemas.UserCreate(
-            name=user_data.name,
-            surname=user_data.surname,
-            email=user_data.email,
-            rolename=RoleEnum.student,
-            keycloackid=user_data.keycloackid
-        )
-        CRUD.create_user(db, new_user)
+def login(userLogin : schemas.UserLoginPassword, db: Session = Depends(get_db)):
+    user_exist = CRUD.get_user_by_email(db, userLogin.email)
 
-    user = authenticate_user(db, user_data.email, user_data.keycloackid)
+    if not user_exist:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="No account with this email",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    user = authenticate_user(db, userLogin.email, userLogin.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -841,6 +867,23 @@ def set_time_subscribtion(year:int, month:int, day:int, hour:int, minute:int, se
 
 ########### SEKCJA STUDENT ################
 
+@app.get('/Student/MemberType')
+def get_student_type(student = Depends(get_current_user)):
+    """
+    Returns information about student. It contains information about
+    being student with group, without group or being leader
+    """
+    print(student.rolename)
+    if student.groupid is None:
+        return {"memberType": "withoutGroup"}
+    if student.rolename == "student":
+        return {"memberType": "student"}
+    if student.rolename == "leader":
+        return {"memberType": "leader"}
+    raise HTTPException(status_code=404, detail="Wystąpił błąd")
+
+
+
 @app.get("/Student/Group")
 def get_student_group(student = Depends(get_current_user), db: Session = Depends(get_db)):
     """
@@ -1222,10 +1265,8 @@ def delete_pdf_file(user = Depends(get_current_user), db: Session = Depends(get_
     status projektu nie moze byc avaliable,
     po poprawnym wgraniu pliku tworzone jest actionhistory
     """
-    try:
 
-        # Pobierz użytkownika na podstawie jego ID
-        user = CRUD.get_user_by_id(db, user_id)
+    try:
 
         if not user:
             raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")

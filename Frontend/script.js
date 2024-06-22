@@ -66,7 +66,7 @@ const login=() => {
     const inputPassword = document.getElementById("password");
 
     let valueLogin = inputLogin.value;
-    let valuePassword = inputLogin.value;
+    let valuePassword = inputPassword.value;
 
     console.log("Login: ", valueLogin);
     console.log("Password: ", valuePassword);
@@ -76,6 +76,126 @@ const login=() => {
         const message = document.getElementById("errorLogin");
         message.style.display = "flex";
     }
+    else
+    {
+        const userLogin = {
+            email: valueLogin,
+            password: valuePassword
+        }
+
+        fetch(`http://127.0.0.1:8000/login`,{
+            method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userLogin)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => {
+                    throw new Error(error.detail); // rzucenie błędu z szczegółami
+                });
+            }
+            //console.log((response));
+            return response.json();
+        })
+            .then(data => {
+                sessionStorage.setItem("JWT", data.access_token);
+                alert('Udało się zalogować!');
+                redirectToHomePage();
+        })
+        .catch(error => alert('Błąd pobierania danych:', error));
+
+    }
+}
+
+const register=()=>{
+    //window.location.href="registerPage.html";
+    const inputPassword = document.getElementById("password");
+    const inputPassword2 = document.getElementById("password2");
+    const inputEmail = document.getElementById("email");
+    const inputName = document.getElementById("name");
+    const inputSurname=document.getElementById("surname");
+
+    let valuePassword = inputPassword.value;
+    let valuePassword2 = inputPassword2.value;
+    let email = inputEmail.value;
+    let name=inputName.value;
+    let surname=inputSurname.value;
+
+    if(valuePassword==="" || valuePassword2==="")
+        alert("Nie podano hasla")
+    else if (valuePassword!==valuePassword2)
+        alert("Hasła powinny być takie same!")
+    else if(name==="" || surname==="" || email==="")
+        alert("Podaj wszytskie wartości")
+
+    else if(!email.endsWith("pwr.edu.pl"))
+        alert("Jesteś z poza organzacji. Nie możesz się zarejestrować!")
+    else
+    {
+        const newUser = {
+            email: email,
+            password: valuePassword,
+            name: name,
+            surname: surname
+        }
+
+        console.log(newUser)
+        fetch(`http://127.0.0.1:8000/Register`,{
+            method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newUser)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => {
+                    console.log(error.detail);
+                    alert(error.detail)
+                    throw new Error(error.detail);
+                });
+
+            }
+            return response.json();
+        })
+            .then(data => {
+                sessionStorage.setItem("JWT", data.access_token);
+                alert('Udało się stworzyć użytkownika!');
+                redirectToHomePage();
+                //window.location.href = 'loginPage.html';
+        })
+        .catch(error => alert('Błąd pobierania danych:', error.message));
+
+    }
+
+}
+
+function redirectToHomePage()
+{
+    const token = sessionStorage.getItem("JWT");
+    fetch("http://127.0.0.1:8000/User/Role", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    }).then(data => {
+        if (data === "student")
+            window.location.href = "./StudentView/studentHome.html";
+        else if(data === "leader")
+            window.location.href = "./StudentView/studentHome.html";
+        else if(data === "admin")
+            window.location.href = "./AdminView/adminHome.html";
+    }).catch(error => {
+        console.error('Error:', error);
+    });
 }
 
 const logo = document.querySelector('.logoImage');
