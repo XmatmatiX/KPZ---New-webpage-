@@ -1,5 +1,46 @@
 const token = sessionStorage.getItem("JWT");
 
+function fetchGroupDetails() {
+    fetch(`http://127.0.0.1:8000/Student/Group`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            updateMemberDetails(data.members);
+        })
+        .catch(error => {
+            console.error('Błąd pobierania danych:', error.message);
+            alert(`Nie udało się pobrać danych grupy: ${error.message}`);
+        });
+}
+
+function updateMemberDetails(members) {
+    console.log(members);
+    const memberDetailsContainer = document.getElementById('member-details');
+    if (memberDetailsContainer) {
+        let membersHtml = '<h7>Członkowie grupy</h7>';
+        members.forEach(member => {
+            membersHtml += `
+                    <div class="member">
+                        <img src="../Images/Vector.jpg" alt="Avatar studenta">
+                        <p>${member.name} ${member.surname} - ${member.role}</p>
+                    </div>
+                `;
+        });
+        memberDetailsContainer.innerHTML = membersHtml;
+    } else {
+        console.error('Member details container not found');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const formModal = document.getElementById('formModal');
     const fileModal = document.getElementById('fileModal');
@@ -137,45 +178,6 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Failed to change guardian');
         });
 
-        function fetchGroupDetails() {
-        fetch(`http://127.0.0.1:8000/Student/Group`, {
-                    headers: {
-                    "Authorization": `Bearer ${token}`
-                 }
-                })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                updateMemberDetails(data.member_get);
-            })
-            .catch(error => {
-                console.error('Błąd pobierania danych:', error.message);
-                alert(`Nie udało się pobrać danych grupy: ${error.message}`);
-            });
-    }
-
-        function updateMemberDetails(members) {
-        const memberDetailsContainer = document.getElementById('member-details');
-        if (memberDetailsContainer) {
-            let membersHtml = '<h7>Członkowie grupy</h7>';
-            members.forEach(member => {
-                membersHtml += `
-                    <div class="member">
-                        <img src="../Images/Vector.jpg" alt="Avatar studenta">
-                        <p>${member.name} ${member.surname} - ${member.role}</p>
-                    </div>
-                `;
-            });
-            memberDetailsContainer.innerHTML = membersHtml;
-        } else {
-            console.error('Member details container not found');
-        }
-    }
     fetchGroupDetails();
 });
 

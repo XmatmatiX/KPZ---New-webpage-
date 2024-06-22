@@ -10,7 +10,7 @@
 
     <title>KPZ</title>
 </head>
-<body onload="checkRole()">
+<body onload="checkRole(); fetchGroupDetails()">
 <section class="header">
     <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here" onclick="imageClick()">
     <div class="title">
@@ -29,10 +29,6 @@
         <button id="enrollmentButton" class="menuButton"><img src="../Images/signin.png" alt="There should be home photo"> Zapisy </button>
     </div>
     <div class="page">
-        <section class="headerAdmin">
-            <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">
-            <button id="searchGroupButton" class="searchButton">Szukaj</button>
-        </section>
         <div class="container-leader">
             <div class="group-info-leader">
                 <h3>Skład grupy</h3>

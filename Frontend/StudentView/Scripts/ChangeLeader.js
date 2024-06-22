@@ -88,15 +88,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Funkcja do usunięcia rezerwacji projektu przez lidera grupy
 function deleteProjectReservation() {
-    const userId = document.getElementById('groupIdInput').value;
     if (!confirm('Czy na pewno chcesz usunąć rezerwację projektu?')) {
         return; // Jeśli użytkownik kliknie "Anuluj" w oknie dialogowym, funkcja zostanie przerwana.
     }
 
-    fetch(`http://127.0.0.1:8000/Student/${userId}/QuitProject`, {
+    fetch(`http://127.0.0.1:8000/Student/QuitProject`, {
         method: 'DELETE', // Metoda HTTP DELETE
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${token}`
         }
 
     })
