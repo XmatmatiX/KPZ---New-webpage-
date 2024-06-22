@@ -290,7 +290,7 @@ def project_list( db: Session = Depends(get_db)):
 def project_detail(id: int, db: Session = Depends(get_db)):
     project = CRUD.get_project_by_id(db, id)
     if project is None:
-        raise HTTPException(status_code=404, detail="Project not not found")
+        raise HTTPException(status_code=404, detail="Nie odnaleziono projektu")
     num_taken = CRUD.number_project_reserved(db, project.projectid)
     return {"id": id, "logo": project.logopath ,"companyname": project.companyname, "title": project.projecttitle,
             "description": project.description, "technologies": project.technologies, "minsize": project.mingroupsize, "maxsize": project.maxgroupsize,
@@ -557,7 +557,7 @@ def get_student(id:int, role = Depends(is_admin), db:Session=Depends(get_db)):
     """
     student=CRUD.get_user_by_id(db,id)
     if not student:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
     #return {"student":student}
     return {"name": student.name, "surname": student.surname, "email": student.email, "group": student.groupid }
 
@@ -565,7 +565,7 @@ def get_student(id:int, role = Depends(is_admin), db:Session=Depends(get_db)):
 def get_guardian(id:int, role = Depends(is_admin), db: Session=Depends(get_db)):
     guardian=CRUD.get_guardian(db, id)
     if not guardian:
-        raise HTTPException(status_code=404, detail="Guardian not found")
+        raise HTTPException(status_code=404, detail="Nie odnaleziono opiekuna")
     return {"name": guardian.name, "surname": guardian.surname, "email": guardian.email}
 
 @app.put("/Admin/AdminCreate/{email}")
@@ -575,14 +575,14 @@ def put_admin_create(email:str, role = Depends(is_admin), db:Session=Depends(get
     """
     student=CRUD.get_user_by_email(db,email)
     if not student:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
     if student.rolename ==RoleEnum.admin.value:
-        raise HTTPException(status_code=404, detail="User is alrady admin")
+        raise HTTPException(status_code=404, detail="Użytkownik już posiada prawa administratora")
     if student.groupid:
-        raise HTTPException(status_code=404, detail="Admin can not be assigned to a project")
+        raise HTTPException(status_code=404, detail="Admin nie może być zapisany do grupy projektowej")
 
     CRUD.update_to_admin(db,email)
-    return {"message": " Admin changed succesfully"}
+    return {"message": "Udało się stworzyć admina"}
 
 @app.get("/Admin/AdminList")
 def get_admins(role = Depends(is_admin), db: Session = Depends(get_db)):
@@ -608,11 +608,11 @@ def post_sign_to_group(user_id:int, groupId:int, role = Depends(is_admin), db:Se
     """
     student=CRUD.get_user_by_id(db, user_id)
     if not student:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
     group= CRUD.get_group(db, groupId)
 
     if not group:
-        raise HTTPException(status_code=404, detail="Group with such groupID doesnt exist")
+        raise HTTPException(status_code=404, detail="Grupa o podanym identyfikatorze nie istnieje")
     try:
         CRUD.update_user_group_id(db, student, group.groupid)
         return {"message": "Udało się dołączyć do  grupy"}
@@ -652,9 +652,9 @@ def post_add_project(project: schemas.ProjectCreate, groupID: Optional[int] = No
                 new_reservation = CRUD.create_project_reservation(db, created_project, group)
                 print(f"Created new reservation: {new_reservation}")
             except exceptions.NotTimeForReservationException:
-                raise HTTPException(status_code=400, detail="Project cannot be reserved at the moment")
+                raise HTTPException(status_code=400, detail="Nie mozna dokonac rezerwacji, poniewaz czas na zapisy jeszcze nie nadszedl")
             except exceptions.ProjectNotAvailableException:
-                raise HTTPException(status_code=400, detail="Project is already reserved")
+                raise HTTPException(status_code=400, detail="Projekt jest już zajęty")
             except exceptions.GroupSizeNotValidForProjectException:
                 raise HTTPException(status_code=400, detail="Rozmiar grupy nie odpowiada wymaganiom projektu")
 
@@ -679,7 +679,7 @@ def get_notification_by_id(id: int, role = Depends(is_admin), db: Session = Depe
     """
     notification = CRUD.get_action_history_id(db, id)
     if notification is None:
-        raise HTTPException(status_code=404, detail="Notification not not found")
+        raise HTTPException(status_code=404, detail="Nie odnaleziono powiadomienia")
     CRUD.update_action_history_displayed(db, notification)
     return notification
 
@@ -690,10 +690,10 @@ def get_group_action_history(group_id: int, role = Depends(is_admin), db: Sessio
     """
     group = CRUD.get_group(db, group_id)
     if group is None:
-        raise HTTPException(status_code=404, detail="Group not not found")
+        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
     history = CRUD.get_action_history(db, group_id)
     if history is None:
-        raise HTTPException(status_code=404, detail="Action history not found")
+        raise HTTPException(status_code=404, detail="Nie odnaleziono powiadomienia")
     return history
 
 @app.delete("/Admin/Notification/{id}")
@@ -1168,16 +1168,16 @@ def create_group(student = Depends(get_current_user), db: Session = Depends(get_
     except Exception as e:
         print (e)
 
-@app.post("/Student/Group/GuardianAdd/{name}/{surname}/{email}")
-def set_guardian(name: str, surname: str, email: str, user = Depends(get_current_user), db: Session = Depends(get_db)):
-    print(name)
+@app.post("/Student/Group/GuardianAdd/{nameG}:{surname}:{email}")
+def set_guardian(nameG: str, surname: str, email: str,user = Depends(get_current_user), db: Session = Depends(get_db)):
+    print(nameG)
     if user is None:
         raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
     if user.rolename != "leader":
         raise HTTPException(status_code=404, detail="Tylko lider może wprowadzić dane opiekuna")
-    if name != "" and surname != "" and email != "":
+    if nameG != "" and surname != "" and email != "":
         guard=schemas.GuardianCreate(
-            name=name,
+            name=nameG,
             surname=surname,
             email=email
         )

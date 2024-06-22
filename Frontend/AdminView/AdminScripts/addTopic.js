@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function() {
             email: document.getElementById('email').value,
             phonenumber: document.getElementById('phonenumber').value,
             description: document.getElementById('description').value,
-            logopath: document.getElementById('logopath').value,
+            logopath: "",
             technologies: document.getElementById('technologies').value,
             mingroupsize: parseInt(document.getElementById('mingroupsize').value, 10),
             maxgroupsize: parseInt(document.getElementById('maxgroupsize').value, 10),

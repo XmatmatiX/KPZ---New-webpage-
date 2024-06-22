@@ -37,11 +37,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 const dateTime = new Date(notification.date);
                 const formattedDateTime = `${dateTime.toLocaleDateString()} ${dateTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}`;
 
-                //notificationItem.style.fontWeight = notification.displayed ? 'normal' : 'bold';
-
-                //console.log("Not disp")
-                //console.log(notification.displayed)
-
                 if (!notification.displayed) {
                     notificationItem.style.fontWeight = 'bold';
                 }
@@ -49,23 +44,32 @@ document.addEventListener("DOMContentLoaded", function() {
                     notificationItem.style.fontWeight = 'normal';
                 }
 
-                notificationItem.innerHTML = `
-                    <p>${notification.group}</p>
-                    <p>${notification.content}</p>
-                    <p>${formattedDateTime}</p>
-                    <button class="searchButton"> <img src="../Images/trash.png" alt="Here should be a photo"> </button>
-                `;
+                let projectTittle;
 
-                notificationSection.appendChild(notificationItem);
-                const notificationDetails = document.createElement('div');
-                notificationDetails.classList.add('notificationDetails');
+                fetch(`http://127.0.0.1:8000/Admin/Project/${notification.project}`)
+                    .then(response => response.json())
+                    .then(project => {
 
-                // Notification Details
+                        projectTittle = project.projecttitle
+                        console.log(projectTittle)
 
-                notificationSection.appendChild(notificationDetails);
-                notificationItem.addEventListener('click', function() {
+                        notificationItem.innerHTML = `
+                            <p>${notification.group}</p>
+                            <p>${projectTittle}</p>
+                            <p>${formattedDateTime}</p>
+                            <button class="searchButton"> <img src="../Images/trash.png" alt="Here should be a photo"> </button>
+                        `;
 
-                    event.stopPropagation();
+                        notificationSection.appendChild(notificationItem);
+                        const notificationDetails = document.createElement('div');
+                        notificationDetails.classList.add('notificationDetails');
+
+                        // Notification Details
+
+                        notificationSection.appendChild(notificationDetails);
+                        notificationItem.addEventListener('click', function() {
+
+                            event.stopPropagation();
 
                     fetch(`http://127.0.0.1:8000/Admin/Notification/${notification.historyid}`, {
                             headers: {
@@ -75,42 +79,41 @@ document.addEventListener("DOMContentLoaded", function() {
                         .then(response => response.json())
                         .then(details => {
 
-                            if (!notification.displayed) {
-                                notificationItem.style.fontWeight = 'normal';
+                                    if (!notification.displayed) {
+                                        notificationItem.style.fontWeight = 'normal';
+                                    }
+
+                                    // Wyświetl szczegóły powiadomienia w elemencie notificationDetails
+                                    displayNotificationDetails(notificationDetails, details);
+                                    toggleNotificationDetails(notificationDetails);
+                                    notificationItem.classList.toggle('active');
+                                })
+                                .catch(error => {
+                                    errorModal.style.display = 'block';
+                                    modalText.textContent = `Błąd pobierania danych: ${error.message}`;
+                                });
+                        });
+
+                        // Dodaj obsługę zdarzenia kliknięcia na przycisku smietnika
+                        notificationItem.querySelector('.searchButton').addEventListener('click', function(event) {
+
+                            event.stopPropagation();
+
+                            const modal = document.getElementById('deleteModal');
+
+                            // elementy do zamykania modalu
+                            const span = document.getElementsByClassName("close")[0];
+                            const confirmBtn = document.getElementById("confirmBtn");
+                            const cancelBtn = document.getElementById("cancelBtn");
+
+                            function closeModal() {
+                                modal.style.display = "none";
                             }
 
-                            // Wyświetl szczegóły powiadomienia w elemencie notificationDetails
-                            displayNotificationDetails(notificationDetails, details);
-                            toggleNotificationDetails(notificationDetails);
-                            notificationItem.classList.toggle('active');
-                            //notificationDetails.classList.toggle('activeDetails');
-                        })
-                        .catch(error => {
-                            errorModal.style.display = 'block';
-                            modalText.textContent = `Błąd pobierania danych: ${error.message}`;
-                        });
-                });
-
-                // Dodaj obsługę zdarzenia kliknięcia na przycisku smietnika
-                notificationItem.querySelector('.searchButton').addEventListener('click', function(event) {
-
-                    event.stopPropagation();
-
-                    const modal = document.getElementById('deleteModal');
-
-                    // elementy do zamykania modalu
-                    const span = document.getElementsByClassName("close")[0];
-                    const confirmBtn = document.getElementById("confirmBtn");
-                    const cancelBtn = document.getElementById("cancelBtn");
-
-                    function closeModal() {
-                        modal.style.display = "none";
-                    }
-
-                    // Przypisanie obsługi zdarzeń do przycisków
-                    modal.style.display = "block";
-                    span.onclick = closeModal;
-                    confirmBtn.onclick = function() {
+                            // Przypisanie obsługi zdarzeń do przycisków
+                            modal.style.display = "block";
+                            span.onclick = closeModal;
+                            confirmBtn.onclick = function() {
 
                         fetch(`http://127.0.0.1:8000/Admin/Notification/${notification.historyid}`, {
                             method: 'DELETE',
@@ -133,11 +136,14 @@ document.addEventListener("DOMContentLoaded", function() {
                                 modalText.textContent = `Błąd usuwania powiadomienia: ${error.message}`;
                             });
 
-                        closeModal();
-                    }
-                    cancelBtn.onclick = closeModal; // Zamknij modal po anulowaniu
+                                closeModal();
+                            }
+                            cancelBtn.onclick = closeModal; // Zamknij modal po anulowaniu
 
-                });
+                        });
+
+                    })
+                    .catch(error => { console.log(error)});
 
                 notifications.appendChild(notificationSection);
             });
@@ -153,8 +159,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Tutaj dostosuj sposób wyświetlania danych szczegółowych powiadomienia
                 // np. ustawiając odpowiednie wartości innerHTML w elemencie notificationDetails
                 notificationDetails.innerHTML = `
-                    <p>${details.content}</p>
+                    <div class="content"><p>${details.content}</p></div>
+                    <div id="groupButton" class="buttonContainer"><button class="searchButton"> Szczegóły </button></div> 
                 `;
+
+                const groupButton = document.getElementById("groupButton");
+
+                groupButton.addEventListener('click', function() {
+                    window.location.href = `groupDetails.html?id=${details.groupid}`;
+                });
             }
 
         })

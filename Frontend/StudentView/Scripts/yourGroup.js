@@ -99,17 +99,19 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                return response.json().then(data => {
+                    throw new Error(data.detail);
+                });
             }
-            return response.json();
+            return response.json(); // Jeśli odpowiedź jest 'ok', zwracamy JSON
         })
         .then(data => {
             alert(data.message);
-              window.location.href = 'StudentHome.html';
+            alert("Ok");
+             // window.location.href = 'StudentHome.html';
         })
         .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-            alert('Failed to unsubscribe from the group');
+            alert('Wystąpił błąd: ' + error.message);
         });
     }
 
