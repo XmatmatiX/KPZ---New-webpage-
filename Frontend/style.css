@@ -58,7 +58,6 @@ body{
     width: 100%;
     margin-top: 15px;
     height: 100px;
-    /**/
     display: flex; /* Ustawia elementy w nagłówku na elastyczne */
     align-items: center; /* Wyśrodkowanie w pionie */
 }
@@ -1637,3 +1636,135 @@ h3 {
     background-color: #aaa;
 }
 
+.divStyle {
+    display: flex;
+    height: 40px;
+    align-items: center;
+}
+
+.enrollmentTime {
+    display: inline-block;
+    margin-right: 20px;
+    font-size: 20px;
+}
+
+/* RESPONSYWNOŚĆ */
+/* TELEFON */
+@media screen and (max-width:480px) {
+
+    :root {
+        --radius-large: 64px;
+        --radius-medium: 10px;
+        --radius-small: 5px;
+
+        --font-small: 10px;
+        --font-big: 24px;
+
+        --title-font: "Italiana", sans-serif;
+        --transition: all 0.3s ease-in-out; /* efekt po najechaniu*/
+    }
+
+    button {
+        width: 140px;
+        height: 35px;
+        padding: 14px 20px;
+        border-radius: var(--radius-medium);
+        font-size: var(--font-small);
+    }
+
+    .header {
+        height: 80px;
+    }
+
+    .logoImage {
+        width: 60px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+
+    .title {
+        width: 100%;
+    }
+
+    .title p {
+        font-size: 12px;
+    }
+
+    .headerButton {
+        margin: 10px 10px 10px 0;
+    }
+
+    .mainHeader {
+        margin-top: 10px;
+    }
+
+    .mainHeader h1 {
+        font-size: 20px;
+    }
+
+    article {
+        margin: 15px;
+        gap: 5px;
+    }
+
+    .formattedP {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .divStyle {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        margin-bottom: 10px;
+    }
+
+    .enrollmentTime {
+        margin-right: 20px;
+        font-size: 15px;
+    }
+
+    .dateLabel {
+        font-size: 15px;
+        padding: 5px 5px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .headerLanding {
+        flex-direction: column;
+        margin: 15px 10px;
+        padding: 0;
+        height: auto;
+    }
+
+    .searchInput, .searchButton {
+        width: 95%;
+        margin: 5px 0;
+    }
+
+    .freeBorder2 {
+        display: flex;
+        justify-content: center;
+        margin: 7px 0;
+        width: 95%;
+    }
+
+    .topicList {
+        margin: 0 20px; /* Marginesy z prawej i lewej strony 20px na mniejszych ekranach */
+
+    }
+
+    .borderItem {
+        display: none;
+    }
+
+    .topicItem {
+        margin-bottom: 10px;
+        grid-template-columns: auto;
+        padding: 10px 10px 10px 20px;
+    }
+
+}
