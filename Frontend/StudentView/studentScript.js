@@ -171,10 +171,11 @@ function submitForm() {
         if (confirmation) {
             console.log("ok zmieniam");
             document.getElementById('formModal').style.display = 'none';
-            fetch(`http://127.0.0.1:8000/Student/${user_id}/Group/GuardianAdd/${nameG}:${surname}:${email}`, {
+            fetch(`http://127.0.0.1:8000/Student/Group/GuardianAdd/${nameG}:${surname}:${email}`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({})
             })

@@ -1060,14 +1060,13 @@ def delete_reservation(user = Depends(get_current_user), db: Session = Depends(g
     CRUD.delete_project_reservation(db,reservation)
     return {"message": "Usunięto rezerwację"}
 
-@app.post("/Student/unsubscribe/{id}")
+@app.post("/Student/unsubscribe")
 def unsubscribe_from_group(user = Depends(get_current_user), db: Session = Depends(get_db)):
     """
     Opuszczenie grupy projektowej. Lider nie może opuścić grupy, chyba że jest jedynym jej członkiem.
     W takim przypadku grupa zostanie usunięta
     """
     # Pobierz użytkownika
-    user = CRUD.get_user_by_id(db, id)
     if not user:
         raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
 

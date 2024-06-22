@@ -82,7 +82,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function fetchGroupDetails(groupId) {
-        fetch(`http://127.0.0.1:8000/Student/Group/${groupId}`)
+        fetch(`http://127.0.0.1:8000/Student/Group`,{
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);

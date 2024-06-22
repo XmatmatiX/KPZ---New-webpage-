@@ -46,7 +46,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 let projectTittle;
 
-                fetch(`http://127.0.0.1:8000/Admin/Project/${notification.project}`)
+                fetch(`http://127.0.0.1:8000/Admin/Project/${notification.project}`,{
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                })
                     .then(response => response.json())
                     .then(project => {
 

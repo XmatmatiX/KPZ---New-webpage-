@@ -1,71 +1,51 @@
 
 const token = sessionStorage.getItem("JWT");
-document.addEventListener("DOMContentLoaded", function() {
-    const searchButton = document.getElementById('searchGroupButton');
 
-    searchButton.addEventListener('click', function(event) {
-        event.preventDefault();
-        //const groupIdInput = document.getElementById('groupIdInput');
+function fetchGroupDetails() {
+    fetch(`http://127.0.0.1:8000/Student/Group`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data); // Log data to see its structure
+            updateMemberDetails(data.members); // Assume `members` is directly under `data`
+            updateProjectDetails(data); // Pass the whole data object if it contains all needed info
+        })
+        .catch(error => {
+            console.error('Błąd pobierania danych:', error);
+            alert(`Nie udało się pobrać danych grupy: ${error.message}`);
+        });
+}
 
-        //if (!groupIdInput) {
-            //console.error('Input element for group ID not found');
-            //return;
-        //}
-
-       //const groupId = groupIdInput.value;
-        //if (!groupId) {
-            //alert('Proszę wpisać ID grupy.');
-            //return;
-        //}
-
-        fetchGroupDetails();
-    });
-
-    function fetchGroupDetails() {
-        fetch(`http://127.0.0.1:8000/Student/Group`, {
-                    headers: {
-                    "Authorization": `Bearer ${token}`
-                 }
-                })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data); // Log data to see its structure
-                updateMemberDetails(data.members); // Assume `members` is directly under `data`
-                updateProjectDetails(data); // Pass the whole data object if it contains all needed info
-            })
-            .catch(error => {
-                console.error('Błąd pobierania danych:', error);
-                alert(`Nie udało się pobrać danych grupy: ${error.message}`);
-            });
-    }
-
-    function updateMemberDetails(members) {
-        const memberDetailsContainer = document.getElementById('member-details');
-        if (memberDetailsContainer) {
-            let membersHtml = '<h7>Członkowie grupy</h7>';
-            members.forEach(member => {
-                membersHtml += `
+function updateMemberDetails(members) {
+    const memberDetailsContainer = document.getElementById('member-details');
+    if (memberDetailsContainer) {
+        let membersHtml = '<h7>Członkowie grupy</h7>';
+        members.forEach(member => {
+            membersHtml += `
                         <div id="${member.role}" class="member" data-role="${member.role}">
                             <img src="../Images/Vector.jpg" alt="Avatar studenta">
                             <p>${member.name} ${member.surname} - ${member.role} <br>${member.email}</br></p>
                         </div>
                 `;
-            });
-            memberDetailsContainer.innerHTML = membersHtml;
-        } else {
-            console.error('Member details container not found');
-        }
+        });
+        memberDetailsContainer.innerHTML = membersHtml;
+    } else {
+        console.error('Member details container not found');
     }
+}
 
-    function updateProjectDetails(data) {
-        const projectDetailsContainer = document.getElementById('project-details-div');
-        if (projectDetailsContainer) {
-            projectDetailsContainer.innerHTML = `
+function updateProjectDetails(data) {
+    const projectDetailsContainer = document.getElementById('project-details-div');
+    if (projectDetailsContainer) {
+        projectDetailsContainer.innerHTML = `
                 <p><strong>Kod zaproszenia:</strong> ${data.invite_code || 'Brak'}</p>
                 <p><strong>Rozmiar grupy:</strong> ${data.group_size || 'Brak'}</p>
                 <h7>Opiekun grupy</h7>
@@ -78,11 +58,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 <p><strong>Telefon kontaktowy:</strong> ${data.contact_info?.contact_phone || 'Brak'}</p>
                 <p><strong>Osoba kontaktowa:</strong> ${data.contact_info?.person || 'Brak'}</p>
             `;
-        } else {
-            console.error('Project details container not found');
-        }
+    } else {
+        console.error('Project details container not found');
     }
-});
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const unsubscribeButton = document.getElementById('leaveButton');
 
@@ -107,8 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             alert(data.message);
-            alert("Ok");
-             // window.location.href = 'StudentHome.html';
+            window.location.href = 'StudentHome.html';
         })
         .catch(error => {
             alert('Wystąpił błąd: ' + error.message);
