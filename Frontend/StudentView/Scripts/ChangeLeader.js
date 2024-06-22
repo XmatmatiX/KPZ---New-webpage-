@@ -18,39 +18,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const nominateButton = document.getElementById('nominate');
     const unsubscribeButton = document.getElementById('delete-reservation');
 
+    const token = sessionStorage.getItem("JWT");
     // Funkcja do pobierania członków grupy z serwera
     function fetchGroupMembers(studentId) {
-        fetch(`http://127.0.0.1:8000/Student/Group/${studentId}`)
+        fetch(`http://127.0.0.1:8000/Student/Group`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 leaderForm.innerHTML = '';  // Wyczyść formularz przed dodaniem nowych elementów
-
-                // const students = document.getElementById('studentGroupList');
-                //
-                // const members = data['members'];
-                // console.log(members);
-                //
-                // members.forEach(member => {
-                //     const memberItem = document.createElement('div');
-                //     memberItem.classList.add('studentGroupItem3')
-                //
-                //     const roleClass = member.rolename === 'leader' ? 'leader' : 'student';
-                //     memberItem.classList.add('studentGroupItem', roleClass);
-                //
-                //     const translatdeRole = translateRole(member.role);
-                //
-                //     memberItem.innerHTML = `
-                //             <p>${member.email}</p>
-                //             <p>${member.name}</p>
-                //             <p>${member.surname}</p>
-                //             <p>${translatdeRole}</p>
-                //             <button id = "nominate" class="nominate-button">Nominuj lidera</button>
-                //         `;
-                //
-                //     students.appendChild(memberItem)
-                // });
-
                 data.members.forEach(member => {
                     console.log(member.role);
                     const role = member.role;
@@ -87,7 +65,8 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(`http://127.0.0.1:8000/Student/ChangeLeader/${leaderId}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({})
         })

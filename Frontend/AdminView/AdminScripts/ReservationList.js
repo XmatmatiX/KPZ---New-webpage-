@@ -1,5 +1,7 @@
 "use strict"
 
+const token = sessionStorage.getItem("JWT");
+
 function translateStatus(status) {
     switch(status) {
         case 'available':
@@ -20,7 +22,11 @@ function translateStatus(status) {
 function allProjects(projects) {
 
     // Pobranie danych z endpointa GET /ProjectList
-    fetch('http://127.0.0.1:8000/Admin/Reservations')
+    fetch('http://127.0.0.1:8000/Admin/Reservations', {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(data => {
 
@@ -68,7 +74,11 @@ function allProjects(projects) {
 
 function chosenProjects(projects, state) {
 
-    fetch(`http://127.0.0.1:8000/Admin/ReservationStatus/${state}`)
+    fetch(`http://127.0.0.1:8000/Admin/ReservationStatus/${state}`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(data => {
 
@@ -264,7 +274,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         else {
             fetch(`http://127.0.0.1:8000/Admin/ReservationSearch/${reservation}`, {
-            })
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');

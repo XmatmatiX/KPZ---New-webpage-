@@ -1,5 +1,7 @@
 "use strict"
 
+const token = sessionStorage.getItem("JWT");
+
 function addButtonListener(studentItem, userId) {
 
     const groupButton = studentItem.querySelector('.groupButton');
@@ -13,7 +15,11 @@ function displayGroups(userID) {
     const groupList = document.getElementById('groupList');
     groupList.innerHTML = '';
 
-    fetch('http://127.0.0.1:8000/Admin/Groups')
+    fetch('http://127.0.0.1:8000/Admin/Groups', {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(data => {
             const groups = data['groups:']; // Pobranie tablicy projektów
@@ -55,7 +61,10 @@ function displayGroups(userID) {
                     console.log('Wybrano grupę:', groupids[i]);
 
                     fetch(`http://127.0.0.1:8000/Admin/SignToGroup/${userID}${groupids[i]}`, {
-                        method: 'POST'
+                        method: 'POST',
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
                     })
                         .then(response => {
                             if (!response.ok) {
@@ -112,7 +121,11 @@ function openModal(userID) {
 }
 
 function allStudents(students) {
-    fetch(`http://127.0.0.1:8000/Admin/Students`)
+    fetch(`http://127.0.0.1:8000/Admin/Students`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(data => {
 
@@ -157,7 +170,11 @@ function allStudents(students) {
 }
 
 function freeStudents(students) {
-    fetch(`http://127.0.0.1:8000/Admin/FreeStudents`)
+    fetch(`http://127.0.0.1:8000/Admin/FreeStudents`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(details => {
 
@@ -300,7 +317,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         else {
             fetch(`http://127.0.0.1:8000/Admin/SearchStudent/${student}`, {
-                method: 'POST'
+                method: 'POST',
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
             })
                 .then(response => {
                     if (!response.ok) {

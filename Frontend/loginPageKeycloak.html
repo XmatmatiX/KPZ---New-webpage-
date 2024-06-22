@@ -1,0 +1,97 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Roboto+Flex:opsz,wght@8..144,300&display=swap" rel="stylesheet">
+
+    <title>KPZ</title>
+    <script src="keycloak_modules/keycloak-js/dist/keycloak.js"></script>
+    <script>
+        const keycloak = new Keycloak({
+                url: 'http://localhost:8080/',
+                realm: 'myrealm',
+                clientId: 'LoginClient',
+            });
+
+        var userRegister;
+
+        function initKeycloak() {
+            keycloak.init({onLoad: 'login-required'}).then(function(authenticated) {
+                if(authenticated)
+                {
+                    Login();
+                }
+            }).catch(function() {
+                alert('failed to initialize');
+            });
+        }
+
+        function Login(){
+            var jsonString = JSON.stringify(keycloak.tokenParsed);
+            var data = JSON.parse(jsonString);
+            console.log(data);
+            userRegister =
+            {
+                name: data.given_name,
+                surname: data.family_name,
+                email: data.email,
+                keycloackid: data.sub
+            }
+            console.log(data.sub);
+
+            fetch("http://127.0.0.1:8000/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                 },
+                body: JSON.stringify(userRegister)
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                }).then(data => {
+                    sessionStorage.setItem("JWT", data.access_token);
+                    redirectToHomePage();
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+
+        }
+
+        function redirectToHomePage()
+        {
+            const token = sessionStorage.getItem("JWT");
+            fetch("http://127.0.0.1:8000/User/Role", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                 },
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                }).then(data => {
+                    if (data === "student")
+                        window.location.href = "./StudentView/studentHome.html";
+                    else if(data === "leader")
+                        window.location.href = "./StudentView/studentHome.html";
+                    else if(data === "admin")
+                        window.location.href = "./AdminView/adminHome.html";
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+
+</head>
+<body onload="initKeycloak()">
+</body>
+</html>
+-->

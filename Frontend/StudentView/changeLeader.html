@@ -10,7 +10,7 @@
   <title>KPZ</title>
 </head>
 
-<body>
+<body onload="checkRole(); fetchGroupMembers()">
 <section class="header">
   <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here" onclick="imageClick()">
   <div class="title">
@@ -28,40 +28,14 @@
     <button id="enrollmentButton" class="menuButton"><img src="../Images/signin.png" alt="There should be home photo"> Zapisy </button>
   </div>
   <div class="page">
-
-<!--      <section class="headerAdmin">-->
-<!--        <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">-->
-<!--        <button id="searchGroupButton" class="searchButton">Szukaj</button>-->
-<!--      </section>-->
-
-<!--      <article class="backgroundArticle">-->
-<!--        <p class="formattedP">Nie możesz opuścić grupy, dopóki jesteś jej liderem. Aby opuścić grupę, która oprócz Ciebie ma innych członków, musisz nominować innego członka na lidera. <em>Nominowany/a musi wyrazić zgodę na zostanie liderem.</em> Opuszczenie grupy, której jesteś jedynym członkiem, spowoduje usunięcie grupy.</p>-->
-<!--      </article>-->
-
-<!--    <h1>Studenci</h1>-->
-
-<!--    <section class="addGroup">-->
-
-<!--      <section id="studentGroupList" class="studentGroupList3">-->
-
-<!--        <div class="borderStudent3">-->
-<!--          <p>Email</p>-->
-<!--          <p>Imię</p>-->
-<!--          <p>Nazwisko</p>-->
-<!--          <p>Rola</p>-->
-<!--          <p></p>-->
-<!--        </div>-->
-
-<!--      </section>-->
-
-<!--    </section>-->
-
     <section class="main-content">
       <div class="info-box">
-        <section class="headerAdmin">
-          <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">
-          <button id="searchGroupButton" class="searchButton">Szukaj</button>
+         <!--
+         <section class="headerAdmin">
+            <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">
+            <button id="searchGroupButton" class="searchButton">Szukaj</button>
         </section>
+        -->
         <div class="alert-box">
           <p>Nie możesz opuścić grupy, dopóki jesteś jej liderem. Aby opuścić grupę, która oprócz Ciebie ma innych członków, musisz nominować innego członka na lidera. Nominowany/a musi wyrazić zgodę na zostanie liderem.</em>  Opuszczenie grupy, której jesteś jedynym członkiem, spowoduje usunięcie grupy.</p>
         </div>

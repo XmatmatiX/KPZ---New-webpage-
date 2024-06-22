@@ -1,5 +1,7 @@
 "use strict"
 
+const token = sessionStorage.getItem("JWT");
+
 function openModal(projectID) {
 
     const span = document.getElementById("closeButton3");
@@ -63,7 +65,10 @@ function openModal(projectID) {
 
         fetch(`http://127.0.0.1:8000/Admin/${projectID}/Logo`, {
             method: 'PUT',
-            body: formData
+            body: formData,
+            headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
         })
             .then(response => {
                 if (response.ok) {
@@ -148,7 +153,10 @@ document.addEventListener("DOMContentLoaded", function() {
     confirmButton.addEventListener('click', function() {
 
         fetch(`http://127.0.0.1:8000/Admin/DeleteProject/${projectId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
         })
             .then(response => {
                 if (response.ok) {
@@ -167,7 +175,11 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // Pobranie szczegółów projektu za pomocą endpointu /Project/{id}
-    fetch(`http://127.0.0.1:8000/Admin/Project/${projectId}`)
+    fetch(`http://127.0.0.1:8000/Admin/Project/${projectId}`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(projectData => {
 

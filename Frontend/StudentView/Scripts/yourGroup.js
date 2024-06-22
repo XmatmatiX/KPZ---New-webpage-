@@ -1,26 +1,32 @@
+
+const token = sessionStorage.getItem("JWT");
 document.addEventListener("DOMContentLoaded", function() {
     const searchButton = document.getElementById('searchGroupButton');
 
     searchButton.addEventListener('click', function(event) {
         event.preventDefault();
-        const groupIdInput = document.getElementById('groupIdInput');
+        //const groupIdInput = document.getElementById('groupIdInput');
 
-        if (!groupIdInput) {
-            console.error('Input element for group ID not found');
-            return;
-        }
+        //if (!groupIdInput) {
+            //console.error('Input element for group ID not found');
+            //return;
+        //}
 
-        const groupId = groupIdInput.value;
-        if (!groupId) {
-            alert('Proszę wpisać ID grupy.');
-            return;
-        }
+       //const groupId = groupIdInput.value;
+        //if (!groupId) {
+            //alert('Proszę wpisać ID grupy.');
+            //return;
+        //}
 
-        fetchGroupDetails(groupId);
+        fetchGroupDetails();
     });
 
-    function fetchGroupDetails(groupId) {
-        fetch(`http://127.0.0.1:8000/Student/Group/${groupId}`)
+    function fetchGroupDetails() {
+        fetch(`http://127.0.0.1:8000/Student/Group`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -82,12 +88,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Funkcja do rezygnacji z grupy
     function leaveGroup() {
-        const studentId = document.getElementById('groupIdInput').value;
-        console.log(studentId);
-        fetch(`http://127.0.0.1:8000/Student/unsubscribe/${studentId}`, {
+
+        fetch(`http://127.0.0.1:8000/Student/unsubscribe`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({})
         })

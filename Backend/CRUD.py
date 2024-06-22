@@ -868,3 +868,14 @@ def isTimeValid() -> bool:
 #         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
 #     return file
 # #
+
+#######################
+#Sekcja do autoryzacji#
+#######################
+
+def check_user(db: Session, email: str, keycloackid: str):
+    db_user = db.query(models.Users).filter(models.Users.email == email).first()
+    if db_user.keycloackid != keycloackid:
+        return None
+    else:
+        return db_user

@@ -26,7 +26,7 @@ def fill_database():
     users = readUsers(db)
     guards = readGuardians(db)
     #projects = readProjects(db)
-    CRUD.create_project_from_forms(db)
+    #CRUD.create_project_from_forms(db)
     projects = CRUD.get_all_projects(db)
     mini = projects[0].mingroupsize
     maxi = projects[0].maxgroupsize

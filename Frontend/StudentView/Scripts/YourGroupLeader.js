@@ -1,3 +1,5 @@
+const token = sessionStorage.getItem("JWT");
+
 document.addEventListener('DOMContentLoaded', function() {
     const formModal = document.getElementById('formModal');
     const fileModal = document.getElementById('fileModal');
@@ -22,21 +24,21 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('opiekunForm').addEventListener('submit', function(event) {
         event.preventDefault();
 
-        const userId = prompt('Wprowadź swoje ID studenta (lidera):');
-        if (!userId) {
-            alert('ID studenta jest wymagane.');
-            return;
-        }
+        //const userId = prompt('Wprowadź swoje ID studenta (lidera):');
+        //if (!userId) {
+            //alert('ID studenta jest wymagane.');
+            //return;
+        //}
 
         const name = document.getElementById('imie').value;
         const surname = document.getElementById('nazwisko').value;
         const email = document.getElementById('email').value;
 
-
-        fetch(`http://127.0.0.1:8000/Student/${userId}/Group/GuardianChange/${name}/${surname}/${email}`, {
+        fetch(`http://127.0.0.1:8000/Student/Group/GuardianChange/${name}/${surname}/${email}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({})
         })
@@ -55,8 +57,12 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Failed to change guardian');
         });
 
-             function fetchGroupDetails(groupId) {
-        fetch(`http://127.0.0.1:8000/Student/Group/${groupId}`)
+        function fetchGroupDetails() {
+        fetch(`http://127.0.0.1:8000/Student/Group`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -90,15 +96,15 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Member details container not found');
         }
     }
-    fetchGroupDetails(userId);
-    });
+    fetchGroupDetails();
+});
 
 document.getElementById('file').addEventListener('click', function() {
     document.getElementById('fileModal').style.display = 'block';
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const userId = 23; // Replace with the actual user ID
+    //const userId = 62; // Replace with the actual user ID
 
     // Function to upload PDF
     async function uploadFiles() {
@@ -121,9 +127,12 @@ document.addEventListener('DOMContentLoaded', function() {
          for (let i = 0; i < files.length; i++) {
         formData.append('files[]', files[i]);
         }
-         fetch(`http://127.0.0.1:8000/Student/${userId}/PDF_file`, {
+         fetch(`http://127.0.0.1:8000/Student/PDF_file`, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
             })
              .then(response => response.json())  // Oczekuje, że serwer zwróci JSON
             .then(data => {
@@ -143,8 +152,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/Student/${userId}/PDF_file`, {
-                method: 'DELETE'
+            const response = await fetch(`http://127.0.0.1:8000/Student/PDF_file`, {
+                method: 'DELETE',
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
             });
 
             const data = await response.json();
@@ -162,8 +174,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to get the list of PDF files
     async function getPDFList() {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/Student/${userId}/PDF_file`, {
-                method: 'GET'
+            const response = await fetch(`http://127.0.0.1:8000/Student/PDF_file`, {
+                method: 'GET',
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
             });
 
             const data = await response.json();

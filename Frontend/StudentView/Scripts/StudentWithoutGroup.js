@@ -3,20 +3,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const joinGroupButton = document.querySelector('.join-btn');
     const modal = document.getElementById('joinGroupModal');
     const closeModal = document.querySelector('.close');
-
+    const token = sessionStorage.getItem("JWT");
     // Funkcja do tworzenia nowej grupy
     function createGroup() {
-        const studentId = document.getElementById('createStudentIdInput').value;
+        //const studentId = document.getElementById('createStudentIdInput').value;
 
-        if (!studentId) {
-            alert('Please enter your student ID.');
-            return;
-        }
+        //if (!studentId) {
+            //alert('Please enter your student ID.');
+            //return;
+        //}
 
-        fetch(`http://127.0.0.1:8000/Student/${studentId}/CreateGroup`, {
+        fetch(`http://127.0.0.1:8000/Student/CreateGroup`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({})
         })
@@ -38,17 +39,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Funkcja do dołączania do istniejącej grupy
     function joinGroup() {
-        const studentId = document.getElementById('studentIdInput').value;
         const inviteCode = document.getElementById('inviteCodeInput').value;
-        if (!studentId || !inviteCode) {
-            alert('Please enter both your student ID and the invite code.');
+        if (!inviteCode) {
+            alert('Please enter the invite code.');
             return;
         }
 
-        fetch(`http://127.0.0.1:8000/Student/${studentId}/JoinGroup/${inviteCode}`, {
+        fetch(`http://127.0.0.1:8000/Student/JoinGroup/${inviteCode}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({})
         })

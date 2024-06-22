@@ -78,32 +78,31 @@ const login=() => {
     }
     else
     {
-        fetch(`http://127.0.0.1:8000/Login${valueLogin}:${valuePassword}`,{
+        const userLogin = {
+            email: valueLogin,
+            password: valuePassword
+        }
+
+        fetch(`http://127.0.0.1:8000/login`,{
             method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({})
+                body: JSON.stringify(userLogin)
         })
-    .then(response => {
+        .then(response => {
             if (!response.ok) {
                 return response.json().then(error => {
                     throw new Error(error.detail); // rzucenie błędu z szczegółami
                 });
-
             }
+            //console.log((response));
             return response.json();
         })
             .then(data => {
-                let role=data.rolename;
-                alert('Udało się zalogować!', role);
-                if (role==="admin")
-                    window.location.href = 'AdminView/adminHome.html';
-                else
-                    window.location.href = 'StudentView/studentHome.html';
-
-
-
+                sessionStorage.setItem("JWT", data.access_token);
+                alert('Udało się zalogować!');
+                redirectToHomePage();
         })
         .catch(error => alert('Błąd pobierania danych:', error));
 
@@ -135,37 +134,68 @@ const register=()=>{
         alert("Jesteś z poza organzacji. Nie możesz się zarejestrować!")
     else
     {
-        console.log(email, name, surname, valuePassword)
-        fetch(`http://127.0.0.1:8000/Register${email}:${valuePassword}:${name}:${surname}`,{
+        const newUser = {
+            email: email,
+            password: valuePassword,
+            name: name,
+            surname: surname
+        }
+
+        console.log(newUser)
+        fetch(`http://127.0.0.1:8000/Register`,{
             method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({})
+                body: JSON.stringify(newUser)
         })
         .then(response => {
             if (!response.ok) {
                 return response.json().then(error => {
                     console.log(error.detail);
                     alert(error.detail)
-                    throw new Error(error.detail); // rzucenie błędu z szczegółami
+                    throw new Error(error.detail);
                 });
 
             }
             return response.json();
         })
             .then(data => {
-                alert('Udało się stworzyć użytkownika! Teraz się zaloguj');
-                window.location.href = 'loginPage.html';
-                console.log(data);
-
-
-
+                sessionStorage.setItem("JWT", data.access_token);
+                alert('Udało się stworzyć użytkownika!');
+                redirectToHomePage();
+                //window.location.href = 'loginPage.html';
         })
-        .catch(error => alert('Błąd pobierania danych:', error));
+        .catch(error => alert('Błąd pobierania danych:', error.message));
 
     }
 
+}
+
+function redirectToHomePage()
+{
+    const token = sessionStorage.getItem("JWT");
+    fetch("http://127.0.0.1:8000/User/Role", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    }).then(data => {
+        if (data === "student")
+            window.location.href = "./StudentView/studentHome.html";
+        else if(data === "leader")
+            window.location.href = "./StudentView/studentHome.html";
+        else if(data === "admin")
+            window.location.href = "./AdminView/adminHome.html";
+    }).catch(error => {
+        console.error('Error:', error);
+    });
 }
 
 const logo = document.querySelector('.logoImage');
