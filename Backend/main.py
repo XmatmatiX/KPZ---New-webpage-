@@ -612,7 +612,7 @@ def post_sign_to_group(user_id:int, groupId:int,db:Session=Depends(get_db)):
 def post_add_project(project: schemas.ProjectCreate, groupID: Optional[int] = None, db: Session = Depends(get_db)):
     """
     Dodawanie nowego projektu przez admina
-    z dodatkowa opcja przypisania do grupy
+    z dodatkową opcją przypisania do grupy
     """
     try:
         if groupID:
@@ -627,15 +627,17 @@ def post_add_project(project: schemas.ProjectCreate, groupID: Optional[int] = No
                 raise HTTPException(status_code=400, detail="Grupa zarezerwowała już projekt")
             print(f"Group {groupID} does not have a reservation")
 
-            # Create a new project reservation
+        # Create the project
+        created_project = CRUD.create_project(db, project)
+        print(f"Created project: {created_project}")
+
+        if groupID:
             try:
-                # Create the project
-                created_project = CRUD.create_project(db, project)
-                print(f"Created project: {created_project}")
+                # Create a new project reservation
                 new_reservation = CRUD.create_project_reservation(db, created_project, group)
                 print(f"Created new reservation: {new_reservation}")
             except exceptions.NotTimeForReservationException:
-                raise HTTPException(status_code=400, detail="Nie mozna dokonac rezerwacji, poniewaz czas na zapisy jeszcze nie nadszedl")
+                raise HTTPException(status_code=400, detail="Nie można dokonać rezerwacji, ponieważ czas na zapisy jeszcze nie nadszedł")
             except exceptions.ProjectNotAvailableException:
                 raise HTTPException(status_code=400, detail="Projekt jest już zajęty")
             except exceptions.GroupSizeNotValidForProjectException:
@@ -644,8 +646,6 @@ def post_add_project(project: schemas.ProjectCreate, groupID: Optional[int] = No
         return {"message": "Udało się dodać projekt"}
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "Zaszedł błąd", "error": str(e)})
-
-
 
 @app.get("/Admin/Notification")
 def get_notifications(db: Session = Depends(get_db)):
