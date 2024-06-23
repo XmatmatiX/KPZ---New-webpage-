@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function() {
             email: document.getElementById('email').value,
             phonenumber: document.getElementById('phonenumber').value,
             description: document.getElementById('description').value,
-            logopath: document.getElementById('logopath').value,
+            logopath: "",
             technologies: document.getElementById('technologies').value,
             mingroupsize: parseInt(document.getElementById('mingroupsize').value, 10),
             maxgroupsize: parseInt(document.getElementById('maxgroupsize').value, 10),
@@ -76,22 +76,47 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/Admin/AddProject?groupID=${groupID}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || response.statusText);
+            if(groupID) {
+                console.log("Group", groupID)
+                // const response = await fetch(`http://127.0.0.1:8000/Admin/AddProject?groupID=${groupID}`, {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+                //     body: JSON.stringify(data)
+                // });
+                //
+                // if (!response.ok) {
+                //     const errorData = await response.json();
+                //     throw new Error(errorData.detail || response.statusText);
+                // }
+                //
+                // const result = await response.json();
+                // warningModal.style.display = 'block';
+                // modalText.textContent = `Projekt został prawidłowo dodany`;
+            }
+            else {
+                const response = await fetch(`http://127.0.0.1:8000/Admin/AddProject`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || response.statusText);
+                }
+
+                const result = await response.json();
+                // warningModal.style.display = 'block';
+                // modalText.textContent = `Projekt został prawidłowo dodany`;
+                console.log(result)
             }
 
-            const result = await response.json();
-            warningModal.style.display = 'block';
-            modalText.textContent = `Projekt został prawidłowo dodany`;
+
         } catch (error) {
             warningModal.style.display = 'block';
             modalText.textContent = `Wystąpił błąd podczas dodawania projektu: ${error.message}`;

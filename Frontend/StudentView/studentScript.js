@@ -134,11 +134,42 @@ window.onclick = function(event) {
 }
 
 function submitForm() {
-    var imie = document.getElementById('imie').value;
-    var nazwisko = document.getElementById('nazwisko').value;
+    var nameG = document.getElementById('imie').value;
+    var surname = document.getElementById('nazwisko').value;
     var email = document.getElementById('email').value;
-    alert('Imię: ' + imie + '\nNazwisko: ' + nazwisko + '\nEmail: ' + email);
-    document.getElementById('formModal').style.display = 'none';
+    var user_id = document.getElementById('groupIdInput').value;
+    console.log(user_id);
+    //alert('Imię: ' + imie + '\nNazwisko: ' + nazwisko + '\nEmail: ' + email);
+    const confirmation = confirm('Czy dane opiekuna się zgadzają:\n Imię:' + nameG + '\nNazwisko: ' + surname + '\nEmail: ' + email);
+        if (confirmation) {
+            console.log("ok zmieniam");
+            document.getElementById('formModal').style.display = 'none';
+            fetch(`http://127.0.0.1:8000/Student/${user_id}/Group/GuardianAdd/${nameG}:${surname}:${email}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+                .then(response => {
+                    console.log('here');
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.detail);
+                        });
+                    }
+                    return response.json(); // Jeśli odpowiedź jest 'ok', zwracamy JSON
+                })
+                .then(data => {
+                    alert(data.message);
+                    alert("Ok");
+                    // window.location.href = 'StudentHome.html';
+                })
+                .catch(error => {
+                    alert('Wystąpił błąd: ' + error.message);
+                });
+        }
+        else console.log("nope");
 }
 document.getElementById('file').addEventListener('click', function() {
     document.getElementById('fileModal').style.display = 'block';
