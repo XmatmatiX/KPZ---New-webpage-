@@ -361,19 +361,20 @@ input[type="checkbox"] {
 
 .logo {
 
-    height: 80px;
+    height: auto;
+    max-height: 80px;
     width: auto;
     max-width: 100%;
-    object-fit: cover; /* Skaluje obraz, zachowując proporcje, aby wypełnić obszar */
+    object-fit: contain;
     margin: 0 auto;
 }
 
 .logo-main {
-
-    height: 30px;
+    height: auto;
+    max-height: 30px;
     width: auto;
     max-width: 100%;
-    object-fit: cover; /* Skaluje obraz, zachowując proporcje, aby wypełnić obszar */
+    object-fit: contain;
     margin: 0 auto;
 }
 
@@ -514,6 +515,7 @@ input[type="checkbox"] {
     font-size: 15px;
     border-top: 2px solid black;
     border-bottom: 2px solid black;
+    font-family: "Roboto Flex";
 }
 
 pre {
