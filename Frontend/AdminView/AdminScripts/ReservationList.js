@@ -22,7 +22,7 @@ function translateStatus(status) {
 function allProjects(projects) {
 
     // Pobranie danych z endpointa GET /ProjectList
-    fetch('http://127.0.0.1:8000/Admin/Reservations', {
+    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/Reservations', {
                     headers: {
                     "Authorization": `Bearer ${token}`
                  }
@@ -74,7 +74,7 @@ function allProjects(projects) {
 
 function chosenProjects(projects, state) {
 
-    fetch(`http://127.0.0.1:8000/Admin/ReservationStatus/${state}`, {
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/ReservationStatus/${state}`, {
                     headers: {
                     "Authorization": `Bearer ${token}`
                  }
@@ -273,7 +273,7 @@ document.addEventListener("DOMContentLoaded", function() {
             allProjects(adminTopics);
         }
         else {
-            fetch(`http://127.0.0.1:8000/Admin/ReservationSearch/${reservation}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/ReservationSearch/${reservation}`, {
                     headers: {
                     "Authorization": `Bearer ${token}`
                  }

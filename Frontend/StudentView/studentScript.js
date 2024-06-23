@@ -3,7 +3,7 @@
 function checkRole()
 {
     const token = sessionStorage.getItem("JWT");
-            fetch("http://127.0.0.1:8000/User/Role", {
+            fetch("https://projekty.kpz.pwr.edu.pl/api/User/Role", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -169,7 +169,7 @@ function submitForm() {
         if (confirmation) {
             console.log("ok zmieniam");
             document.getElementById('formModal').style.display = 'none';
-            fetch(`http://127.0.0.1:8000/Student/Group/GuardianAdd/${nameG}:${surname}:${email}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group/GuardianAdd/${nameG}:${surname}:${email}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -244,7 +244,7 @@ function uploadFiles() {
     formData.append(files[0]);
 
     // Opcje fetch do wysłania plików
-    fetch(`http://127.0.0.1:8000/Student/${user_id}/PDF_file`, {  // Zakładam, że "/upload" to endpoint na Twoim serwerze
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${user_id}/PDF_file`, {  // Zakładam, że "/upload" to endpoint na Twoim serwerze
         method: 'POST',
         body: formData
     })

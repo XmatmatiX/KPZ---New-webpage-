@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if(project_id==="")
                 alert("Podaj temat");
             else {
-                fetch(`http://127.0.0.1:8000/Student/Enroll/${project_id}`, {
+                fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Enroll/${project_id}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

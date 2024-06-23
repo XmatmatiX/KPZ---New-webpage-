@@ -6,7 +6,7 @@ function groupInformationBtn()
 }
 
 function fetchGroupDetails() {
-    fetch(`http://127.0.0.1:8000/Student/Group`, {
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group`, {
         headers: {
             "Authorization": `Bearer ${token}`
         }
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function fetchGroupDetails(groupId) {
-        fetch(`http://127.0.0.1:8000/Student/Group`,{
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group`,{
             headers: {
                 "Authorization": `Bearer ${token}`
             }
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const surname = document.getElementById('nazwisko').value;
         const email = document.getElementById('email').value;
 
-        fetch(`http://127.0.0.1:8000/Student/Group/GuardianChange/${name}/${surname}/${email}`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group/GuardianChange/${name}/${surname}/${email}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
          for (let i = 0; i < files.length; i++) {
         formData.append('files[]', files[i]);
         }
-         fetch(`http://127.0.0.1:8000/Student/PDF_file`, {
+         fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/PDF_file`, {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/Student/PDF_file`, {
+            const response = await fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/PDF_file`, {
                 method: 'DELETE',
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to get the list of PDF files
     async function getPDFList() {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/Student/PDF_file`, {
+            const response = await fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/PDF_file`, {
                 method: 'GET',
                 headers: {
                     "Authorization": `Bearer ${token}`

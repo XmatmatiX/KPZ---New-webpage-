@@ -15,7 +15,7 @@ function displayGroups(userID) {
     const groupList = document.getElementById('groupList');
     groupList.innerHTML = '';
 
-    fetch('http://127.0.0.1:8000/Admin/Groups', {
+    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/Groups', {
                     headers: {
                     "Authorization": `Bearer ${token}`
                  }
@@ -60,7 +60,7 @@ function displayGroups(userID) {
                     console.log('Wybrano user:', userID);
                     console.log('Wybrano grupę:', groupids[i]);
 
-                    fetch(`http://127.0.0.1:8000/Admin/SignToGroup/${userID}${groupids[i]}`, {
+                    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/SignToGroup/${userID}${groupids[i]}`, {
                         method: 'POST',
                         headers: {
                             "Authorization": `Bearer ${token}`
@@ -121,7 +121,7 @@ function openModal(userID) {
 }
 
 function allStudents(students) {
-    fetch(`http://127.0.0.1:8000/Admin/Students`, {
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Students`, {
                     headers: {
                     "Authorization": `Bearer ${token}`
                  }
@@ -170,7 +170,7 @@ function allStudents(students) {
 }
 
 function freeStudents(students) {
-    fetch(`http://127.0.0.1:8000/Admin/FreeStudents`, {
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/FreeStudents`, {
                     headers: {
                     "Authorization": `Bearer ${token}`
                  }
@@ -316,7 +316,7 @@ document.addEventListener("DOMContentLoaded", function() {
             allStudents(students);
         }
         else {
-            fetch(`http://127.0.0.1:8000/Admin/SearchStudent/${student}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/SearchStudent/${student}`, {
                 method: 'POST',
                 headers: {
                     "Authorization": `Bearer ${token}`

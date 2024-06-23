@@ -2,7 +2,7 @@
 const token = sessionStorage.getItem("JWT");
 
 function fetchGroupDetails() {
-    fetch(`http://127.0.0.1:8000/Student/Group`, {
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group`, {
         headers: {
             "Authorization": `Bearer ${token}`
         }
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Funkcja do rezygnacji z grupy
     function leaveGroup() {
 
-        fetch(`http://127.0.0.1:8000/Student/unsubscribe`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/unsubscribe`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
 //     const urlParams = new URLSearchParams(window.location.search);
 //     const groupId = urlParams.get('id');
 //
-//     fetch(`http://127.0.0.1:8000/Student/Group/${groupId}`)
+//     fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group/${groupId}`)
 //             .then(response => {
 //                 if (!response.ok) {
 //                     throw new Error(`HTTP error! Status: ${response.status}`);

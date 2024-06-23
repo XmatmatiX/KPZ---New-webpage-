@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var confirmBtn = document.getElementById("confirmBtn");
     confirmBtn.addEventListener("click", function() {
 
-        fetch(`http://127.0.0.1:8000/Admin/Group/${groupId}/Confirm`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Group/${groupId}/Confirm`, {
             method: 'PUT',
             headers: {
                     "Authorization": `Bearer ${token}`
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const groupId = urlParams.get('id');
 
-    fetch(`http://127.0.0.1:8000/Admin/Group/${groupId}`, {
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Group/${groupId}`, {
                     headers: {
                     "Authorization": `Bearer ${token}`
                  }
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const guardianDetails = document.getElementById('guardian');
 
             if(guardianId) {
-                fetch(`http://127.0.0.1:8000/Admin/Guardian/${guardianId}`, {
+                fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Guardian/${guardianId}`, {
                     headers: {
                     "Authorization": `Bearer ${token}`
                  }

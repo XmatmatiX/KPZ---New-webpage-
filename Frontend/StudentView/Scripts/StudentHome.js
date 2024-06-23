@@ -2,7 +2,7 @@ function getReservatinDate()
 {
     const enrollmentTime = document.getElementById("date");
     console.log("test");
-      fetch(`http://127.0.0.1:8000/TimeReservation`)
+      fetch(`https://projekty.kpz.pwr.edu.pl/api/TimeReservation`)
         .then(response => response.json())
         .then(data => {
 

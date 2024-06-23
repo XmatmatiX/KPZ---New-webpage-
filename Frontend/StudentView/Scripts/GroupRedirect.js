@@ -3,7 +3,7 @@ const token = sessionStorage.getItem("JWT");
 function redirectToGroup()
 {
     console.log("test1");
-    fetch(`http://127.0.0.1:8000/Student/MemberType`, {
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/MemberType`, {
     method: "GET",
     headers: {
         "Authorization": `Bearer ${token}`

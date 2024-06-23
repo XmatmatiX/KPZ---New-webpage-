@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
             let response;
 
             if(groupID) {
-                response = await fetch(`http://127.0.0.1:8000/Admin/AddProject?groupID=${groupID}`, {
+                response = await fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/AddProject?groupID=${groupID}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             }
             else {
-                response = await fetch(`http://127.0.0.1:8000/Admin/AddProject`, {
+                response = await fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/AddProject`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function() {
         span.onclick = closeModal;
         confirmBtn.onclick = function() {
 
-            fetch(`http://127.0.0.1:8000/Admin/${groupId}/Notification`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/${groupId}/Notification`, {
                 method: 'DELETE',
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function() {
         location.reload();
     });
 
-    fetch(`http://127.0.0.1:8000/Admin/${groupId}/Notification`, {
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/${groupId}/Notification`, {
                     headers: {
                     "Authorization": `Bearer ${token}`
                  }
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     event.stopPropagation();
 
-                    fetch(`http://127.0.0.1:8000/Admin/Notification/${notification.historyid}`, {
+                    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Notification/${notification.historyid}`, {
                     headers: {
                     "Authorization": `Bearer ${token}`
                  }
@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     span.onclick = closeModal;
                     confirmBtn.onclick = function() {
 
-                        fetch(`http://127.0.0.1:8000/Admin/Notification/${notification.historyid}`, {
+                        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Notification/${notification.historyid}`, {
                             method: 'DELETE',
                             headers: {
                                 "Authorization": `Bearer ${token}`

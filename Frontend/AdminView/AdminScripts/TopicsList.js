@@ -4,7 +4,7 @@ const token = sessionStorage.getItem("JWT");
 
 document.addEventListener("DOMContentLoaded", function() {
     //Pobranie danych z endpointa GET /ProjectList
-    fetch('http://127.0.0.1:8000/Admin/ProjectList', {
+    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/ProjectList', {
         headers: {
             "Authorization": `Bearer ${token}`
         }
@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function() {
             allProjects(topicList);
         }
         else {
-            fetch(`http://127.0.0.1:8000/Admin/ProjectListSearch/${topic}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/ProjectListSearch/${topic}`, {
                 headers: {
                     "Authorization": `Bearer ${token}`
                 }

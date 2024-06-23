@@ -83,7 +83,7 @@ const login=() => {
             password: valuePassword
         }
 
-        fetch(`http://127.0.0.1:8000/login`,{
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/login`,{
             method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -142,7 +142,7 @@ const register=()=>{
         }
 
         console.log(newUser)
-        fetch(`http://127.0.0.1:8000/Register`,{
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Register`,{
             method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -175,7 +175,7 @@ const register=()=>{
 function redirectToHomePage()
 {
     const token = sessionStorage.getItem("JWT");
-    fetch("http://127.0.0.1:8000/User/Role", {
+    fetch("https://projekty.kpz.pwr.edu.pl/api/User/Role", {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

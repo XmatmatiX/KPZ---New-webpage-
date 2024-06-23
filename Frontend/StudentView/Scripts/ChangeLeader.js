@@ -16,7 +16,7 @@ const unsubscribeButton = document.getElementById('delete-reservation');
 const token = sessionStorage.getItem("JWT");
     // Funkcja do pobierania członków grupy z serwera
     function fetchGroupMembers() {
-        fetch(`http://127.0.0.1:8000/Student/Group`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group`, {
                     headers: {
                     "Authorization": `Bearer ${token}`
                  }
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const leaderId = selectedLeader.value;
 
 
-        fetch(`http://127.0.0.1:8000/Student/ChangeLeader/${leaderId}`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/ChangeLeader/${leaderId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ function deleteProjectReservation() {
         return; // Jeśli użytkownik kliknie "Anuluj" w oknie dialogowym, funkcja zostanie przerwana.
     }
 
-    fetch(`http://127.0.0.1:8000/Student/QuitProject`, {
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/QuitProject`, {
         method: 'DELETE', // Metoda HTTP DELETE
         headers: {
             'Content-Type': 'application/json',
