@@ -74,6 +74,22 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Member details container not found');
         }
     }
+    function translateStatus(state) {
+                switch(state) {
+                    case 'available':
+                        return 'Dostępny';
+                    case 'reserved':
+                        return 'Zarezerwowany';
+                    case 'taken':
+                        return 'Zajęty';
+                    case 'confirmed':
+                        return 'Zatwierdzony';
+                    case 'waiting':
+                        return 'Oczekujący na zatwierdzenie';
+                    default:
+                        return 'Nieznany';
+                }
+            }
 
     function updateProjectDetails(data) {
         const projectDetailsContainer = document.getElementById('project-details-div');
@@ -86,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p><strong>Email:</strong> ${data.guardian_info?.guardian_email || 'Brak'}</p>
                 <h7>Projekt</h7>
                 <p><strong>Firma:</strong> ${data.contact_info?.company || 'Brak'}</p>
-                <p><strong>Status projektu:</strong> ${data.reservation_status || 'Brak'}</p>
+                <p><strong>Status projektu:</strong> ${translateStatus(data.reservation_status) || 'Brak'}</p>
                 <p><strong>Email kontaktowy:</strong> ${data.contact_info?.contact_email || 'Brak'}</p>
                 <p><strong>Telefon kontaktowy:</strong> ${data.contact_info?.contact_phone || 'Brak'}</p>
                 <p><strong>Osoba kontaktowa:</strong> ${data.contact_info?.person || 'Brak'}</p>
@@ -178,21 +194,14 @@ document.getElementById('file').addEventListener('click', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const userId = document.getElementById('groupIdInput').value; // Replace with the actual user ID
+    const userId = 70; // Replace with the actual user ID
+
 
     // Function to upload PDF
     async function uploadFiles() {
         const fileInput = document.getElementById('fileInput');
         const pdfFile = fileInput.files[0];
-        const userId = document.getElementById('groupIdInput').value;
-        console.log(userId);
-
-         // Walidacja, czy dane opiekuna zostały wypełnione
-        // if (!guardianNameInput.value || !guardianSurnameInput.value || !guardianEmailInput.value) {
-        //     alert('Wszystkie dane opiekuna muszą być uzupełnione.');
-        //     return;
-        // }
-
+     //   alert(userId);
 
         if (!pdfFile) {
             alert('Proszę wybrać plik PDF');
@@ -201,9 +210,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const formData = new FormData();
         formData.append('pdf_file', pdfFile);
-       //  for (let i = 0; i < files.length; i++) {
-       // formData.append('files[]', files[i]);
-        //}
          fetch(`http://127.0.0.1:8000/Student/${userId}/PDF_file`, {
                 method: 'POST',
                 body: formData
@@ -220,12 +226,13 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 console.log('Success:', data);
                 alert('Pliki zostały pomyślnie wysłane.');
+                location.reload();
+                return;
             })
             .catch(error => {
             console.error('Error:', error.message);
             alert('Wystąpił błąd: ' + error.message);
             });
-         location.reload();
     }
 
     // Function to delete all PDF files
@@ -241,7 +248,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const data = await response.json();
             if (response.ok) {
-                alert(data.message);
+              //  alert(data.message);
+                location.reload();
             } else {
                 alert('Błąd: ' + data.detail);
             }
@@ -254,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to get the list of PDF files
     async function getPDFList() {
         try {
-            alert(userId);
+       //     alert(userId);
             const response = await fetch(`http://127.0.0.1:8000/Student/${userId}/PDF_file`, {
                 method: 'GET'
             });
@@ -262,9 +270,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             if (response.ok) {
                 const fileListDiv = document.getElementById('fileList');
-                fileListDiv.innerHTML = '<p>' + data.message + '</p><ul>' + data.files.map(file => `<li>${file}</li>`).join('') + '</ul>';
+                fileListDiv.innerHTML = '<p>Przesłany plik:</p><ul>' + data.files.map(file => `<li>${file}</li>`).join('') + '</ul>';
             } else {
-                alert('Błąd: ' + data.detail);
+                    const fileListDiv = document.getElementById('fileList');
+                    fileListDiv.innerHTML = '<p>' + data.detail + '</p>';
+
             }
         } catch (error) {
             console.error('Wystąpił błąd:', error);
