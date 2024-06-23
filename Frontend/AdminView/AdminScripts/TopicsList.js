@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         })
         .catch(error => console.error('Błąd pobierania danych:', error));
-}
+});
 
 function displaySearchedTopis(topics, data) {
 
