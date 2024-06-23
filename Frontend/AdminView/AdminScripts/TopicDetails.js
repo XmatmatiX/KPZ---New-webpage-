@@ -1,5 +1,7 @@
 "use strict"
 
+const token = sessionStorage.getItem("JWT");
+
 function openModal(projectID) {
 
     const span = document.getElementById("closeButton3");
@@ -61,9 +63,12 @@ function openModal(projectID) {
         const formData = new FormData();
         formData.append('logo_file', file);
 
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/${projectID}/Logo`, {
+        fetch(`http://127.0.0.1:8000/Admin/${projectID}/Logo`, {
             method: 'PUT',
-            body: formData
+            body: formData,
+            headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
         })
             .then(response => {
                 if (response.ok) {
@@ -147,8 +152,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     confirmButton.addEventListener('click', function() {
 
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/DeleteProject/${projectId}`, {
-            method: 'DELETE'
+        fetch(`http://127.0.0.1:8000/Admin/DeleteProject/${projectId}`, {
+            method: 'DELETE',
+            headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
         })
             .then(response => {
                 if (response.ok) {
@@ -167,7 +175,11 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // Pobranie szczegółów projektu za pomocą endpointu /Project/{id}
-    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Project/${projectId}`)
+    fetch(`http://127.0.0.1:8000/Admin/Project/${projectId}`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(projectData => {
 
@@ -176,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (projectData.logopath === null || projectData.logopath == '') {
                 logoHTML = 'BRAK';
             } else {
-                logoHTML = `<img class="logo" src="https://projekty.kpz.pwr.edu.pl/${projectData.logopath}" alt="There should be a photo">`;
+                logoHTML = `<img class="logo" src="../../../Backend/${projectData.logopath}" alt="There should be a photo">`;
             }
 
             projectDetailsElement.innerHTML = `

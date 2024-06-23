@@ -3,20 +3,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const joinGroupButton = document.querySelector('.join-btn');
     const modal = document.getElementById('joinGroupModal');
     const closeModal = document.querySelector('.close');
-
+    const token = sessionStorage.getItem("JWT");
     // Funkcja do tworzenia nowej grupy
     function createGroup() {
-        const studentId = document.getElementById('createStudentIdInput').value;
+        //const studentId = document.getElementById('createStudentIdInput').value;
 
-        if (!studentId) {
-            alert('Please enter your student ID.');
-            return;
-        }
+        //if (!studentId) {
+            //alert('Please enter your student ID.');
+            //return;
+        //}
 
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${studentId}/CreateGroup`, {
+        fetch(`http://127.0.0.1:8000/Student/CreateGroup`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({})
         })
@@ -28,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             alert(data.messsage);
-            window.location.href = 'yourGroup.html';
+            window.location.href = 'groupRedirect.html';
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -38,34 +39,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Funkcja do dołączania do istniejącej grupy
     function joinGroup() {
-        const studentId = document.getElementById('studentIdInput').value;
         const inviteCode = document.getElementById('inviteCodeInput').value;
-        if (!studentId || !inviteCode) {
-            alert('Please enter both your student ID and the invite code.');
+        if (!inviteCode) {
+            alert('Please enter the invite code.');
             return;
         }
 
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${studentId}/JoinGroup/${inviteCode}`, {
+        fetch(`http://127.0.0.1:8000/Student/JoinGroup/${inviteCode}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({})
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                return response.json().then(error => {
+                    throw new Error(error.detail); // rzucenie błędu z szczegółami
+                });
+
             }
             return response.json();
         })
         .then(data => {
-            //alert(data.message);
-            alert('Udało się dołączyć do grupy!')
-            window.location.href = 'yourGroup.html';
+             alert('Udało się dołączyć do grupy!');
+             window.location.href = 'groupRedirect.html';
+
         })
         .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-            alert('Failed to join group');
+            alert(`Nie udało się dołączyć do grupy: ${error.message}`);
         });
     }
     // Zamknięcie modala

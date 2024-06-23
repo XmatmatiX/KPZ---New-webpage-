@@ -1,4 +1,32 @@
-"use strict"
+
+
+function checkRole()
+{
+    const token = sessionStorage.getItem("JWT");
+            fetch("http://127.0.0.1:8000/User/Role", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                 },
+                }).then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401)
+                        {
+                            window.location.href = "../LoginPage.html";
+                            throw new Error('Not authorized');
+                        }
+                        else
+                            throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                }).then(data => {
+                    if (data === "admin" )
+                        window.location.href = "../landingPage.html";
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+}
 
 document.addEventListener("DOMContentLoaded", function() {
     // Pobierz przycisk "Wyloguj się"
@@ -22,17 +50,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-
-document.addEventListener("DOMContentLoaded", function() {
-    // Pobierz przycisk "Wyloguj się"
-    var groupButton = document.getElementById("groupButton");
-
-    // Dodaj nasłuchiwanie zdarzenia kliknięcia na przycisku "Wyloguj się"
-    groupButton.addEventListener("click", function() {
-        // Przenieś użytkownika do strony landingPage.html
-        window.location.href = "yourGroup.html";
-    });
-});
 
 document.addEventListener("DOMContentLoaded", function() {
     // Pobierz przycisk "Wyloguj się"
@@ -72,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (groupButton) {
         groupButton.addEventListener('click', function() {
-            window.location.href = `yourGroup.html?id=${id}`;
+            window.location.href = 'groupRedirect.html';
         });
     }
 });
@@ -126,8 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-
-
 /*student bez grupy*/
 
 document.getElementById('tutor').addEventListener('click', function() {
@@ -146,11 +161,40 @@ window.onclick = function(event) {
 }
 
 function submitForm() {
-    var imie = document.getElementById('imie').value;
-    var nazwisko = document.getElementById('nazwisko').value;
+    var nameG = document.getElementById('imie').value;
+    var surname = document.getElementById('nazwisko').value;
     var email = document.getElementById('email').value;
-    alert('Imię: ' + imie + '\nNazwisko: ' + nazwisko + '\nEmail: ' + email);
-    document.getElementById('formModal').style.display = 'none';
+    //alert('Imię: ' + imie + '\nNazwisko: ' + nazwisko + '\nEmail: ' + email);
+    const confirmation = confirm('Czy dane opiekuna się zgadzają:\n Imię:' + nameG + '\nNazwisko: ' + surname + '\nEmail: ' + email);
+        if (confirmation) {
+            console.log("ok zmieniam");
+            document.getElementById('formModal').style.display = 'none';
+            fetch(`http://127.0.0.1:8000/Student/Group/GuardianAdd/${nameG}:${surname}:${email}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({})
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.detail);
+                        });
+                    }
+                    return response.json(); // Jeśli odpowiedź jest 'ok', zwracamy JSON
+                })
+                .then(data => {
+                    alert(data.message);
+                    location.reload();
+                    // window.location.href = 'StudentHome.html';
+                })
+                .catch(error => {
+                    alert('Wystąpił błąd: ' + error.message);
+                });
+        }
+        //location.reload();
 }
 document.getElementById('file').addEventListener('click', function() {
     document.getElementById('fileModal').style.display = 'block';
@@ -191,19 +235,16 @@ const logo = document.querySelector('.logoImage');
 logo.addEventListener('click', () => {
     window.location.href = 'studentHome.html'; // Przenieś użytkownika na stronę główną
 });
-
+/*
 function uploadFiles() {
     var fileInput = document.getElementById('fileInput');
     var files = fileInput.files;
     var formData = new FormData();
-
-    // Dodaje pliki do obiektu FormData
-    for (let i = 0; i < files.length; i++) {
-        formData.append('files[]', files[i]);
-    }
+    var user_id = document.getElementById('groupIdInput').value;
+    formData.append(files[0]);
 
     // Opcje fetch do wysłania plików
-    fetch('/upload', {  // Zakładam, że "/upload" to endpoint na Twoim serwerze
+    fetch(`http://127.0.0.1:8000/Student/${user_id}/PDF_file`, {  // Zakładam, że "/upload" to endpoint na Twoim serwerze
         method: 'POST',
         body: formData
     })
@@ -211,12 +252,15 @@ function uploadFiles() {
         .then(data => {
             console.log('Success:', data);
             alert('Pliki zostały pomyślnie wysłane.');
+            location.reload();
         })
         .catch(error => {
             console.error('Error:', error);
             alert('Wystąpił błąd podczas przesyłania plików.');
         });
 }
+
+ */
 
 
 function showModal() {
@@ -242,11 +286,11 @@ document.getElementById('send').addEventListener('click', function() {
 });
 /*studentInGroup*/
 
-function leaveGroup(groupName, leaderName) {
-    document.getElementById('groupName').textContent = groupName;
-    document.getElementById('leaderName').textContent = leaderName;
-    document.getElementById('leaveModal').style.display = 'flex';
-}
+//function leaveGroup(groupName, leaderName) {
+    //document.getElementById('groupName').textContent = groupName;
+    //document.getElementById('leaderName').textContent = leaderName;
+    //document.getElementById('leaveModal').style.display = 'flex';
+//}
 
 function closeModal() {
     document.getElementById('leaveModal').style.display = 'none';
@@ -255,7 +299,10 @@ function closeModal() {
 document.querySelector('.modal .close').addEventListener('click', closeModal);
 
 
-
+function imageClick()
+{
+    window.location.href ="studentHome.html";
+}
 
 
 

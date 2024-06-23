@@ -2,16 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Roboto+Flex:opsz,wght@8..144,300&display=swap" rel="stylesheet">
     <title>KPZ</title>
 </head>
-<body>
+<body onload="checkRole(); fetchGroupDetails()">
 
 <section class="header">
-    <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
+    <img id="mainLogo" src="../Images/cropped-kpz2022.png" class="logoImage" alt="There should be a logo here" onclick="imageClick()">
     <div class="title">
         <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
         <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
@@ -22,70 +23,69 @@
 
 <section class="grid">
     <div class="menu">
-        <p>Przeglądaj</p>
+        <p>Menu</p>
         <button id="homeButton" class="menuButton"><img src="../Images/home.png" alt="Home icon"> Strona główna </button>
         <button id="groupButton" class="pageButton"><img src="../Images/people.png" alt="Group icon"> Twoja grupa </button>
         <button id="enrollmentButton" class="menuButton"><img src="../Images/signin.png" alt="Enrollment icon"> Zapisy </button>
     </div>
     <div class="page">
 
-<!--        <section class="headerAdmin">-->
-<!--            <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">-->
-<!--            <button id="searchGroupButton" class="searchButton">Szukaj</button>-->
-<!--        </section>-->
-
-        <section class="groupHeader">
-            <h1>Szczegóły grupy</h1>
-            <div id="groupDetails" class="groupSection">
-                <div id="guardian" class="groupDetails4"></div>
-                <div id="code" class="groupDetails4"></div>
-            </div>
-            <h1>Realizowany temat</h1>
-            <div id="groupDetails2" class="groupSection">
-                <div id="thema" class="groupDetails4"></div>
-                <div id="company" class="groupDetails4"></div>
-                <div id="projectId" class="groupDetails4"></div>
-                <div id="state" class="groupDetails4"></div>
-            </div>
-            <h1>Dane kontaktowe do firmy</h1>
-            <div id="groupDetails3" class="groupSection">
-                <div id="person" class="groupDetails4"></div>
-                <div id="email" class="groupDetails4"></div>
-                <div id="phone" class="groupDetails4"></div>
-            </div>
-        </section>
-
-        <h1>Studenci</h1>
-
-        <section class="addGroup">
-
-            <section id="studentGroupList" class="studentGroupList2">
-
-                <div class="borderStudent">
-                    <p>Email</p>
-                    <p>Imię</p>
-                    <p>Nazwisko</p>
-                    <p>Rola</p>
-                </div>
-
-            </section>
-
-        </section>
-
-<!--        <section id="group-info" class="topicList">-->
-<!--            <h1>Informacje o grupie</h1>-->
-<!--        </section>-->
-
-<!--        <div class="page-c">-->
-<!--            <div id="member-details" class="details-container-member">-->
-<!--                <h7>Członkowie grupy</h7>-->
+<!--        <section class="groupHeader">-->
+<!--            <h1>Szczegóły grupy</h1>-->
+<!--            <div id="groupDetails" class="groupSection">-->
+<!--                <div id="guardian" class="groupDetails4"></div>-->
+<!--                <div id="code" class="groupDetails4"></div>-->
 <!--            </div>-->
-<!--         <section id="project-details" class="details-container">-->
-<!--               <div id="project-details-div">-->
-<!--               </div>-->
-<!--                <button id="leaveButton" class="leave-group" onclick="leaveGroup()">Opuść grupę</button>-->
-<!--         </section>-->
-<!--         </div>-->
+<!--            <h1>Realizowany temat</h1>-->
+<!--            <div id="groupDetails2" class="groupSection">-->
+<!--                <div id="thema" class="groupDetails4"></div>-->
+<!--                <div id="company" class="groupDetails4"></div>-->
+<!--                <div id="projectId" class="groupDetails4"></div>-->
+<!--                <div id="state" class="groupDetails4"></div>-->
+<!--            </div>-->
+<!--            <h1>Dane kontaktowe do firmy</h1>-->
+<!--            <div id="groupDetails3" class="groupSection">-->
+<!--                <div id="person" class="groupDetails4"></div>-->
+<!--                <div id="email" class="groupDetails4"></div>-->
+<!--                <div id="phone" class="groupDetails4"></div>-->
+<!--            </div>-->
+<!--        </section>-->
+
+<!--        <h1>Studenci</h1>-->
+
+<!--        <section class="addGroup">-->
+
+<!--            <section id="studentGroupList" class="studentGroupList2">-->
+
+<!--                <div class="borderStudent">-->
+<!--                    <p>Email</p>-->
+<!--                    <p>Imię</p>-->
+<!--                    <p>Nazwisko</p>-->
+<!--                    <p>Rola</p>-->
+<!--                </div>-->
+
+<!--            </section>-->
+
+<!--        </section>-->
+
+        <section id="group-info" class="topicList">
+            <h1>Informacje o grupie</h1>
+        </section>
+
+        <div class="page-c">
+            <div id="member-details" class="details-container-member">
+                <h7>Członkowie grupy</h7>
+            </div>
+         <section id="project-details" class="details-container">
+               <div id="project-details-div">
+               </div>
+             <div class="project-button">
+                 <!--button id="leaveButton" class="leave-group" onclick="leaveGroup()">Opuść grupę</button-->
+                 <button id="leaveButton" class="leave-group">Opuść grupę</button>
+                 <button id="change" class="change">Zarządzaj stanowiskiem</button>
+             </div>
+         </section>
+         </div>
     </div>
 </section>
 

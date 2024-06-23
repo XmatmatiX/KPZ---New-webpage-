@@ -1,3 +1,51 @@
+const token = sessionStorage.getItem("JWT");
+
+function groupInformationBtn()
+{
+    window.location.href = "yourGroup.html"
+}
+
+function fetchGroupDetails() {
+    fetch(`http://127.0.0.1:8000/Student/Group`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            updateMemberDetails(data.members);
+        })
+        .catch(error => {
+            console.error('Błąd pobierania danych:', error.message);
+            alert(`Nie udało się pobrać danych grupy: ${error.message}`);
+        });
+}
+
+function updateMemberDetails(members) {
+    console.log(members);
+    const memberDetailsContainer = document.getElementById('member-details');
+    if (memberDetailsContainer) {
+        let membersHtml = '<h7>Członkowie grupy</h7>';
+        members.forEach(member => {
+            membersHtml += `
+                    <div class="member">
+                        <img src="../Images/Vector.jpg" alt="Avatar studenta">
+                        <p>${member.name} ${member.surname} - ${member.role}</p>
+                    </div>
+                `;
+        });
+        memberDetailsContainer.innerHTML = membersHtml;
+    } else {
+        console.error('Member details container not found');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const formModal = document.getElementById('formModal');
     const fileModal = document.getElementById('fileModal');
@@ -16,25 +64,111 @@ document.addEventListener('DOMContentLoaded', function() {
             fileModal.style.display = 'none';
         });
     });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchButton = document.getElementById('searchGroupButton');
+    searchButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        const groupIdInput = document.getElementById('groupIdInput');
+
+        if (!groupIdInput) {
+            console.error('Input element for group ID not found');
+            return;
+        }
+
+        const groupId = groupIdInput.value;
+        if (!groupId) {
+            alert('Proszę wpisać ID studnta.');
+            return;
+        }
+
+        fetchGroupDetails(groupId);
+    });
+
+    function fetchGroupDetails(groupId) {
+        fetch(`http://127.0.0.1:8000/Student/Group`,{
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data); // Log data to see its structure
+                updateMemberDetails(data.members); // Assume `members` is directly under `data`
+                updateProjectDetails(data); // Pass the whole data object if it contains all needed info
+            })
+            .catch(error => {
+                console.error('Błąd pobierania danych:', error);
+                alert(`Nie udało się pobrać danych grupy: ${error.message}`);
+            });
+    }
+
+    function updateMemberDetails(members) {
+        const memberDetailsContainer = document.getElementById('member-details');
+        if (memberDetailsContainer) {
+            let membersHtml = '<h7>Członkowie grupy</h7>';
+            members.forEach(member => {
+                membersHtml += `
+                        <div id="${member.role}" class="member" data-role="${member.role}">
+                            <img src="../Images/Vector.jpg" alt="Avatar studenta">
+                            <p>${member.name} ${member.surname} - ${member.role} <br>${member.email}</br></p>
+                        </div>
+                `;
+            });
+            memberDetailsContainer.innerHTML = membersHtml;
+        } else {
+            console.error('Member details container not found');
+        }
+    }
+
+    function updateProjectDetails(data) {
+        const projectDetailsContainer = document.getElementById('project-details-div');
+        if (projectDetailsContainer) {
+            projectDetailsContainer.innerHTML = `
+                <p><strong>Kod zaproszenia:</strong> ${data.invite_code || 'Brak'}</p>
+                <p><strong>Rozmiar grupy:</strong> ${data.group_size || 'Brak'}</p>
+                <h7>Opiekun grupy</h7>
+                <p><strong>Imię i nazwisko:</strong> ${data.guardian_info?.guardian_name || 'Brak'}</p>
+                <p><strong>Email:</strong> ${data.guardian_info?.guardian_email || 'Brak'}</p>
+                <h7>Projekt</h7>
+                <p><strong>Firma:</strong> ${data.contact_info?.company || 'Brak'}</p>
+                <p><strong>Status projektu:</strong> ${data.reservation_status || 'Brak'}</p>
+                <p><strong>Email kontaktowy:</strong> ${data.contact_info?.contact_email || 'Brak'}</p>
+                <p><strong>Telefon kontaktowy:</strong> ${data.contact_info?.contact_phone || 'Brak'}</p>
+                <p><strong>Osoba kontaktowa:</strong> ${data.contact_info?.person || 'Brak'}</p>
+            `;
+        } else {
+            console.error('Project details container not found');
+        }
+    }
+});
+
 
     // Handle form submission for changing guardian
     document.getElementById('opiekunForm').addEventListener('submit', function(event) {
         event.preventDefault();
 
-        const userId = prompt('Wprowadź swoje ID studenta (lidera):');
-        if (!userId) {
-            alert('ID studenta jest wymagane.');
-            return;
-        }
+        //const userId = prompt('Wprowadź swoje ID studenta (lidera):');
+        //if (!userId) {
+            //alert('ID studenta jest wymagane.');
+            //return;
+        //}
 
         const name = document.getElementById('imie').value;
         const surname = document.getElementById('nazwisko').value;
         const email = document.getElementById('email').value;
 
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${userId}/Group/GuardianChange/${name}/${surname}/${email}`, {
+        fetch(`http://127.0.0.1:8000/Student/Group/GuardianChange/${name}/${surname}/${email}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({})
         })
@@ -47,49 +181,13 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             alert(data.message);
             formModal.style.display = 'none';
-            // ewentualnie aktualizacja
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
             alert('Failed to change guardian');
         });
-    });
 
-        function fetchGroupDetails(groupId) {
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group/${groupId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data); // Log data to see its structure
-                updateMemberDetails(data.members); // Assume `members` is directly under `data`
-            })
-            .catch(error => {
-                console.error('Błąd pobierania danych:', error);
-                alert(`Nie udało się pobrać danych grupy: ${error.message}`);
-            });
-    }
-        function updateMemberDetails(members) {
-        const memberDetailsContainer = document.getElementById('member-details');
-        if (memberDetailsContainer) {
-            let membersHtml = '<h7>Członkowie grupy</h7>';
-            members.forEach(member => {
-                membersHtml += `
-                    <div class="member">
-                        <img src="../Images/Vector.jpg" alt="Avatar studenta">
-                        <p>${member.name} ${member.surname} - ${member.role}</p>
-                    </div>
-                `;
-            });
-            memberDetailsContainer.innerHTML = membersHtml;
-        } else {
-            console.error('Member details container not found');
-        }
-    }
-    fetchGroupDetails(1);
+    fetchGroupDetails();
 });
 
 document.getElementById('file').addEventListener('click', function() {
@@ -97,12 +195,19 @@ document.getElementById('file').addEventListener('click', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const userId = 62; // Replace with the actual user ID
+    //const userId = 62; // Replace with the actual user ID
 
     // Function to upload PDF
     async function uploadFiles() {
         const fileInput = document.getElementById('fileInput');
         const pdfFile = fileInput.files;
+
+         // Walidacja, czy dane opiekuna zostały wypełnione
+        if (!guardianNameInput.value || !guardianSurnameInput.value || !guardianEmailInput.value) {
+            alert('Wszystkie dane opiekuna muszą być uzupełnione.');
+            return;
+        }
+
 
         if (!pdfFile) {
             alert('Proszę wybrać plik PDF');
@@ -113,9 +218,12 @@ document.addEventListener('DOMContentLoaded', function() {
          for (let i = 0; i < files.length; i++) {
         formData.append('files[]', files[i]);
         }
-         fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${userId}/PDF_file`, {
+         fetch(`http://127.0.0.1:8000/Student/PDF_file`, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
             })
              .then(response => response.json())  // Oczekuje, że serwer zwróci JSON
             .then(data => {
@@ -135,8 +243,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            const response = await fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${userId}/PDF_file`, {
-                method: 'DELETE'
+            const response = await fetch(`http://127.0.0.1:8000/Student/PDF_file`, {
+                method: 'DELETE',
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
             });
 
             const data = await response.json();
@@ -154,8 +265,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to get the list of PDF files
     async function getPDFList() {
         try {
-            const response = await fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/${userId}/PDF_file`, {
-                method: 'GET'
+            const response = await fetch(`http://127.0.0.1:8000/Student/PDF_file`, {
+                method: 'GET',
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
             });
 
             const data = await response.json();
@@ -184,19 +298,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+/*
 document.addEventListener('DOMContentLoaded', function() {
-    const leaveGroupButton = document.querySelector('.leave-group');
     const leaveButton = document.getElementById('leaveButton');
 
-    leaveButton.addEventListener('click', function() {
-        const confirmation = confirm('Czy na pewno chcesz opuścić grupę?');
-        if (confirmation) {
-            console.log('Użytkownik opuścił grupę.');
-            window.location.href = "enrollment.html";
-            location.reload(); // Odświeżenie bieżącej strony
-        }
-    });
+    if (leaveButton) {
+        leaveButton.addEventListener('click', leaveGroup);
+    }
 });
+
+function leaveGroup() {
+    const confirmation = confirm('Czy na pewno chcesz opuścić grupę?');
+    if (confirmation) {
+        console.log('Użytkownik opuścił grupę.');
+        window.location.href = "enrollment.html";
+    }
+}
+
+ */
+
+
+
 document.getElementById('send').addEventListener('click', function() {
     alert('Plik został wysłany do zatwierdzenia.');
 });

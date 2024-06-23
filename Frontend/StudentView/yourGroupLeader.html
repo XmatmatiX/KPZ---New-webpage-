@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css"/>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,9 +11,9 @@
 
     <title>KPZ</title>
 </head>
-<body>
+<body onload="checkRole(); fetchGroupDetails()">
 <section class="header">
-    <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
+    <img id="mainLogo" src="../Images/cropped-kpz2022.png" class="logoImage" alt="There should be a logo here" onclick="imageClick()">
     <div class="title">
         <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
         <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
@@ -23,30 +24,30 @@
 
 <section class="grid">
     <div class="menu">
-        <p>Przeglądaj</p>
+        <p>Menu</p>
         <button id="homeButton" class="menuButton"><img src="../Images/home.png" alt="There should be home photo"> Strona główna </button>
         <button id="groupButton" class="pageButton"><img src="../Images/people.png" alt="There should be home photo"> Twoja grupa </button>
         <button id="enrollmentButton" class="menuButton"><img src="../Images/signin.png" alt="There should be home photo"> Zapisy </button>
     </div>
     <div class="page">
-        <section class="headerAdmin">
-            <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">
-            <button id="searchGroupButton" class="searchButton">Szukaj</button>
-        </section>
         <div class="container-leader">
             <div class="group-info-leader">
                 <h3>Skład grupy</h3>
-                  <div id="member-details" class="details-container-member2">
-                    <!-- Dynamic content will be loaded here -->
+                  <div id="member-details" >
+                    <!-- Dynamic content will be loaded here class="details-container-member2"-->
                   </div>
                 <div class="button-container">
                     <button id="tutor">Wprowadź opiekuna</button>
-                    <button id="file">Załącz pliki</button>
-                    <button id="send">Wyślij do zatwierdzenia</button>
+                    <button id="file">Zarządzaj plikami</button>
+                  <!--  <button id="send">Wyślij do zatwierdzenia</button>
+                  -->
                 </div>
-                <p>Jeśli jeszcze tego nie zrobiłeś, załącz zgodę opiekuna i wszystkich Waszych prowadzących przedmiot na realizację tematu (dozwolony format to.pdf)</p>
+<!--                <p>Jeśli jeszcze tego nie zrobiłeś, załącz zgodę opiekuna i wszystkich Waszych prowadzących przedmiot na realizację tematu (dozwolony format to.pdf)</p>-->
             </div>
             <section class="rest-info">
+                <div id="project-details-div">
+               </div>
+                <!--
                 <h3>Stan rezerwacji</h3>
                 <p><strong>Temat:</strong> </p>
                 <p><strong>Status:</strong> </p>
@@ -55,10 +56,12 @@
                 <h3>Kontakt z firmą</h3>
                 <p><strong>Osoba kontaktowa:</strong> </p>
                 <p><strong>Kontakt:</strong> </p>
+                -->
 
                 <div class="button-container">
                     <button id="change">Zarządzaj stanowiskiem</button>
-                    <button id="leaveButton" class="leave-group" onclick="leaveGroup()">Opuść grupę</button>
+                    <button onclick="groupInformationBtn()">Informacje o grupie</button>
+                    <!--<button id="leaveButton" class="leave-group" onclick="leaveGroup()">Opuść grupę</button>-->
                 </div>
             </section>
 
@@ -93,7 +96,6 @@
             <button class="button-get" onclick="getPDFList()">Pokaż listę plików</button>
             </div>
         </div>
-    </div>
     </div>
 </section>
 

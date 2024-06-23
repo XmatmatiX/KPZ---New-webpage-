@@ -19,23 +19,29 @@
         <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
         <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
     </div>
-
-    <!-- <button id="loginButton" class="headerButton">Zaloguj się</button> -->
-    <!--    <button class="headerButton">Zarejestruj się</button>-->
 </section>
 
-<button id="backButton" class="backButton">POWRÓT</button>
+<div class="loginHeader">Aby stworzyć konto wypełnij formularz</div>
 
-<div id="topicHeader" class="detailsHeader"></div>
+<section class="registerSection">
+    <div class="register">
+        <input id="name" placeholder="Imię">
+        <input id="surname" placeholder="Nazwisko">
+        <input id="email" placeholder="E-mail">
+        <input id="password" placeholder="Hasło" type="password">
+        <input id="password2" placeholder="Powtórz hasło" type="password">
+    </div>
 
-<section id="topicSection" class="topicSection">
-
-    <div id="topicDetails" class="topicDetails"></div>
+    <div class="buttons">
+        <button onclick="register()">Zarejestruj się</button>
+        <p class="info-text">Masz już konto?</p>
+        <button onclick="window.location.href = 'loginPage.html'">Zaloguj się</button>
+    </div>
 
 </section>
+
 
 <script src="script.js"></script>
-<script src="topicDetails.js"></script>
 
 </body>
 </html>

@@ -1,5 +1,7 @@
 "use strict"
 
+const token = sessionStorage.getItem("JWT");
+
 document.addEventListener("DOMContentLoaded", function() {
 
     const addButton = document.getElementById("addAdmin");
@@ -11,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const enrollmentTime = document.getElementById("enrollmentTime");
     const setTime = document.getElementById("setTime");
 
-    fetch(`https://projekty.kpz.pwr.edu.pl/api/TimeReservation`)
+    fetch(`http://127.0.0.1:8000/TimeReservation`)
         .then(response => response.json())
         .then(data => {
 
@@ -79,8 +81,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     confirmButton2.addEventListener('click', function() {
 
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/ExcelFile`, {
-            method: 'DELETE'
+        fetch(`http://127.0.0.1:8000/Admin/ExcelFile`, {
+            method: 'DELETE',
+            headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
         })
             .then(response => {
                 if (response.ok) {
@@ -141,8 +146,11 @@ document.addEventListener("DOMContentLoaded", function() {
         span.onclick = closeModal;
         confirmBtn.onclick = function() {
 
-            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/database-clear`, {
-                method: 'DELETE'
+            fetch(`http://127.0.0.1:8000/Admin/database-clear`, {
+                method: 'DELETE',
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
             })
                 .then(response => {
                     if (response.ok) {
@@ -177,9 +185,12 @@ document.addEventListener("DOMContentLoaded", function() {
         const formData = new FormData();
         formData.append('excel_file', file);
 
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/ExcelFile`, {
+        fetch(`http://127.0.0.1:8000/Admin/ExcelFile`, {
             method: 'POST',
-            body: formData
+            body: formData,
+            headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
         })
             .then(response => {
                 if (response.ok) {
@@ -215,8 +226,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     uploadButton.addEventListener("click", function() {
 
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/UploadProjects`, {
-            method: 'POST'
+        fetch(`http://127.0.0.1:8000/Admin/UploadProjects`, {
+            method: 'POST',
+            headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
         })
             .then(response => {
                 if (!response.ok) {
@@ -257,10 +271,11 @@ document.addEventListener("DOMContentLoaded", function() {
             const minute = String(date.getMinutes()).padStart(2, '0');
             const second = String(date.getSeconds()).padStart(2, '0');
 
-            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/setTime/${year}:${month}:${day}:${hour}:${minute}:${second}`, {
+            fetch(`http://127.0.0.1:8000/Admin/setTime/${year}:${month}:${day}:${hour}:${minute}:${second}`, {
                 method: 'POST', // lub 'GET', zależnie od API
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({ dateTime: dateTime })
             })
@@ -284,8 +299,11 @@ document.addEventListener("DOMContentLoaded", function() {
         const emailInput = document.getElementById('newAdmin')
         const email = emailInput.value;
 
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/AdminCreate/${email}`, {
-            method: 'PUT'
+        fetch(`http://127.0.0.1:8000/Admin/AdminCreate/${email}`, {
+            method: 'PUT',
+            headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
         })
             .then(response => {
                 if (!response.ok) {
@@ -308,7 +326,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // AdminList
 
-    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/AdminList`)
+    fetch(`http://127.0.0.1:8000/Admin/AdminList`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(data => {
 
@@ -350,8 +372,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     span.onclick = closeModal;
                     confirmBtn.onclick = function() {
 
-                        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/AdminDelete/${ids[i]}`, {
-                            method: 'PUT'
+                        fetch(`http://127.0.0.1:8000/Admin/AdminDelete/${ids[i]}`, {
+                            method: 'PUT',
+                            headers: {
+                                "Authorization": `Bearer ${token}`
+                            }
                         })
                             .then(response => {
                                 if (response.ok) {

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css"/>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,9 +11,9 @@
 
     <title>KPZ</title>
 </head>
-<body>
+<body onload="checkRole()">
 <section class="header">
-    <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
+    <img id="mainLogo" src="../Images/cropped-kpz2022.png" class="logoImage" alt="There should be a logo here" onclick="imageClick()">
     <div class="title">
         <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
         <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
@@ -31,22 +32,15 @@
     <div class="page">
         <div class="signInHeader">Zapisy na projekt</div>
 
-        <div id="errorId" class="errorMessage">
-            Niestety temat jest już zajęty
-        </div>
-        <div id="successId" class="successMessage">
-            Udało Ci się zapisać
-        </div>
-
-
         <section class="idSection">
             <input id="idTopic" placeholder="Wpisz ID tematu">
-          <!--  <button onclick="id()">Zapisz</button> -->
+
             <button id="EnrollButton">Zapisz</button>
         </section>
     </div>
 </section>
 
 <script src="studentScript.js"></script>
+<script src="Scripts/Enrollment.js"></script>
 </body>
 </html>

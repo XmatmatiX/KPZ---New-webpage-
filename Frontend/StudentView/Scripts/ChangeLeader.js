@@ -1,57 +1,34 @@
 
-function translateRole(role) {
-    switch(role) {
-        case 'leader':
-            return 'Lider';
-        case 'student':
-            return 'Student';
-        default:
-            return 'Nieznany';
-    }
-}
+// function translateRole(role) {
+//     switch(role) {
+//         case 'leader':
+//             return 'Lider';
+//         case 'student':
+//             return 'Student';
+//         default:
+//             return 'Nieznany';
+//     }
+// }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const leaderForm = document.getElementById('leader-form');
-    const searchGroupButton = document.getElementById('searchGroupButton');
-    const nominateButton = document.getElementById('nominate');
-
+const leaderForm = document.getElementById('leader-form');
+const nominateButton = document.getElementById('nominate');
+const unsubscribeButton = document.getElementById('delete-reservation');
+const token = sessionStorage.getItem("JWT");
     // Funkcja do pobierania członków grupy z serwera
-    function fetchGroupMembers(studentId) {
-        fetch(`http://127.0.0.1:8000/Student/Group/${studentId}`)
+    function fetchGroupMembers() {
+        fetch(`http://127.0.0.1:8000/Student/Group`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
             .then(response => response.json())
             .then(data => {
                 leaderForm.innerHTML = '';  // Wyczyść formularz przed dodaniem nowych elementów
-
-                const students = document.getElementById('studentGroupList');
-
-                const members = data['members'];
-                console.log(members);
-
-                members.forEach(member => {
-                    const memberItem = document.createElement('div');
-                    memberItem.classList.add('studentGroupItem3')
-
-                    const roleClass = member.rolename === 'leader' ? 'leader' : 'student';
-                    memberItem.classList.add('studentGroupItem', roleClass);
-
-                    const translatdeRole = translateRole(member.role);
-
-                    memberItem.innerHTML = `
-                            <p>${member.email}</p>
-                            <p>${member.name}</p>
-                            <p>${member.surname}</p>
-                            <p>${translatdeRole}</p>
-                            <button id = "nominate" class="nominate-button">Nominuj lidera</button>
-                        `;
-
-                    students.appendChild(memberItem)
-                });
-
                 data.members.forEach(member => {
-                    console.log();
+                    const role = member.role;
                     const div = document.createElement('div');
                     div.innerHTML = `
-                        <label>
+                        <label id="${member.role}" class="member" data-role="${member.role}">
                             <input type="radio" name="leader" value="${member.id}">
                             <img src="../Images/Vector.jpg" alt="Avatar studenta">
                             <p>${member.name} ${member.surname} - ${member.role}</p>
@@ -66,6 +43,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+document.addEventListener('DOMContentLoaded', function() {
+
+
+
+
     // Funkcja do zmiany lidera grupy
     function changeLeader(event) {
         event.preventDefault();
@@ -75,14 +57,15 @@ document.addEventListener('DOMContentLoaded', function() {
             alert("Please select a new leader.");
             return;
         }
-        alert(selectedLeader.value);
 
         const leaderId = selectedLeader.value;
+
 
         fetch(`http://127.0.0.1:8000/Student/ChangeLeader/${leaderId}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({})
         })
@@ -94,6 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             alert(data.message);
+            window.location.href = 'groupRedirect.html';
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -101,16 +85,47 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Pobierz członków grupy po kliknięciu przycisku "Szukaj"
-    searchGroupButton.addEventListener('click', function() {
-        const studentId = document.getElementById('groupIdInput').value;
-        if (studentId) {
-            fetchGroupMembers(studentId);
-        } else {
-            alert('Please enter a student ID.');
+
+    // Funkcja do usunięcia rezerwacji projektu przez lidera grupy
+function deleteProjectReservation() {
+    if (!confirm('Czy na pewno chcesz usunąć rezerwację projektu?')) {
+        return; // Jeśli użytkownik kliknie "Anuluj" w oknie dialogowym, funkcja zostanie przerwana.
+    }
+
+    fetch(`http://127.0.0.1:8000/Student/QuitProject`, {
+        method: 'DELETE', // Metoda HTTP DELETE
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${token}`
         }
+
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.detail);
+            });
+        }
+        return response.json(); // Jeśli odpowiedź jest 'ok', zwracamy JSON
+    })
+    .then(data => {
+        alert(data.message); // Wyświetlamy komunikat o sukcesie
+        window.location.href = 'groupRedirect.html';
+    })
+    .catch(error => {
+        console.error('Wystąpił problem z operacją usunięcia rezerwacji:', error);
+        alert('Wystąpił błąd: ' + error.message); // Wyświetlamy komunikat o błędzie
     });
+}
+
+
 
     // Dodaj nasłuchiwacz zdarzeń do przycisku "Nominuj lidera"
     nominateButton.addEventListener('click', changeLeader);
+    unsubscribeButton.addEventListener('click', deleteProjectReservation);
+
 });
+
+
+
+

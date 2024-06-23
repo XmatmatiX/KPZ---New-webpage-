@@ -1,8 +1,13 @@
 "use strict"
 
+const token = sessionStorage.getItem("JWT");
 function allGroups(groupList) {
 
-    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/Groups')
+    fetch('http://127.0.0.1:8000/Admin/Groups', {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(data => {
 
@@ -17,7 +22,11 @@ function allGroups(groupList) {
 
             const fetchGuardianPromises  = guardians.map(guardianId => {
                 if(guardianId) {
-                    return fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Guardian/${guardianId}`)
+                    return fetch(`http://127.0.0.1:8000/Admin/Guardian/${guardianId}`, {
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
+                    })
                         .then(response => response.json())
                         .then(data => `${data.name} ${data.surname}`)
                         .catch(error => {
@@ -66,7 +75,11 @@ function allGroups(groupList) {
 }
 function freeGroups(groupList) {
 
-    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/GroupsWithoutProject')
+    fetch('http://127.0.0.1:8000/Admin/GroupsWithoutProject', {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(data => {
 
@@ -94,7 +107,11 @@ function freeGroups(groupList) {
 
             const fetchGuardianPromises  = guardians.map(guardianId => {
                 if(guardianId) {
-                    return fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Guardian/${guardianId}`)
+                    return fetch(`http://127.0.0.1:8000/Admin/Guardian/${guardianId}`, {
+                            headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
+                        })
                         .then(response => response.json())
                         .then(data => `${data.name} ${data.surname}`)
                         .catch(error => {
@@ -166,7 +183,11 @@ function displaySearchedGroups(group, data) {
 
     const fetchGuardianPromises  = guardians.map(guardianId => {
         if(guardianId) {
-            return fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Guardian/${guardianId}`)
+            return fetch(`http://127.0.0.1:8000/Admin/Guardian/${guardianId}`, {
+                            headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
+                })
                 .then(response => response.json())
                 .then(data2 => `${data2.name} ${data2.surname}`)
                 .catch(error => {
@@ -265,8 +286,11 @@ document.addEventListener("DOMContentLoaded", function() {
             allGroups(groupList);
         }
         else {
-            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/SearchGroup/${group}`, {
-                method: 'POST'
+            fetch(`http://127.0.0.1:8000/Admin/SearchGroup/${group}`, {
+                method: 'POST',
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
             })
                 .then(response => {
                     if (!response.ok) {

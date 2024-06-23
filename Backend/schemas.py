@@ -149,5 +149,22 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    name: str | None = None
-    scopes: list[str] = []
+    email: str | None = None
+    role: str | None = None
+
+
+class UserRegister(BaseModel):
+    name: str
+    surname: str
+    email: str
+    keycloackid: str
+
+class UserRegisterPassword(BaseModel):
+    name: str
+    surname: str
+    email: str
+    password: str
+
+class UserLoginPassword(BaseModel):
+    email: str
+    password: str

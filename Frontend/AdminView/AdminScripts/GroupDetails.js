@@ -1,5 +1,6 @@
 "use strict"
 
+const token = sessionStorage.getItem("JWT");
 document.addEventListener("DOMContentLoaded", function() {
 
     var notificationButton = document.getElementById("notificationButton");
@@ -40,8 +41,11 @@ document.addEventListener("DOMContentLoaded", function() {
     var confirmBtn = document.getElementById("confirmBtn");
     confirmBtn.addEventListener("click", function() {
 
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Group/${groupId}/Confirm`, {
-            method: 'PUT'
+        fetch(`http://127.0.0.1:8000/Admin/Group/${groupId}/Confirm`, {
+            method: 'PUT',
+            headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
         })
             .then(response => {
                 if (!response.ok) {
@@ -75,7 +79,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const groupId = urlParams.get('id');
 
-    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Group/${groupId}`)
+    fetch(`http://127.0.0.1:8000/Admin/Group/${groupId}`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(data => {
 
@@ -128,7 +136,11 @@ document.addEventListener("DOMContentLoaded", function() {
             const guardianDetails = document.getElementById('guardian');
 
             if(guardianId) {
-                fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Guardian/${guardianId}`)
+                fetch(`http://127.0.0.1:8000/Admin/Guardian/${guardianId}`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
                     .then(response => response.json())
                     .then(data => {
                         const guardianName = `${data.name} ${data.surname}`;
@@ -163,6 +175,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 const confirmation = document.getElementById("confirmation");
                 const conf = data['confirmation-path'] || 'BRAK PLIKÓW';
                 confirmation.textContent = `${conf}`;
+            }
+
+            var confirmationButton = document.getElementById("confirmationButton");
+
+            if (data.state === "reserved" || data.state==="waiting") {
+                confirmationButton.style.display = 'block';
+            } else {
+                confirmationButton.style.display = 'none';
             }
 
             const students = document.getElementById('studentGroupList');

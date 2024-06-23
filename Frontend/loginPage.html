@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css"/>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -9,39 +10,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Roboto+Flex:opsz,wght@8..144,300&display=swap" rel="stylesheet">
 
     <title>KPZ</title>
-    <script src="keycloak_modules/keycloak-js/dist/keycloak.js"></script>
-    <script>
-        const keycloak = new Keycloak({
-                url: 'https://login.pwr.edu.pl/auth/realms/pwr.edu.pl/protocol/openid-connect/',
-                realm: 'PWr',
-                clientId: 'projekty.kpz.pwr.edu.pl',
-
-            });
-
-        var userRegister;
-
-        function initKeycloak() {
-            keycloak.init({onLoad: 'login-required'}).then(function(authenticated) {
-                if(authenticated)
-                {
-                    Login();
-                }
-            }).catch(function() {
-                alert('failed to initialize');
-            });
-        }
-
-        function Login(){
-            var jsonString = JSON.stringify(keycloak.tokenParsed);
-            var data = JSON.parse(jsonString);
-            console.log(data);
-        }
-
-    </script>
-
 </head>
 <body>
-</body>
 
-<button onclick="initKeycloak()">zaloguj</button>
+<section class="header">
+    <img id="mainLogo" src="Images/cropped-kpz2022.png" class="logoImage" alt="There should be a logo here">
+    <div class="title">
+        <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
+        <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
+    </div>
+</section>
+
+<div class="loginHeader">Do logowania wykorzystaj konto AD</div>
+
+<div id="errorLogin" class="errorMessage">
+    Nieprawidłowy login lub hasło
+</div>
+
+<section class="loginSection">
+    <input id="login" placeholder="Login">
+    <input id="password" placeholder="Hasło" type="password">
+    <div class="buttons">
+        <button onclick="login()">Zaloguj się</button>
+        <p class="info-text">Nie masz konta?</p>
+        <button onclick="window.location.href='registerPage.html'">Zarejestruj się</button>
+    </div>
+</section>
+
+<script src="script.js"></script>
+
+</body>
 </html>

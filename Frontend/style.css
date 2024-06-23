@@ -58,7 +58,6 @@ body{
     width: 100%;
     margin-top: 15px;
     height: 100px;
-    /**/
     display: flex; /* Ustawia elementy w nagłówku na elastyczne */
     align-items: center; /* Wyśrodkowanie w pionie */
 }
@@ -174,6 +173,17 @@ button:hover {
     background-color: #FFFFFF;
     padding: 30px;
     border-radius: 0 0 var(--radius-small) var(--radius-small);
+
+    /*flex-direction: column;*/
+    /*row-gap: 15px;*/
+}
+
+.notificationDetails .content {
+    margin-bottom: 15px;
+}
+
+.notificationDetails .buttonContainer {
+    margin-left: 50px;
 }
 
 .required {
@@ -350,20 +360,20 @@ input[type="checkbox"] {
 }
 
 .logo {
-
-    height: 80px;
+    height: auto;
+    max-height: 80px;
     width: auto;
     max-width: 100%;
-    object-fit: cover; /* Skaluje obraz, zachowując proporcje, aby wypełnić obszar */
+    object-fit: contain;
     margin: 0 auto;
 }
 
 .logo-main {
-
-    height: 30px;
+    height: auto;
+    max-height: 30px;
     width: auto;
     max-width: 100%;
-    object-fit: cover; /* Skaluje obraz, zachowując proporcje, aby wypełnić obszar */
+    object-fit: contain;
     margin: 0 auto;
 }
 
@@ -469,10 +479,15 @@ input[type="checkbox"] {
     padding: 7px 10px;
     border-radius: var(--radius-small);
     cursor: pointer;
+    border: 2px solid #7a7a7a; /* Dodaje ramkę */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Dodaje delikatny cień */
+    transition: background-color 0.3s, box-shadow 0.3s; /* Dodaje płynne przejście */
 }
 
 .group2:hover {
     background-color: var(--hover2);
+    border-color: var(--hover2); /* Zmienia kolor ramki na ten sam co tło */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Wzmacnia cień */
 }
 
 .topicDetails {
@@ -499,6 +514,7 @@ input[type="checkbox"] {
     font-size: 15px;
     border-top: 2px solid black;
     border-bottom: 2px solid black;
+    font-family: "Roboto Flex";
 }
 
 pre {
@@ -625,7 +641,7 @@ pre {
     padding: 10px;
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
-    grid-template-columns: 5fr 2fr 1fr;
+    grid-template-columns: 8fr 2fr 1fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
 }
@@ -767,7 +783,6 @@ pre {
 
 .notificationItem.active {
     background-color: var(--hover2);
-    /*font-weight: normal;*/
 }
 
 .notificationGroupItem {
@@ -778,7 +793,7 @@ pre {
     height: 55px;
     border-radius: var(--radius-small);
     display: grid;  /* Siatka*/
-    grid-template-columns: 5fr 2fr 1fr;
+    grid-template-columns: 8fr 2fr 1fr;
     gap: 5px; /* Odstęp między elementami */
     justify-items: center;
     align-items: center;
@@ -792,8 +807,6 @@ pre {
 
 .notificationGroupItem.active {
     background-color: var(--hover2);
-    border: 2px solid #000;
-    font-weight: normal;
 }
 
 .deleteModal {
@@ -1008,6 +1021,22 @@ textarea {
 
 .loginSection input {
     margin-bottom: 20px; /* Zwiększenie odstępu między inputami */
+}
+
+.registerSection {
+    background-color: var(--neutral);
+    width: 400px;
+    height: auto;
+    margin: 20px auto;
+    padding: 30px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.registerSection input {
+    margin-bottom: 15px;
 }
 
 .errorMessage {
@@ -1624,3 +1653,180 @@ h3 {
     background-color: #aaa;
 }
 
+.divStyle {
+    display: flex;
+    height: 40px;
+    align-items: center;
+}
+
+.enrollmentTime {
+    display: inline-block;
+    margin-right: 20px;
+    font-size: 20px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Opcjonalne: centrowanie elementów w pionie */
+    gap: 10px; /* Opcjonalne: odstępy między elementami */
+}
+
+.buttons button {
+    width: 200px; /* Przykładowa szerokość przycisków */
+}
+
+.buttons .info-text {
+    margin: 10px 0; /* Opcjonalne: odstępy nad i pod tekstem */
+    text-align: center; /* Opcjonalne: wyrównanie tekstu do środka */
+}
+
+.register {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Opcjonalne: centrowanie elementów w pionie */
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* RESPONSYWNOŚĆ */
+/* TELEFON */
+@media screen and (max-width:480px) {
+
+    :root {
+        --radius-large: 64px;
+        --radius-medium: 10px;
+        --radius-small: 5px;
+
+        --font-small: 14px;
+        --font-big: 24px;
+
+        --title-font: "Italiana", sans-serif;
+        --transition: all 0.3s ease-in-out; /* efekt po najechaniu*/
+    }
+
+    p {
+        font-size: var(--font-small);
+    }
+
+    button {
+        width: 140px;
+        height: 35px;
+        padding: 14px 20px;
+        border-radius: var(--radius-medium);
+        font-size: var(--font-small);
+    }
+
+    .header {
+        height: 80px;
+    }
+
+    .logoImage {
+        width: 60px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+
+    .title {
+        width: 100%;
+    }
+
+    .title p {
+        font-size: 12px;
+    }
+
+    .headerButton {
+        margin: 10px 10px 10px 0;
+    }
+
+    .mainHeader {
+        margin-top: 10px;
+    }
+
+    .mainHeader h1 {
+        font-size: 20px;
+    }
+
+    article {
+        margin: 15px;
+        gap: 5px;
+    }
+
+    .formattedP {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .divStyle {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        margin-bottom: 10px;
+    }
+
+    .enrollmentTime {
+        margin-right: 20px;
+        font-size: 15px;
+    }
+
+    .dateLabel {
+        font-size: 15px;
+        padding: 5px 5px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .headerLanding {
+        flex-direction: column;
+        margin: 15px 10px;
+        padding: 0;
+        height: auto;
+    }
+
+    .searchInput, .searchButton {
+        width: 95%;
+        margin: 5px 0;
+    }
+
+    .freeBorder2 {
+        display: flex;
+        justify-content: center;
+        margin: 7px 0;
+        width: 95%;
+    }
+
+    .topicList {
+        margin: 0 20px; /* Marginesy z prawej i lewej strony 20px na mniejszych ekranach */
+
+    }
+
+    .borderItem {
+        display: none;
+    }
+
+    .topicItem {
+        margin-bottom: 10px;
+        grid-template-columns: auto;
+        padding: 10px 10px 10px 20px;
+        font-size: 17px;
+    }
+
+    .backButton {
+        display: none;
+    }
+
+    .detailsHeader {
+        padding: 10px 15px;
+        margin: 10px 0;
+        height: auto;
+        grid-template-columns: 3fr 5fr;
+    }
+
+    .topicSection {
+        margin: 10px;
+        padding: 10px 10px;
+    }
+
+}

@@ -101,7 +101,6 @@ button {
     font-weight: bold;
     transition: background-color 0.3s; /* Efekt przejścia podczas zmiany tła */
 }
-
 .headerButton {
     margin-left: auto;
     margin-right: 30px;
@@ -151,7 +150,20 @@ button:hover {
     align-items: center;
     font-weight: normal;
 }
-
+label {
+    display: flex;
+    align-items: center; /* Wycentruje elementy w pionie */
+    padding: 10px; /* Dodaje odstęp wewnątrz etykiety */
+    margin: 5px; /* Dodaje odstęp między poszczególnymi elementami listy */
+    border: 1px solid #ccc; /* Dodaje subtelne obramowanie */
+    border-radius: 5px; /* Lekko zaokrągla rogi */
+    cursor: pointer; /* Wskazuje, że element jest klikalny */
+    background-color: #f9f9f9; /* Jasne tło dla lepszej czytelności */
+    transition: background-color 0.3s; /* Animacja tła przy hover */
+}
+label:hover {
+    background-color: #e0e0e0; /* Zmienia tło etykiety po najechaniu */
+}
 input[type="checkbox"] {
     width: 20px;
     height: 20px;
@@ -216,11 +228,22 @@ input[type="radio"] {
 }
 
 .logo {
+
+    height: auto;
+    max-height: 80px;
+    width: auto;
     max-width: 100%;
-    max-height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+.logo-main {
+    height: auto;
+    max-height: 30px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    margin: 0 auto;
 }
 
 .formattedP {
@@ -789,7 +812,7 @@ em {
     margin-bottom: 20px;
 }
 
-input {
+input{
     width: 250px;
     height: 35px;
     padding: 14px 20px;
@@ -854,6 +877,10 @@ input {
     height: 100vh;  /*cała wysokość okna*/
 }
 
+.leader{
+    ;
+}
+
 .menu{
     grid-column: 1/3;   /*rozciagniecie miedzy 1 i 3 krawedzia*/
     display: flex;
@@ -913,6 +940,15 @@ h2 {
 
 .pp {
     padding-right: 200px;
+    font-size: 20px;
+}
+
+li {
+    margin-left: 40px;
+    font-size: 20px;
+}
+
+strong {
     font-size: 20px;
 }
 
@@ -1076,6 +1112,7 @@ article {
 h7 {
     color: #333;
     font-size: 20px;
+    margin-bottom: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1097,6 +1134,17 @@ span {
 
 .leave-group:hover {
     background: #a4a4a4;
+}
+.change {
+    background: #000000;
+    color: #fffdfd;
+    padding: 10px 20px;
+    align-items: center;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 20px;
 }
 .modal {
     position: fixed;
@@ -1138,14 +1186,14 @@ span {
 }
 
 .info-box {
-    background-color: #a1d3e5;
+    background-color: var(--primary-dark);
     border-radius: 5px;
     padding: 20px;
     margin-bottom: 20px;
 }
 .alert-box {
-    background-color: #fff3cd;
-    border-left: 4px solid #ffa502;
+    background-color: #ffffff;
+    border-left: 4px solid #f5d9a9;
     padding: 20px;
     margin: 20px 0;
     border-radius: 5px;
@@ -1155,14 +1203,25 @@ span {
     line-height: 1.5;
     color: #856404;
 }
-
-.nominate-button {
+.containerChangeLeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    grid-gap: 20px;
+}
+.delete-group2,.nominate-button  {
     background-color: #050505;
     border: none;
-    padding: 10px;
+    display: inline-block;
+    vertical-align: middle; /* Wyrównuje przyciski wertykalnie do środka */
+    margin-top: 20px;
+    margin-right: auto; /* Opcjonalnie, dodaje odstęp między przyciskami */
+    margin-left: auto;
     border-radius: var(--radius-medium)
 }
-
 .group-members {
     margin-top: 10px;
 }
@@ -1240,7 +1299,12 @@ input[type="text"] {
     width: 50%; /* Adjust based on your layout needs */
     margin: 40px;
 }
-
+.rest-info p{
+    font-size: 16px; /* Rozmiar czcionki */
+    color: #333; /* Kolor tekstu */
+    margin-bottom: 10px; /* Odległość między paragrafami */
+    line-height: 1.5; /* Wysokość linii */
+}
 .group-info p {
     margin: 10px 0;
     font-size: 16px;
@@ -1302,7 +1366,12 @@ h3 {
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
     border-radius: 4px;
 }
-
+.project-button {
+    display: flex;        /* Ustawia flexbox, co pozwala na elastyczne rozmieszczenie elementów wewnątrz */
+    justify-content: center; /* Wyśrodkowuje przyciski w poziomie */
+    align-items: center;  /* Wyśrodkowuje przyciski w pionie */
+    gap: 20px;            /* Ustawia odstęp między przyciskami */
+}
 .close {
     color: #aaa;
     float: right;
@@ -1350,6 +1419,7 @@ h3 {
 }
 .button-upl-file, .deleteButtonFile, .button-get {
     display: block;
+    margin: 0 auto;
     width: 40%;
     padding: 10px;
     margin-top: 20px;
@@ -1406,7 +1476,7 @@ h3 {
     margin: 40px;
 }
 .details-container-member2{
-    background-color: var(--primary-light);
+    background-color: #f4f4f4;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
@@ -1437,4 +1507,261 @@ h3 {
 .group-info-leader p{
     font-size: 16px; /* Rozmiar czcionki */
     color: #333; /* Kolor tekstu */
+}
+
+/* RESPONSYWNOŚĆ */
+/* TELEFON */
+@media screen and (max-width:480px) {
+
+    :root {
+        --radius-large: 64px;
+        --radius-medium: 10px;
+        --radius-small: 5px;
+
+        --font-small: 14px;
+        --font-big: 24px;
+
+        --title-font: "Italiana", sans-serif;
+        --transition: all 0.3s ease-in-out; /* efekt po najechaniu*/
+    }
+
+    p {
+        font-size: var(--font-small);
+    }
+
+    button {
+        width: 120px;
+        height: 35px;
+        padding: 14px 20px;
+        border-radius: var(--radius-medium);
+        font-size: var(--font-small);
+    }
+
+    .header {
+        height: 80px;
+    }
+
+    .logoImage {
+        width: 60px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+
+    .title {
+        width: 100%;
+        margin-left: 5px;
+    }
+
+    .title p {
+        font-size: 12px;
+    }
+
+    .headerButton {
+        margin: 10px 10px 10px 0;
+    }
+
+    .mainHeader {
+        margin-top: 10px;
+    }
+
+    .mainHeader h1 {
+        font-size: 20px;
+    }
+
+    article {
+        margin: 15px;
+        gap: 5px;
+    }
+
+    .formattedP {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .divStyle {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        margin-bottom: 10px;
+    }
+
+    .enrollmentTime {
+        margin-right: 20px;
+        font-size: 15px;
+    }
+
+    .dateLabel {
+        font-size: 15px;
+        padding: 5px 5px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .headerLanding {
+        flex-direction: column;
+        margin: 15px 10px;
+        padding: 0;
+        height: auto;
+    }
+
+    .searchInput, .searchButton {
+        width: 95%;
+        margin: 5px 0;
+    }
+
+    .freeBorder2 {
+        display: flex;
+        justify-content: center;
+        margin: 7px 0;
+        width: 95%;
+    }
+
+    .topicList {
+        margin: 0 20px; /* Marginesy z prawej i lewej strony 20px na mniejszych ekranach */
+
+    }
+
+    .borderItem {
+        display: none;
+    }
+
+    .topicItem {
+        margin-bottom: 10px;
+        grid-template-columns: auto;
+        padding: 10px 10px 10px 20px;
+        font-size: 17px;
+    }
+
+    .backButton {
+        display: none;
+    }
+
+    .detailsHeader {
+        padding: 10px 15px;
+        margin: 10px 0;
+        height: auto;
+        grid-template-columns: 3fr 5fr;
+    }
+
+    .topicSection {
+        margin: 10px;
+        padding: 10px 10px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        grid-template-rows: 52px auto;
+        width: 100%;
+        height: 100vh;
+    }
+
+    .menu {
+        max-height: 52px;
+        grid-column: 1/13;
+        display: flex;
+        flex-direction: row;
+        gap: 0;
+        padding: 0;
+        align-items: center;
+        border-top: 2px solid #000;
+    }
+
+    .menu p {
+        display: none; /* Ukryj tekst tylko na małych ekranach */
+    }
+
+    .pageButton {
+        height: 50px;
+        justify-content: flex-start;
+        padding: 5px 8px;
+    }
+
+    .menuButton {
+        height: 50px;
+        justify-content: flex-start;
+        padding: 5px 8px;
+    }
+
+    .page {
+        grid-column: 1/13;  /* Rozciągnij stronę na całą szerokość */
+        margin-top: 0;
+        padding: 10px;
+    }
+
+    .headerAdmin {
+        margin: 10px;
+        padding: 0;
+    }
+
+    .headerAdmin input {
+        margin-right: 20px;
+    }
+
+    .searchButton {
+        width: 100px;
+    }
+
+    .topicList {
+        margin: 10px;
+    }
+
+    .page-c, .container-leader{
+        display: flex;
+        flex-direction: column; /* Ustaw kontenery jeden pod drugim */
+        justify-content: flex-start; /* Opcjonalne: wyrównaj kontenery do góry */
+        align-items: center; /* Opcjonalne: wyśrodkuj kontenery */
+        margin: 0 10px;
+    }
+
+    .details-container-member, .details-container {
+        background-color: #f4f4f4;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        width: 100%;
+        margin: 15px 0;
+    }
+
+    .project-button {
+        margin-top: 20px;
+        flex-direction: column; /* Ustaw kontenery jeden pod drugim */
+        justify-content: flex-start; /* Opcjonalne: wyrównaj kontenery do góry */
+        align-items: center; /* Opcjonalne: wyśrodkuj kontenery */
+    }
+
+    .leave-group, .change {
+        width: 180px;
+        margin: 0;
+    }
+
+    .main-content {
+        padding-top: 0;
+        display: flex;
+        flex-direction: column; /* Ustaw kontenery jeden pod drugim */
+        justify-content: flex-start; /* Opcjonalne: wyrównaj kontenery do góry */
+        align-items: center; /* Opcjonalne: wyśrodkuj kontenery */
+    }
+
+    .nominate-button, .delete-group2 {
+        width: 160px;
+        margin: 0;
+        align-items: center;
+        display: flex; /* Ustawienie elastycznego układu na poziomie przycisku */
+        justify-content: center; /* Wyśrodkowanie poziome */
+    }
+
+    .containerChangeLeader {
+        align-items: center;
+        display: flex; /* Ustawienie elastycznego układu na poziomie przycisku */
+        justify-content: center; /* Wyśrodkowanie poziome */
+    }
+
+    .group-info-leader, .rest-info {
+        width: 100%; /* Adjust based on your layout needs */
+        margin: 20px 0;
+    }
+
 }

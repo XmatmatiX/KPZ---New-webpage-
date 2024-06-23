@@ -1,5 +1,7 @@
 "use strict"
 
+const token = sessionStorage.getItem("JWT");
+
 function addButtonListener(studentItem, userId) {
 
     const groupButton = studentItem.querySelector('.groupButton');
@@ -13,7 +15,11 @@ function displayGroups(userID) {
     const groupList = document.getElementById('groupList');
     groupList.innerHTML = '';
 
-    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/Groups')
+    fetch('http://127.0.0.1:8000/Admin/Groups', {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(data => {
             const groups = data['groups:']; // Pobranie tablicy projektów
@@ -54,8 +60,11 @@ function displayGroups(userID) {
                     console.log('Wybrano user:', userID);
                     console.log('Wybrano grupę:', groupids[i]);
 
-                    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/SignToGroup/${userID}${groupids[i]}`, {
-                        method: 'POST'
+                    fetch(`http://127.0.0.1:8000/Admin/SignToGroup/${userID}${groupids[i]}`, {
+                        method: 'POST',
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
                     })
                         .then(response => {
                             if (!response.ok) {
@@ -112,7 +121,11 @@ function openModal(userID) {
 }
 
 function allStudents(students) {
-    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Students`)
+    fetch(`http://127.0.0.1:8000/Admin/Students`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(data => {
 
@@ -157,7 +170,11 @@ function allStudents(students) {
 }
 
 function freeStudents(students) {
-    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/FreeStudents`)
+    fetch(`http://127.0.0.1:8000/Admin/FreeStudents`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(details => {
 
@@ -299,8 +316,11 @@ document.addEventListener("DOMContentLoaded", function() {
             allStudents(students);
         }
         else {
-            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/SearchStudent/${student}`, {
-                method: 'POST'
+            fetch(`http://127.0.0.1:8000/Admin/SearchStudent/${student}`, {
+                method: 'POST',
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
             })
                 .then(response => {
                     if (!response.ok) {

@@ -1,5 +1,6 @@
 "use strict"
 
+const token = sessionStorage.getItem("JWT");
 document.addEventListener("DOMContentLoaded", function() {
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -52,8 +53,11 @@ document.addEventListener("DOMContentLoaded", function() {
         span.onclick = closeModal;
         confirmBtn.onclick = function() {
 
-            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/${groupId}/Notification`, {
-                method: 'DELETE'
+            fetch(`http://127.0.0.1:8000/Admin/${groupId}/Notification`, {
+                method: 'DELETE',
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
             })
                 .then(response => {
                     if (response.ok) {
@@ -109,7 +113,11 @@ document.addEventListener("DOMContentLoaded", function() {
         location.reload();
     });
 
-    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/${groupId}/Notification`)
+    fetch(`http://127.0.0.1:8000/Admin/${groupId}/Notification`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(data => {
 
@@ -123,10 +131,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 const notificationItem = document.createElement('div');
                 notificationItem.classList.add('notificationGroupItem');
-
-                // const notificationDetails = document.createElement('div');
-                // notificationDetails.classList.add('notificationDetails');
-                // notifications.appendChild(notificationDetails);
 
                 const dateTime = new Date(notification.datatime);
                 const formattedDateTime = `${dateTime.toLocaleDateString()} ${dateTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}`;
@@ -150,7 +154,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     event.stopPropagation();
 
-                    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Notification/${notification.historyid}`)
+                    fetch(`http://127.0.0.1:8000/Admin/Notification/${notification.historyid}`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
                         .then(response => response.json())
                         .then(details => {
                             // Wyświetl szczegóły powiadomienia w elemencie notificationDetails
@@ -183,8 +191,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     span.onclick = closeModal;
                     confirmBtn.onclick = function() {
 
-                        fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Notification/${notification.historyid}`, {
-                            method: 'DELETE'
+                        fetch(`http://127.0.0.1:8000/Admin/Notification/${notification.historyid}`, {
+                            method: 'DELETE',
+                            headers: {
+                                "Authorization": `Bearer ${token}`
+                            }
                         })
                             .then(response => {
                                 if (response.ok) {

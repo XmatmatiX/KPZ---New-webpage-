@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css"/>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,10 +11,10 @@
 
     <title>KPZ</title>
 </head>
-<body>
+<body onload="checkRole()">
 
 <section class="header">
-    <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
+    <img id="mainLogo" src="../Images/cropped-kpz2022.png" class="logoImage" alt="There should be a logo here" onclick="imageClick()">
     <div class="title">
         <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
         <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
@@ -37,14 +38,18 @@
             <div class="option">
                 <h3>Opcja 1. Dołącz do istniejącej grupy</h3>
                 <p>Dołącz do istniejącej grupy - wpisz w polu tekstowym hasło grupy otrzymane od jej lidera.</p>
+                <!--
                 <input type="text" id="studentIdInput" placeholder="Podaj swoje ID studenta">
+                -->
                 <input type="text" id="inviteCodeInput" placeholder="Podaj hasło grupy">
                 <button class="join-btn">Dołącz</button>
             </div>
             <div class="option">
                 <h3>Opcja 2. Utwórz nową grupę</h3>
                 <p>Utwórz nową grupę - zostaniesz liderem tej grupy, generowane jest hasło grupy, które podajesz studentom, z którymi chcesz tworzyć grupę, by mogli się oni do niej zapisać.</p>
+                <!--
                 <input type="text" id="createStudentIdInput" placeholder="Podaj swoje ID studenta">
+                -->
                 <button class="create-btn">Utwórz</button>
             </div>
             <div id="joinGroupModal" class="modal">

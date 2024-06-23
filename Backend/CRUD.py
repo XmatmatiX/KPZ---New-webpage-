@@ -46,7 +46,7 @@ def create_project_reservation(db: Session, project: models.Project,
                 db.commit()
                 db.refresh(db_reservation)
                 create_action_history(db, group.groupid,
-                                      f"Zarezerwowano projekt id {project.projectid}: {project.projecttitle} zgloszony przez {project.companyname}")
+                                      f"Zarezerwowano projekt: {project.projecttitle} (firma: {project.companyname})")
                 return db_reservation
             raise exceptions.GroupSizeNotValidForProjectException
         raise exceptions.ProjectNotAvailableException
@@ -259,7 +259,7 @@ def get_user_by_surname(db: Session, surname: str):
     return users
 
 
-def get_user_by_email(db: Session, email: str):
+def get_user_by_email(db: Session, email: str) -> models.Users | None:
     return db.query(models.Users).filter(models.Users.email == email).first()
 
 
@@ -613,14 +613,14 @@ def update_project_reservation_files(db: Session, reservation: schemas.ProjectRe
         db.commit()
         db.refresh(reservation)
         create_action_history(db, reservation.groupid,
-                              contentA=f"Dodano pliki. Znajduja sie w lokalizacji {reservation.confirmationpath}")
+                              contentA=f"Dodano pliki. Znajdują sie w lokalizacji {reservation.confirmationpath}")
     else:
         reservation.confirmationpath = path
         reservation.status = "reserved"
         db.commit()
         db.refresh(reservation)
         create_action_history(db, reservation.groupid,
-                              contentA="Plik potwierdzenia zostal usuniety")
+                              contentA="Plik potwierdzenia zostal usunięty")
     return reservation
 
 
@@ -632,7 +632,8 @@ def update_project_reservation_isConfirmed(db: Session, reservation: schemas.Pro
     # reservation.isconfirmed = True // NIE MAMY ISCONFIRMED
     db.commit()
     db.refresh(reservation)
-    create_action_history(db, reservation.groupid, contentA=f"Zatwierdzono realizacje tematu {reservation.projectid}.")
+    project=get_project_by_id(db,reservation.projectid )
+    create_action_history(db, reservation.groupid, contentA=f"Zatwierdzono realizację tematu {project.projecttitle} (firma: {project.companyname}).")
     return reservation
 
 def update_project_logopath(db: Session, project_name: schemas.ProjectBase, path: str):
@@ -674,11 +675,28 @@ def delete_user(db: Session, user: schemas.UserReturn):
     db.commit()
 
 
-def delete_all_users(db: Session):
-    db.query(models.Users).filter(models.Users.groupid is not None, models.Users.rolename != "admin").delete()
-    db.commit()
-
-
+# def delete_all_users(db: Session):
+#     db.query(models.Users).filter(models.Users.groupid is not None, models.Users.rolename != "admin").delete()
+#     db.commit()
+# def delete_all_projects(db: Session):
+#     db.query(models.Project).delete()
+#     db.commit()
+#
+# def delete_all_actionshistory(db: Session):
+#     db.query(models.ActionHistory).delete()
+#     db.commit()
+#
+# def delete_all_projectreservations(db: Session):
+#     db.query(models.ProjectReservation).delete()
+#     db.commit()
+#
+# def delete_all_guardians(db: Session):
+#     db.query(models.Guardian).delete()
+#     db.commit()
+#
+# def delete_all_projectgroups(db: Session):
+#     db.query(models.ProjectGroup).delete()
+#     db.commit()
 def delete_project(db: Session, project: schemas.Project):
     """
     Deletes a project and every reservation of this project
@@ -738,7 +756,8 @@ def delete_project_reservation(db: Session, reservation: schemas.ProjectReservat
     :return:
     """
     #delete_ALL_action_history(db, reservation.groupid)
-    create_action_history(db, reservation.groupid, f"Usunieto rezerwacje projektu {reservation.projectid}")
+    project=get_project_by_id(db, reservation.projectid)
+    create_action_history(db, reservation.groupid, f"Usunieto rezerwacje projektu {project.projecttitle} (firma: {project.companyname}).)")
     db.delete(reservation)
     db.commit()
 
@@ -780,13 +799,26 @@ def delete_all(db: Session):
     """
     Deleted everything
     """
-    delete_all_users(db)
+    db.query(models.Users).update({models.Users.groupid: None})
+    db.commit()
+
+    db.query(models.Users).filter(models.Users.groupid is not None, models.Users.rolename != "admin").delete()
+    db.query(models.Project).delete()
     db.query(models.ActionHistory).delete()
     db.query(models.ProjectReservation).delete()
-    db.query(models.ProjectGroup).delete()
     db.query(models.Guardian).delete()
-    db.query(models.Project).delete()
+    db.query(models.ProjectGroup).delete()
+
+    # delete_all_projects(db)
+    # delete_all_users(db)
+    # delete_all_actionshistory(db)
+    # delete_all_projectreservations(db)
+    # delete_all_projectgroups(db)
+    # delete_all_guardians(db)
     db.commit()
+
+
+
 
 
 """
@@ -866,3 +898,14 @@ def isTimeValid() -> bool:
 #         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
 #     return file
 # #
+
+#######################
+#Sekcja do autoryzacji#
+#######################
+
+def check_user(db: Session, email: str, keycloackid: str):
+    db_user = db.query(models.Users).filter(models.Users.email == email).first()
+    if db_user.keycloackid != keycloackid:
+        return None
+    else:
+        return db_user

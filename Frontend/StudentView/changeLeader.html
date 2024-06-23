@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css"/>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,9 +11,9 @@
   <title>KPZ</title>
 </head>
 
-<body>
+<body onload="checkRole(); fetchGroupMembers()">
 <section class="header">
-  <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
+  <img id="mainLogo" src="../Images/cropped-kpz2022.png" class="logoImage" alt="There should be a logo here" onclick="imageClick()">
   <div class="title">
     <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
     <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
@@ -28,41 +29,27 @@
     <button id="enrollmentButton" class="menuButton"><img src="../Images/signin.png" alt="There should be home photo"> Zapisy </button>
   </div>
   <div class="page">
-
-      <section class="headerAdmin">
-        <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">
-        <button id="searchGroupButton" class="searchButton">Szukaj</button>
-      </section>
-
-      <article class="backgroundArticle">
-        <p class="formattedP">Nie możesz opuścić grupy, dopóki jesteś jej liderem. Aby opuścić grupę, która oprócz Ciebie ma innych członków, musisz nominować innego członka na lidera. <em>Nominowany/a musi wyrazić zgodę na zostanie liderem.</em> Opuszczenie grupy, której jesteś jedynym członkiem, spowoduje usunięcie grupy.</p>
-      </article>
-
-    <h1>Studenci</h1>
-
-    <section class="addGroup">
-
-      <section id="studentGroupList" class="studentGroupList3">
-
-        <div class="borderStudent3">
-          <p>Email</p>
-          <p>Imię</p>
-          <p>Nazwisko</p>
-          <p>Rola</p>
-          <p></p>
+    <section class="main-content">
+      <div class="info-box">
+         <!--
+         <section class="headerAdmin">
+            <input id="groupIdInput" placeholder="Wyszukaj grupę po id studenta">
+            <button id="searchGroupButton" class="searchButton">Szukaj</button>
+        </section>
+        -->
+        <div class="alert-box">
+          <p>Nie możesz opuścić grupy, dopóki jesteś jej liderem. Aby opuścić grupę, która oprócz Ciebie ma innych członków, musisz nominować innego członka na lidera.</em>  Opuszczenie grupy, której jesteś jedynym członkiem, spowoduje usunięcie grupy.</p>
         </div>
-
-      </section>
-
+        <form id="leader-form">
+        </form>
+        <div class="containerChangeLeader">
+          <button id="nominate" class="nominate-button">Nominuj lidera</button>
+          <button id="delete-reservation" class="delete-group2">Usuń rezerwację</button>
+        </div>
+      </div>
     </section>
-
-      <form id="leader-form">
-      </form>
-
-      <button id="unsubscribeButton" class="deleteButton">Usuń grupę</button>
-
   </div>
-</section>
+  </section>
 <script src="Scripts/ChangeLeader.js"></script>
 <script src="studentScript.js"></script>
 </body>

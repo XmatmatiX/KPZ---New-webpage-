@@ -10,10 +10,10 @@
 
     <title>KPZ</title>
 </head>
-<body>
+<body onload="checkRole()">
 
 <section class="header">
-    <img id="mainLogo" src="../Images/logo.png" class="logoImage" alt="There should be a logo here">
+    <img id="mainLogo" src="../Images/cropped-kpz2022.png" class="logoImage" alt="There should be a logo here">
     <div class="title">
         <p>KONFERENCJA PROJEKTÓW ZESPOŁOWYCH</p>
         <p>Studentów III roku Wydziałów WIT oraz WEFiM</p>
@@ -68,10 +68,6 @@
                 <textarea class="groupDescription" id="description" placeholder="Dodaj opis tematu"></textarea>
             </div>
             <div class="topicData">
-                <p>Logo</p>
-                <input class="groupInput" id="logopath" placeholder="Podaj ścieżkę do logo">
-            </div>
-            <div class="topicData">
                 <p>Technologie</p>
                 <input class="groupInput" id="technologies" placeholder="Podaj wymagane technologie">
             </div>
@@ -83,8 +79,8 @@
                 </div>
             </div>
             <div class="topicData">
-                <p>Ilość grup <span class="required">*</span></p>
-                <input class="groupInput" id="groupnumber" placeholder="Podaj ilość grup możliwych do realizacji tematu">
+                <p>Liczba grup <span class="required">*</span></p>
+                <input class="groupInput" id="groupnumber" placeholder="Podaj liczę grup możliwych do realizacji tematu">
             </div>
             <div class="topicData">
                 <p>Języki projektu <span class="required">*</span></p>

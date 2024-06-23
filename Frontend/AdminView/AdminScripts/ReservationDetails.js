@@ -1,11 +1,16 @@
 "use strict"
 
+const token = sessionStorage.getItem("JWT");
 document.addEventListener("DOMContentLoaded", function() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const reservationId = urlParams.get('id');
 
-    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/Reservation/${reservationId}`)
+    fetch(`http://127.0.0.1:8000/Admin/Reservation/${reservationId}`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(data => {
 

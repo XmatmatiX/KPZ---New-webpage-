@@ -1,5 +1,7 @@
 "use strict"
 
+const token = sessionStorage.getItem("JWT");
+
 function translateStatus(status) {
     switch(status) {
         case 'available':
@@ -20,7 +22,11 @@ function translateStatus(status) {
 function allProjects(projects) {
 
     // Pobranie danych z endpointa GET /ProjectList
-    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/Reservations')
+    fetch('http://127.0.0.1:8000/Admin/Reservations', {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(data => {
 
@@ -42,7 +48,7 @@ function allProjects(projects) {
                 if (logos[i] === null || logos[i] === '') {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
                 }
 
                 topicItem.innerHTML = `
@@ -68,7 +74,11 @@ function allProjects(projects) {
 
 function chosenProjects(projects, state) {
 
-    fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/ReservationStatus/${state}`)
+    fetch(`http://127.0.0.1:8000/Admin/ReservationStatus/${state}`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
         .then(response => response.json())
         .then(data => {
 
@@ -103,7 +113,7 @@ function chosenProjects(projects, state) {
                 if (logos[i] === null || logos[i] === '') {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
                 }
 
                 topicItem.innerHTML = `
@@ -161,7 +171,7 @@ function displaySearchedReservations(reservations, data) {
         if (logos[i] === null || logos[i] === '') {
             logoHTML = 'BRAK';
         } else {
-            logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
+            logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
         }
 
         topicItem.innerHTML = `
@@ -263,8 +273,11 @@ document.addEventListener("DOMContentLoaded", function() {
             allProjects(adminTopics);
         }
         else {
-            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/ReservationSearch/${reservation}`, {
-            })
+            fetch(`http://127.0.0.1:8000/Admin/ReservationSearch/${reservation}`, {
+                    headers: {
+                    "Authorization": `Bearer ${token}`
+                 }
+                })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');

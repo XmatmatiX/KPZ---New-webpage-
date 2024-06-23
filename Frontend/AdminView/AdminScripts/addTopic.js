@@ -1,5 +1,7 @@
 "use strict"
 
+const token = sessionStorage.getItem("JWT");
+
 document.addEventListener("DOMContentLoaded", function() {
 
     const submitButton = document.getElementById('addTopicButton');
@@ -58,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function() {
             email: document.getElementById('email').value,
             phonenumber: document.getElementById('phonenumber').value,
             description: document.getElementById('description').value,
-            logopath: document.getElementById('logopath').value,
+            logopath: "",
             technologies: document.getElementById('technologies').value,
             mingroupsize: parseInt(document.getElementById('mingroupsize').value, 10),
             maxgroupsize: parseInt(document.getElementById('maxgroupsize').value, 10),
@@ -76,25 +78,47 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         try {
-            const response = await fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/AddProject?groupID=${groupID}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
+            let response;
+
+            if(groupID) {
+                response = await fetch(`http://127.0.0.1:8000/Admin/AddProject?groupID=${groupID}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+            }
+            else {
+                response = await fetch(`http://127.0.0.1:8000/Admin/AddProject`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+            }
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.detail || response.statusText);
+                throw new Error(errorData.error || response.statusText);
             }
 
-            const result = await response.json();
             warningModal.style.display = 'block';
-            modalText.textContent = `Projekt został prawidłowo dodany`;
+            modalText.textContent = "Projekt został prawidłowo dodany";
+
         } catch (error) {
             warningModal.style.display = 'block';
-            modalText.textContent = `Wystąpił błąd podczas dodawania projektu: ${error.message}`;
+
+            if(error.message === "'<=' not supported between instances of 'int' and 'NoneType'")
+            {
+                modalText.textContent = `Wystąpił błąd podczas dodawania projektu: Rozmiar podanej grupy jest niezgodny z podanym zakresem`;
+            }
+            else
+            {
+                modalText.textContent = `Wystąpił błąd podczas dodawania projektu: ${error.message}`;
+            }
         }
 
     });

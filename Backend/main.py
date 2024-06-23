@@ -3,6 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Optional
 
+from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from fastapi import FastAPI, Request
 from fastapi import Depends, HTTPException, status, Security, UploadFile, File
@@ -13,8 +14,9 @@ from fastapi.responses import JSONResponse
 import os
 import shutil
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, SecurityScopes
-#from jose import JWTError, jwt
-# from passlib.context import CryptContext
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+
 #from pydantic import parse_obj_as, ValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
@@ -22,12 +24,17 @@ from starlette.responses import RedirectResponse
 import models, schemas, CRUD, exceptions
 from database import SessionLocal, engine
 
-from config import ALGORITHM, SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ORIGINS
+from config import ORIGINS
 
-# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login", scopes={"user": "Zwykly user", "arbiter": "Arbiter"})
+SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class RoleEnum(str, Enum):
     student = "student"
@@ -80,18 +87,17 @@ def get_db():
     finally:
         db.close()
 
-
-"""
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-
-def get_password_hash(password):
+def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
 
-def get_user(db: Session, name: str):
-    user = CRUD.get_user(db, name)
+# funkcja sprawdzająca, czy istnieje użytkownik o podanym email oraz keycloackid
+def authenticate_user(db: Session, email: str, keycloackid: str):
+    user = CRUD.get_user_by_email(db, email)
+    if not verify_password(keycloackid, user.keycloackid):
+        return None
     return user
 
 
@@ -106,103 +112,125 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+######################################
+# funkcje odpowiadajace za autoryzacje
+######################################
 
-# funkcja odpowiadajaca za logowanie uzytkownika
-def authenticate_user(db: Session, email: str, password: str):
-    user = CRUD.get_user(db, email)
-    if not user:
-        return False
-    if not verify_password(password, user.password):
-        return False
-    return user
+# funkcja sprawdzajaca czy uzytkownik jest adminem
+def is_admin(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                          detail="Could not validate credentials",
+                                          headers={"WWW-Authenticate": "Bearer"})
 
+    role_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                          detail="You don't have Admin role",
+                                          headers={"WWW-Authenticate": "Bearer"})
 
-# funkcja odpowiadajaca za autoryzacje
-def get_current_user(security_scopes: SecurityScopes, token: str = Depends(oauth2_scheme),
-                     db: Session = Depends(get_db)):
-    if security_scopes.scopes:
-        authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
-    else:
-        authenticate_value = "Bearer"
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": authenticate_value},
-    )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        name: str = payload.get("sub")
-        if name is None:
+        role: str = payload.get("role")
+        if role is None:
             raise credentials_exception
-        token_scopes = payload.get("scopes", [])
-        token_data = schemas.TokenData(scopes=token_scopes, name=name)
-    except (JWTError, ValidationError):
+
+        token_data = schemas.TokenData(role=role)
+    except JWTError:
         raise credentials_exception
-    user = get_user(db, name=token_data.name)
+
+    if token_data.role != RoleEnum.admin.value:
+        raise role_exception
+
+    return token_data
+
+
+
+
+# funkcja pobierająca aktualnego uzytkownika
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                          detail="Could not validate credentials",
+                                          headers={"WWW-Authenticate": "Bearer"})
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+
+        token_data = schemas.TokenData(email=email)
+
+    except JWTError:
+        raise credentials_exception
+
+    user = CRUD.get_user_by_email(db, email=token_data.email)
     if user is None:
         raise credentials_exception
-    for scope in security_scopes.scopes:
-        if scope not in token_data.scopes:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Not enough permissions",
-                headers={"WWW-Authenticate": authenticate_value},
-            )
+
     return user
 
-
-# Endpoint rejestrujacy nowych uzytkownikow
-@app.post("/register/", status_code=201)
-def register(user: schemas.UserCreate, session: Session = Depends(get_db)):
-    existing_user = session.query(models.Users).filter_by(name=user.name).first()
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-
-    user.password = get_password_hash(user.password)
-
-    CRUD.create_user(session, user)
-
-    return {"message": "user created successfully"}
+@app.post("/Register", response_model= schemas.Token)
+def register(newUser : schemas.UserRegisterPassword, db: Session = Depends(get_db)):
+    user_exist = CRUD.get_user_by_email(db, newUser.email)
+    if user_exist:
+      return {"message": "User already exists"}
 
 
-"""
-# Endpoint sluzacy do logowania. Zwraca token JWT.
-# Aby uzytkownik otrzymal stopien uprawnien "user", w bazie danych musi mu byc przypisana rola o nazwie "user".
-# Aby uzytkownik otrzymal stopien uprawnien "arbiter", w bazie danych musi mu byc przypisana rola o nazwie "arbiter".
-"""
 
+    new_user = schemas.UserCreate(
+        name=newUser.name,
+        surname=newUser.surname,
+        email=newUser.email,
+        rolename=RoleEnum.student,
+        keycloackid=hash_password(newUser.password)
+    )
+    CRUD.create_user(db, new_user)
 
-@app.post("/login/")
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = authenticate_user(db, form_data.email, form_data.password)
+    user = authenticate_user(db, newUser.email, newUser.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
-    # Pobieranie roli użytkownika na podstawie rolename
     user_role = user.rolename
-
-    # Mapowanie roli użytkownika na odpowiednie zakresy (scopes)
-    if user_role == RoleEnum.student.value:
-        scopes = ["student"]
-    elif user_role == RoleEnum.leader.value:
-        scopes = ["leader"]
-    elif user_role == RoleEnum.admin.value:
-        scopes = ["admin"]
-    else:
-        # Domyślny zakres, gdy rola nie pasuje do żadnej zdefiniowanej w enumie
-        scopes = ["user"]
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.email, "scopes": scopes}, expires_delta=access_token_expires
+        data={"sub": user.email, "role": user_role}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-"""
+@app.post("/login", response_model= schemas.Token)
+def login(userLogin : schemas.UserLoginPassword, db: Session = Depends(get_db)):
+    user_exist = CRUD.get_user_by_email(db, userLogin.email)
+
+    if not user_exist:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="No account with this email",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    user = authenticate_user(db, userLogin.email, userLogin.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    user_role = user.rolename
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email, "role": user_role}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@app.get("/User/Role")
+def authTest(current_user = Depends(get_current_user)):
+    """
+        Zwraca rolę zalogowanego użytkownika
+    """
+    return current_user.rolename;
 
 
 @app.get("/ProjectList")
@@ -301,7 +329,7 @@ def get_time_for_resrvation():
 
 ########### SEKCJA ADMIN ################
 @app.get("/Admin/ProjectList")
-def admin_project_list(db: Session = Depends(get_db)):
+def admin_project_list(role = Depends(is_admin),db: Session = Depends(get_db)):
     projects = CRUD.get_all_projects(db)
 
     return {"projects:": projects}
@@ -334,17 +362,17 @@ def admin_project_list(db: Session = Depends(get_db)):
     #         "maxsizes": maxsizes, "status": stats, "group": groups}
 
 @app.get("/Admin/ProjectListSearch/{parameter}")
-def admin_project_list(parameter:str, db: Session = Depends(get_db)):
+def admin_project_list(parameter:str,role = Depends(is_admin), db: Session = Depends(get_db)):
     projects = CRUD.project_search(db, parameter)
 
     return {"projects:": projects}
 
 
 @app.get("/Admin/Project/{id}")
-def admin_project(id: int, db: Session = Depends(get_db)):
+def admin_project(id: int, role = Depends(is_admin), db: Session = Depends(get_db)):
     return CRUD.get_project_by_id(db, id)
 @app.get("/Admin/Reservations")
-def admin_reservation(db: Session = Depends(get_db)):
+def admin_reservation(role = Depends(is_admin), db: Session = Depends(get_db)):
     """
             lista rezerwacji
     """
@@ -375,7 +403,7 @@ def admin_reservation(db: Session = Depends(get_db)):
     }
 
 @app.get("/Admin/Reservation/{project_id}")
-def admin_reservation(project_id: int, db: Session = Depends(get_db)):
+def admin_reservation(project_id: int, role = Depends(is_admin), db: Session = Depends(get_db)):
     """
             Zwraca dane o danej rezerwacji
             UWAGA: id jest rezerwacji a nie projektu
@@ -388,7 +416,7 @@ def admin_reservation(project_id: int, db: Session = Depends(get_db)):
 
 
 @app.get("/Admin/ReservationStatus/{status}")
-def admin_reservation(status: str, db: Session = Depends(get_db)):
+def admin_reservation(status: str, role = Depends(is_admin), db: Session = Depends(get_db)):
     """status to jeden z ReservationStatus"""
     reservations = CRUD.get_project_reservations_by_status(db, status)
     rid = []
@@ -415,7 +443,7 @@ def admin_reservation(status: str, db: Session = Depends(get_db)):
 
 
 @app.get("/Admin/ReservationSearch/{parameter}")
-def search_reservation(parameter: str, db: Session = Depends(get_db)):
+def search_reservation(parameter: str, role = Depends(is_admin), db: Session = Depends(get_db)):
     """status to jeden z ReservationStatus"""
     reservations = CRUD.reservation_search(db, parameter)
     rid = []
@@ -441,7 +469,7 @@ def search_reservation(parameter: str, db: Session = Depends(get_db)):
     "status": statuses}
 
 @app.get("/Admin/Group/{id}")
-def admin_group(id: int, db: Session = Depends(get_db)):
+def admin_group(id: int, role = Depends(is_admin), db: Session = Depends(get_db)):
     """
     Do poprawy - zawezic to co o uzytkowniku widac
     """
@@ -465,7 +493,7 @@ def admin_group(id: int, db: Session = Depends(get_db)):
             "state": status, "guardian": group.guardianid, "confirmation-path": path}
 
 @app.get("/Admin/Groups")
-def admin_groups(db: Session = Depends(get_db)):
+def admin_groups(role = Depends(is_admin), db: Session = Depends(get_db)):
     """
         Zwraca wszystkie grupy
     """
@@ -473,13 +501,13 @@ def admin_groups(db: Session = Depends(get_db)):
     return {"groups:": groups}
 
 @app.post("/Admin/SearchGroup/{parameter}")
-def search_groups(parameter: str, db: Session = Depends(get_db)):
+def search_groups(parameter: str, role = Depends(is_admin), db: Session = Depends(get_db)):
     groups = CRUD.group_search(db, parameter)
     return {"groups:": groups}
 
 
 @app.get("/Admin/FreeStudents")
-def admin_free_students(db: Session = Depends(get_db)):
+def admin_free_students(role = Depends(is_admin), db: Session = Depends(get_db)):
     """
         Zwraca wszytskich zalogowanych studentow bez grup
     """
@@ -506,7 +534,7 @@ def admin_free_students(db: Session = Depends(get_db)):
         "index": student_indexes
     }
 @app.get("/Admin/GroupsWithoutProject")
-def free_groups(db: Session = Depends(get_db)):
+def free_groups(role = Depends(is_admin), db: Session = Depends(get_db)):
     """
         Zwraca grupy bez rezerwacji
     """
@@ -514,7 +542,7 @@ def free_groups(db: Session = Depends(get_db)):
     return {"groups:": groups}
 
 @app.post("/Admin/SearchStudent/{parameter}")
-def search_students(parameter: str, db: Session = Depends(get_db)):
+def search_students(parameter: str, role = Depends(is_admin), db: Session = Depends(get_db)):
     students = CRUD.get_user_by_something(db, parameter)
     ids=[]
     names = []
@@ -532,7 +560,7 @@ def search_students(parameter: str, db: Session = Depends(get_db)):
     return {"ids": ids,"names": names, "surnames": surnames, "groups": groups, "roles": roles, "emails":emails}
 
 @app.get("/Admin/Students")
-def get_students(db: Session = Depends(get_db)):
+def get_students(role = Depends(is_admin), db: Session = Depends(get_db)):
     students = CRUD.get_all_students(db)
     ids=[]
     names = []
@@ -548,7 +576,7 @@ def get_students(db: Session = Depends(get_db)):
     return {"ids":ids,"names": names, "surnames": surnames, "groups": groups, "emails":emails}
 
 @app.get("/Admin/Student/{id}")
-def get_student(id:int, db:Session=Depends(get_db)):
+def get_student(id:int, role = Depends(is_admin), db:Session=Depends(get_db)):
     """
             Szczegoly studenta - UWAGA ZMIANA W ZWRACANIU - zeby nie zwracac poufnych informacji
 
@@ -560,14 +588,14 @@ def get_student(id:int, db:Session=Depends(get_db)):
     return {"name": student.name, "surname": student.surname, "email": student.email, "group": student.groupid }
 
 @app.get("/Admin/Guardian/{id}")
-def get_guardian(id:int, db: Session=Depends(get_db)):
+def get_guardian(id:int, role = Depends(is_admin), db: Session=Depends(get_db)):
     guardian=CRUD.get_guardian(db, id)
     if not guardian:
         raise HTTPException(status_code=404, detail="Nie odnaleziono opiekuna")
     return {"name": guardian.name, "surname": guardian.surname, "email": guardian.email}
 
 @app.put("/Admin/AdminCreate/{email}")
-def put_admin_create(email:str, db:Session=Depends(get_db)):
+def put_admin_create(email:str, role = Depends(is_admin), db:Session=Depends(get_db)):
     """
     Nadanie user praw admina
     """
@@ -583,7 +611,7 @@ def put_admin_create(email:str, db:Session=Depends(get_db)):
     return {"message": "Udało się stworzyć admina"}
 
 @app.get("/Admin/AdminList")
-def get_admins(db: Session = Depends(get_db)):
+def get_admins(role = Depends(is_admin), db: Session = Depends(get_db)):
     admins = CRUD.get_admins(db)
     ids=[]
     names = []
@@ -599,7 +627,7 @@ def get_admins(db: Session = Depends(get_db)):
     return {"ids":ids,"names": names, "surnames": surnames, "email": emails}
 
 @app.post("/Admin/SignToGroup/{user_id}{groupId}")
-def post_sign_to_group(user_id:int, groupId:int,db:Session=Depends(get_db)):
+def post_sign_to_group(user_id:int, groupId:int, role = Depends(is_admin), db:Session=Depends(get_db)):
     """
             Przypisanie studenta do danej grupy.
 
@@ -624,10 +652,10 @@ def post_sign_to_group(user_id:int, groupId:int,db:Session=Depends(get_db)):
         raise HTTPException(status_code=404, detail="Grupa ma zbyt mało członków")
 
 @app.post("/Admin/AddProject")
-def post_add_project(project: schemas.ProjectCreate, groupID: Optional[int] = None, db: Session = Depends(get_db)):
+def post_add_project(project: schemas.ProjectCreate, groupID: Optional[int] = None, role = Depends(is_admin), db: Session = Depends(get_db)):
     """
     Dodawanie nowego projektu przez admina
-    z dodatkowa opcja przypisania do grupy
+    z dodatkową opcją przypisania do grupy
     """
     try:
         if groupID:
@@ -642,15 +670,17 @@ def post_add_project(project: schemas.ProjectCreate, groupID: Optional[int] = No
                 raise HTTPException(status_code=400, detail="Grupa zarezerwowała już projekt")
             print(f"Group {groupID} does not have a reservation")
 
-            # Create a new project reservation
+        # Create the project
+        created_project = CRUD.create_project(db, project)
+        print(f"Created project: {created_project}")
+
+        if groupID:
             try:
-                # Create the project
-                created_project = CRUD.create_project(db, project)
-                print(f"Created project: {created_project}")
+                # Create a new project reservation
                 new_reservation = CRUD.create_project_reservation(db, created_project, group)
                 print(f"Created new reservation: {new_reservation}")
             except exceptions.NotTimeForReservationException:
-                raise HTTPException(status_code=400, detail="Nie mozna dokonac rezerwacji, poniewaz czas na zapisy jeszcze nie nadszedl")
+                raise HTTPException(status_code=400, detail="Nie można dokonać rezerwacji, ponieważ czas na zapisy jeszcze nie nadszedł")
             except exceptions.ProjectNotAvailableException:
                 raise HTTPException(status_code=400, detail="Projekt jest już zajęty")
             except exceptions.GroupSizeNotValidForProjectException:
@@ -660,10 +690,8 @@ def post_add_project(project: schemas.ProjectCreate, groupID: Optional[int] = No
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "Zaszedł błąd", "error": str(e)})
 
-
-
 @app.get("/Admin/Notification")
-def get_notifications(db: Session = Depends(get_db)):
+def get_notifications(role = Depends(is_admin), db: Session = Depends(get_db)):
     """
     Zwraca cala action history
     """
@@ -671,7 +699,7 @@ def get_notifications(db: Session = Depends(get_db)):
     return all_history
 
 @app.get("/Admin/Notification/{id}")
-def get_notification_by_id(id: int, db: Session = Depends(get_db)):
+def get_notification_by_id(id: int, role = Depends(is_admin), db: Session = Depends(get_db)):
     """
     Zwraca action history o konkretnym id - skoro to zwracamy, to automatycznie action hisotyr jest zmieniane na displayed=TRUE
     """
@@ -682,7 +710,7 @@ def get_notification_by_id(id: int, db: Session = Depends(get_db)):
     return notification
 
 @app.get("/Admin/{group_id}/Notification")
-def get_group_action_history(group_id: int, db: Session = Depends(get_db)):
+def get_group_action_history(group_id: int, role = Depends(is_admin), db: Session = Depends(get_db)):
     """
     Zwraca cale action history konkretnej grupy  - albo pusta liste jesli nic nie ma
     """
@@ -695,7 +723,7 @@ def get_group_action_history(group_id: int, db: Session = Depends(get_db)):
     return history
 
 @app.delete("/Admin/Notification/{id}")
-def delete_notification_by_id(id: int, db: Session = Depends(get_db)):
+def delete_notification_by_id(id: int, role = Depends(is_admin), db: Session = Depends(get_db)):
     """
     Usuwa konkretne action history
     """
@@ -707,7 +735,7 @@ def delete_notification_by_id(id: int, db: Session = Depends(get_db)):
 
 
 @app.delete("/Admin/{group_id}/Notification")
-def delete_group_action_history(group_id: int, db: Session = Depends(get_db)):
+def delete_group_action_history(group_id: int, role = Depends(is_admin), db: Session = Depends(get_db)):
     """
     Deletes all action history referred to a group with id
     """
@@ -718,7 +746,7 @@ def delete_group_action_history(group_id: int, db: Session = Depends(get_db)):
     return {"message": "Usunięto wszytskie powiadomienia związane z grupą"}
 
 @app.delete("/Admin/database-clear")
-def delete_database(db: Session = Depends(get_db)):
+def delete_database(role = Depends(is_admin), db: Session = Depends(get_db)):
     """
     Deletes database -wont delete any admin!
     """
@@ -726,7 +754,7 @@ def delete_database(db: Session = Depends(get_db)):
     return {"message": "Wyczyszczenie danych z bazy przebiegło pomyślnie"}
 
 @app.put("/Admin/AdminDelete/{id}")
-def delete_admin(id: int,db: Session= Depends(get_db)):
+def delete_admin(id: int, role = Depends(is_admin),db: Session= Depends(get_db)):
     """
     Nie mozna usunac konta kpz@pwr.edu.pl !! -> Superadmin
     """
@@ -739,7 +767,7 @@ def delete_admin(id: int,db: Session= Depends(get_db)):
     return {"message": "Pomyślnie usunięto administratora"}
 
 @app.post("/Admin/UploadProjects")
-def post_uploads_projects(db: Session = Depends(get_db)):
+def post_uploads_projects(role = Depends(is_admin), db: Session = Depends(get_db)):
     """
     Tworzenie projektow w bazie na podstawie zamieszczonego excel
     """
@@ -749,7 +777,7 @@ def post_uploads_projects(db: Session = Depends(get_db)):
     return {"message": "Załadowanie projektów przebiegło pomyślnie", "projects":projects}
 
 @app.put("/Admin/Group/{group_id}/Confirm")
-def confirm_realization(group_id: int, db: Session = Depends(get_db)):
+def confirm_realization(group_id: int, role = Depends(is_admin), db: Session = Depends(get_db)):
     group = CRUD.get_group(db, group_id)
     if group is None:
         raise HTTPException(status_code=404, detail="Nie odnaleziono grupy")
@@ -760,7 +788,7 @@ def confirm_realization(group_id: int, db: Session = Depends(get_db)):
     return {"message": "Zatwierdzono realizację projektu przez grupę"}
 
 @app.delete("/Admin/DeleteProject/{id}")
-def delete_project(id:int, db: Session = Depends(get_db)):
+def delete_project(id:int, role = Depends(is_admin), db: Session = Depends(get_db)):
     project = CRUD.get_project_by_id(db, id)
     if project is None:
         raise HTTPException(status_code=404, detail="Nie odnaleziono projektu")
@@ -769,7 +797,7 @@ def delete_project(id:int, db: Session = Depends(get_db)):
 
 
 @app.put("/Admin/{project_id}/Logo")
-def put_logo(project_id: str, logo_file: UploadFile = File(...), db: Session = Depends(get_db)):
+def put_logo(project_id: str, logo_file:UploadFile=File(...), role = Depends(is_admin), db: Session = Depends(get_db) ):
     """
     Dodawanie loga firmy przez podanie nazwy firmy.
     Dodanie pliku oznacza nadpisanie poprzedniego. Sciezka pliku zapisuje sie w project.logopath.
@@ -803,7 +831,7 @@ def put_logo(project_id: str, logo_file: UploadFile = File(...), db: Session = D
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "Zaszedł błąd", "error": str(e)})
 @app.post("/Admin/ExcelFile")
-def post_excel(excel_file: UploadFile = File(...),db: Session = Depends(get_db)):
+def post_excel(excel_file: UploadFile = File(...), role = Depends(is_admin), db: Session = Depends(get_db)):
     """
     Dodawanie pliku excel z forms
     Plik musi byc nazwany KPZ_FORMS.xlsx!!!!
@@ -831,7 +859,7 @@ def post_excel(excel_file: UploadFile = File(...),db: Session = Depends(get_db))
         return JSONResponse(status_code=500, content={"message": "Zaszedł błąd", "error": str(e)})
 
 @app.delete("/Admin/ExcelFile")
-def delete_excel(db: Session = Depends(get_db)):
+def delete_excel(role = Depends(is_admin), db: Session = Depends(get_db)):
     """
     Usuwanie pliku excel
     """
@@ -857,7 +885,7 @@ def delete_excel(db: Session = Depends(get_db)):
 
 
 @app.post("/Admin/setTime/{year}:{month}:{day}:{hour}:{minute}:{second}")
-def set_time_subscribtion(year:int, month:int, day:int, hour:int, minute:int, second:int, db: Session = Depends(get_db)):
+def set_time_subscribtion(year:int, month:int, day:int, hour:int, minute:int, second:int, role = Depends(is_admin), db: Session = Depends(get_db)):
     data=f"{day}.{month}.{year} {hour}:{minute}:{second}"
     CRUD.setTimeOfSubscribtion(data)
     return {"message": f"ustawiono czas rezerwacji na {data}"}
@@ -865,14 +893,29 @@ def set_time_subscribtion(year:int, month:int, day:int, hour:int, minute:int, se
 
 ########### SEKCJA STUDENT ################
 
-@app.get("/Student/Group/{id}")
-def get_student_group(id: int, db: Session = Depends(get_db)):
+@app.get('/Student/MemberType')
+def get_student_type(student = Depends(get_current_user)):
+    """
+    Returns information about student. It contains information about
+    being student with group, without group or being leader
+    """
+    print(student.rolename)
+    if student.groupid is None:
+        return {"memberType": "withoutGroup"}
+    if student.rolename == "student":
+        return {"memberType": "student"}
+    if student.rolename == "leader":
+        return {"memberType": "leader"}
+    raise HTTPException(status_code=404, detail="Wystąpił błąd")
+
+
+
+@app.get("/Student/Group")
+def get_student_group(student = Depends(get_current_user), db: Session = Depends(get_db)):
     """
     Returns information about a group to which student with id belong
     id jest studenta!
     """
-    # Get the student by their id
-    student = CRUD.get_user_by_id(db, id)
     if not student:
         raise HTTPException(status_code=404, detail="Nie odnaleziono studenta")
 
@@ -957,12 +1000,12 @@ def get_student_group(id: int, db: Session = Depends(get_db)):
         "members": member_details,
         "invite_code": group.invitecode,
         "group_size": group.groupsize,
-        "reservation-status": status,
-        "project-info":project_info,
+        "reservation_status": status,
+        "project_info":project_info,
     }
 
 @app.put("/Student/ChangeLeader/{id}")
-def put_change_leader(id: int, db: Session = Depends(get_db)):
+def put_change_leader(id :int, student = Depends(get_current_user), db: Session = Depends(get_db)):
     """
     Change leader of a group <- the ID is of a new leader
     """
@@ -988,13 +1031,12 @@ def put_change_leader(id: int, db: Session = Depends(get_db)):
 
     return {"message": "Zmieniono lidera"}
 
-@app.post("/Student/{user_id}/Enroll/{project_id}")
-def enroll_student_to_project( user_id: int, project_id: int, db: Session = Depends(get_db)):
+@app.post("/Student/Enroll/{project_id}")
+def enroll_student_to_project( project_id: int, user = Depends(get_current_user), db: Session = Depends(get_db)):
     """
     Makes reseravtion of a project - should be done by leader otherwise raise exception
     """
-    # Sprawdź, czy użytkownik istnieje
-    user = CRUD.get_user_by_id(db, user_id)
+
     if not user:
         raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
 
@@ -1022,12 +1064,11 @@ def enroll_student_to_project( user_id: int, project_id: int, db: Session = Depe
 
     return {"message": "Udało się zapisać na projekt", "group_id": user.groupid, "project_name": project.projecttitle}
 
-@app.delete("/Student/{user_id}/QuitProject")
-def delete_reservation(user_id: int, db: Session = Depends(get_db)):
+@app.delete("/Student/QuitProject")
+def delete_reservation(user = Depends(get_current_user), db: Session = Depends(get_db)):
     """
     Rezegnacja grupy projektowej z rezerwacji projekt. Użytkownik musi byc liderem.
     """
-    user = CRUD.get_user_by_id(db, user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
     if user.groupid is None:
@@ -1045,14 +1086,13 @@ def delete_reservation(user_id: int, db: Session = Depends(get_db)):
     CRUD.delete_project_reservation(db,reservation)
     return {"message": "Usunięto rezerwację"}
 
-@app.post("/Student/unsubscribe/{id}")
-def unsubscribe_from_group(id: int, db: Session = Depends(get_db)):
+@app.post("/Student/unsubscribe")
+def unsubscribe_from_group(user = Depends(get_current_user), db: Session = Depends(get_db)):
     """
     Opuszczenie grupy projektowej. Lider nie może opuścić grupy, chyba że jest jedynym jej członkiem.
     W takim przypadku grupa zostanie usunięta
     """
     # Pobierz użytkownika
-    user = CRUD.get_user_by_id(db, id)
     if not user:
         raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
 
@@ -1083,13 +1123,11 @@ def unsubscribe_from_group(id: int, db: Session = Depends(get_db)):
 
     return {"message": "Użytkownik opuścił grupę"}
 
-@app.post("/Student/{my_id}/unsubscribeSomeone/{someone_id}")
-def unsubscribe_from_group(my_id: int, someone_id: int,  db: Session = Depends(get_db)):
+@app.post("/Student/unsubscribeSomeone/{someone_id}")
+def unsubscribe_from_group(someone_id: int, user = Depends(get_current_user),  db: Session = Depends(get_db)):
     """
        Usuwanie członka grupy. Tylko Lider może usunąć członka grupy.
     """
-    # Pobierz użytkownika
-    user = CRUD.get_user_by_id(db, my_id)
     other_user = CRUD.get_user_by_id(db, someone_id)
     if not other_user or not user:
         raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
@@ -1123,12 +1161,11 @@ def unsubscribe_from_group(my_id: int, someone_id: int,  db: Session = Depends(g
     db.commit()
     return {"message": "Użytkownik opuścił grupę"}
 
-@app.post("/Student/{user_id}/JoinGroup/{inviteCode}")
-def join_group(user_id: int, inviteCode: str, db: Session = Depends(get_db)):
+@app.post("/Student/JoinGroup/{inviteCode}")
+def join_group(inviteCode: str, student = Depends(get_current_user), db: Session = Depends(get_db)):
     """
     Makes student with user_id join a group with inviteCode
     """
-    student = CRUD.get_user_by_id(db, user_id)
     if not student:
         raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
     group = CRUD.get_group_by_invite_code(db, inviteCode)
@@ -1146,28 +1183,26 @@ def join_group(user_id: int, inviteCode: str, db: Session = Depends(get_db)):
     except exceptions.MinimumSizeGroupException:
         raise HTTPException(status_code=404, detail="Grupa ma zbyt mało członków")
 
-@app.post("/Student/{user_id}/CreateGroup")
-def create_group(user_id: int, db: Session = Depends(get_db)):
-    student = CRUD.get_user_by_id(db, user_id)
+@app.post("/Student/CreateGroup")
+def create_group(student = Depends(get_current_user), db: Session = Depends(get_db)):
     if not student:
         raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
     try:
         group=CRUD.create_project_group_short(db, student)
-        return {"messsage": "the group was succesfully created, here is its inviteCode"+group.invitecode}
+        return {"messsage": "Stworzono grupę. Hasło wstępu to: "+group.invitecode}
     except Exception as e:
         print (e)
 
-@app.post("/Student/{user_id}/Group/GuardianAdd/{name}/{surname}/{email}")
-def set_guardian(user_id: int, name: str, surname: str, email: str, db: Session = Depends(get_db)):
-    user = CRUD.get_user_by_id(db, user_id)
-    print(name)
+@app.post("/Student/Group/GuardianAdd/{nameG}:{surname}:{email}")
+def set_guardian(nameG: str, surname: str, email: str,user = Depends(get_current_user), db: Session = Depends(get_db)):
+    print(nameG)
     if user is None:
         raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
     if user.rolename != "leader":
         raise HTTPException(status_code=404, detail="Tylko lider może wprowadzić dane opiekuna")
-    if name != "" and surname != "" and email != "":
+    if nameG != "" and surname != "" and email != "":
         guard=schemas.GuardianCreate(
-            name=name,
+            name=nameG,
             surname=surname,
             email=email
         )
@@ -1179,9 +1214,8 @@ def set_guardian(user_id: int, name: str, surname: str, email: str, db: Session 
         return {"message": "Udało się dodać opiekuna"}
     raise HTTPException(status_code=404, detail="Brak wymaganych informacji na temat opiekuna")
 
-@app.put("/Student/{user_id}/Group/GuardianChange/{name}/{surname}/{email}")
-def change_guardian(user_id: int, name: str, surname: str, email: str, db: Session = Depends(get_db)):
-    user = CRUD.get_user_by_id(db, user_id)
+@app.put("/Student/Group/GuardianChange/{name}/{surname}/{email}")
+def change_guardian(name: str, surname: str, email: str, user = Depends(get_current_user), db: Session = Depends(get_db)):
     print(name)
     if user is None:
         raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
@@ -1201,122 +1235,116 @@ def change_guardian(user_id: int, name: str, surname: str, email: str, db: Sessi
         return {"message": "Zmieniono opiekuna"}
     raise HTTPException(status_code=404, detail="Brak wymaganych informacji na temat opiekuna")
 
-@app.post("/Student/{user_id}/PDF_file")
-def post_pdf_file(user_id: int,pdf_file: UploadFile = File(...),db:Session =Depends((get_db))):
+@app.post("/Student/PDF_file")
+def post_pdf_file(user = Depends(get_current_user), pdf_file: UploadFile = File(...),db:Session =Depends((get_db))):
     """
     Buduje katalog o id grupy i tam wrzuca plik ( tylko format pdf ),
     tylko lider moze to zrobic,
     status projektu nie moze byc avaliable,
     po poprawnym wgraniu pliku tworzone jest actionhistory
     """
-    try:
-        # Pobierz użytkownika na podstawie jego ID
-        user = CRUD.get_user_by_id(db, user_id)
 
-        if not user:
-            raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
-        if user.rolename != "leader":
-            raise HTTPException(status_code=404, detail="Tylko lider może załączyć plik ze zgodą")
 
-        reservation =CRUD.get_project_reservation_by_group(db,user.groupid)
+    if not user:
+        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
+    if user.rolename != "leader":
+        raise HTTPException(status_code=404, detail="Tylko lider może załączyć plik ze zgodą")
 
-        if reservation is None:
-            raise HTTPException(status_code=404, detail="Grupa nie posiada rezerwacji")
-        if reservation != "available":
-            raise HTTPException(status_code=404, detail="Status projektu nie pozwala na wysłanie zgody")
-        # Pobierz groupID użytkownika
-        groupID = user.groupid
-        # pdf_file = CRUD.validate_pdf(pdf_file)
+    reservation =CRUD.get_project_reservation_by_group(db,user.groupid)
 
-        # Określ ścieżkę, gdzie chcesz zapisać plik PDF
-        save_path = os.path.join("docs", "pdf", str(groupID))
+    if reservation is None:
+        raise HTTPException(status_code=404, detail="Grupa nie posiada rezerwacji")
+    if reservation.status != "reserved":
+        raise HTTPException(status_code=404, detail="Status projektu nie pozwala na wysłanie zgody")
+    # Pobierz groupID użytkownika
+    groupID = user.groupid
+    # pdf_file = CRUD.validate_pdf(pdf_file)
+    group = CRUD.get_group(db, groupID)
+    if group.guardianid is None:
+        raise HTTPException(status_code=404, detail="Grupa nie ma wybranego opiekuna. Najpierw ustaw opiekuna, a później spróbuj ponownie")
+    # Określ ścieżkę, gdzie chcesz zapisać plik PDF
+    save_path = os.path.join("docs", "pdf", str(groupID))
 
-        os.makedirs(save_path, exist_ok=True)
+    os.makedirs(save_path, exist_ok=True)
 
-        # Połącz ścieżkę i nazwę pliku
-        file_path = os.path.join(save_path, pdf_file.filename)
+    # Połącz ścieżkę i nazwę pliku
+    file_path = os.path.join(save_path, pdf_file.filename)
 
-        # Sprawdź, czy plik już istnieje w katalogu
-        if os.path.exists(file_path):
-            raise HTTPException(status_code=409,
-                                detail="Plik już istnieje. Jeśli chcesz go zastąpić, proszę usuń istniejący i załaduj nowy")
+    # Sprawdź, czy plik już istnieje w katalogu
+    if os.path.exists(file_path):
+        raise HTTPException(status_code=409,
+                            detail="Plik już istnieje. Jeśli chcesz go zastąpić, proszę usuń istniejący i załaduj nowy")
 
-        # Zapisz przesłany plik na dysku
-        with open(file_path, "wb") as buffer:
-            buffer.write(pdf_file.file.read())
+    # Zapisz przesłany plik na dysku
+    with open(file_path, "wb") as buffer:
+        buffer.write(pdf_file.file.read())
 
-        CRUD.update_project_reservation_files(db, reservation,file_path)
-        return JSONResponse(status_code=200, content={"message": "Pomyślnie załadowano plik", "file_path": file_path})
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"message": "Zaszedł błąd", "error": str(e)})
-@app.delete("/Student/{user_id}/PDF_file")
-def delete_pdf_file(user_id: int, db: Session = Depends(get_db)):
+    CRUD.update_project_reservation_files(db, reservation,file_path)
+    return JSONResponse(status_code=200, content={"message": "Pomyślnie załadowano plik", "file_path": file_path})
+
+@app.delete("/Student/PDF_file")
+def delete_pdf_file(user = Depends(get_current_user), db: Session = Depends(get_db)):
     """
     Usuwa wszystko w katalogu o podanym id grupy,
     tylko lider moze to zrobic,
     status projektu nie moze byc avaliable,
     po poprawnym wgraniu pliku tworzone jest actionhistory
     """
-    try:
 
-        # Pobierz użytkownika na podstawie jego ID
-        user = CRUD.get_user_by_id(db, user_id)
 
-        if not user:
-            raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
-        if user.rolename != "leader":
-            raise HTTPException(status_code=404, detail="Tylko lider może zarządzać plikami")
 
-        groupID = user.groupid
-        # Określ ścieżkę do katalogu, który ma zostać usunięty
-        directory_path = os.path.join("docs", "pdf", str(groupID))
+    if not user:
+        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
+    if user.rolename != "leader":
+        raise HTTPException(status_code=404, detail="Tylko lider może zarządzać plikami")
 
-        # Sprawdź czy katalog istnieje
-        if not os.path.exists(directory_path):
-            raise HTTPException(status_code=404, detail="Nie odnaleziono folderu (ścieżki)")
+    groupID = user.groupid
+    # Określ ścieżkę do katalogu, który ma zostać usunięty
+    directory_path = os.path.join("docs", "pdf", str(groupID))
 
-        # Usuń wszystkie pliki w katalogu
-        for filename in os.listdir(directory_path):
-            file_path = os.path.join(directory_path, filename)
-            os.remove(file_path)
+    # Sprawdź czy katalog istnieje
+    if not os.path.exists(directory_path):
+        raise HTTPException(status_code=404, detail="Nie odnaleziono folderu (ścieżki)")
 
-        # Usuń pusty katalog
-        os.rmdir(directory_path)
+    # Usuń wszystkie pliki w katalogu
+    for filename in os.listdir(directory_path):
+        file_path = os.path.join(directory_path, filename)
+        os.remove(file_path)
 
-        reservation = CRUD.get_project_reservation_by_group(db, groupID)
+    # Usuń pusty katalog
+    os.rmdir(directory_path)
 
-        CRUD.update_project_reservation_files(db, reservation, None)
-        return {"message": f"Wszystkie pliki z katalogu {user.groupid} zostały usunięte"}
+    reservation = CRUD.get_project_reservation_by_group(db, groupID)
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Zaszedł błąd: {str(e)}")
-@app.get("/Student/{user_id}/PDF_file")
-def get_pdf_file(user_id: int, db: Session = Depends(get_db)):
+    CRUD.update_project_reservation_files(db, reservation, None)
+    return {"message": f"Wszystkie pliki z katalogu {user.groupid} zostały usunięte"}
+
+@app.get("/Student/PDF_file")
+def get_pdf_file(user = Depends(get_current_user), db: Session = Depends(get_db)):
     """
     Pobieranie pliku z katalogu grupy
     Kazdy czlonek grupy moze to zrobic
     """
-    try:
-        user = CRUD.get_user_by_id(db, user_id)
 
-        if not user:
-            raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
-        groupID = user.groupid
+    if not user:
+        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
+    groupID = user.groupid
 
-        # Określ ścieżkę do katalogu, z którego chcesz pobrać pliki
-        directory_path = os.path.join("docs", "pdf", str(groupID))
+    # Określ ścieżkę do katalogu, z którego chcesz pobrać pliki
+    directory_path = os.path.join("docs", "pdf", str(groupID))
+    print(directory_path)
 
-        # Sprawdź czy katalog istnieje
-        if not os.path.exists(directory_path):
-            raise HTTPException(status_code=404, detail="Nie odnaleziono folderu (ścieżki)")
+    # Sprawdź czy katalog istnieje
+    if not os.path.exists(directory_path):
+        raise HTTPException(status_code=404, detail="Nie odnaleziono folderu (ścieżki)")
 
-        # Pobierz listę plików w katalogu
-        files_list = os.listdir(directory_path)
+    # Pobierz listę plików w katalogu
+    files_list = os.listdir(directory_path)
 
-        return {"message": f"Lista plików w katalogu {user.groupid}:", "files": files_list}
+    return {"message": f"Lista plików w katalogu {user.groupid}:", "files": files_list}
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Zaszedł błąd: {str(e)}")
+    #except Exception as e:
+     #   raise HTTPException(status_code=500, detail=f"Zaszedł błąd: {str(e)}")
 
 # Dependency to check LDAP authentication
 # def check_ldap_auth(credentials: HTTPBasicCredentials = Depends(security)):
