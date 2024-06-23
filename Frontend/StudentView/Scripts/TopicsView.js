@@ -87,7 +87,7 @@ function displaySearchedTopics(topics, data) {
         // Dodanie nasłuchiwania zdarzenia kliknięcia na każdy element topicItemAdmin
         topicItem.addEventListener('click', function () {
             // Przekierowanie użytkownika do widoku reservationDetails, przekazując ID projektu jako parametr w adresie URL
-            window.location.href = `topicDetails.html?id=${projecstid[i]}`;
+            window.location.href = `../topicDetails.html?id=${projecstid[i]}`;
         });
 
         // Dodanie pojedynczego projektu do listy
@@ -156,7 +156,7 @@ function allProjects(topicList) {
                 // Dodanie nasłuchiwania zdarzenia kliknięcia na każdy element topicItemAdmin
                 topicItem.addEventListener('click', function () {
                     // Przekierowanie użytkownika do widoku reservationDetails, przekazując ID projektu jako parametr w adresie URL
-                    window.location.href = `topicDetails.html?id=${projecstid[i]}`;
+                    window.location.href = `../topicDetails.html?id=${projecstid[i]}`;
                 });
 
                 // Dodanie pojedynczego projektu do listy
@@ -228,7 +228,7 @@ function freeProjects(topics) {
                 // Dodanie nasłuchiwania zdarzenia kliknięcia na każdy element topicItemAdmin
                 topicItem.addEventListener('click', function () {
                     // Przekierowanie użytkownika do widoku reservationDetails, przekazując ID projektu jako parametr w adresie URL
-                    window.location.href = `topicDetails.html?id=${projecstid[i]}`;
+                    window.location.href = `../topicDetails.html?id=${projecstid[i]}`;
                 });
 
                 // Dodanie pojedynczego projektu do listy

@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const button = document.getElementById("backButton")
 
     button.addEventListener("click", function() {
-        window.location.href = "landingPage.html";
+        history.back();
     })
 
     fetch(`http://127.0.0.1:8000/Project/${projectId}`)
