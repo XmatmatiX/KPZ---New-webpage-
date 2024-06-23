@@ -124,10 +124,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 const notificationItem = document.createElement('div');
                 notificationItem.classList.add('notificationGroupItem');
 
-                // const notificationDetails = document.createElement('div');
-                // notificationDetails.classList.add('notificationDetails');
-                // notifications.appendChild(notificationDetails);
-
                 const dateTime = new Date(notification.datatime);
                 const formattedDateTime = `${dateTime.toLocaleDateString()} ${dateTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}`;
 
