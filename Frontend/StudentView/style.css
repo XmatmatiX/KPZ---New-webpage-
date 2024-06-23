@@ -1456,7 +1456,7 @@ h3 {
     margin: 40px;
 }
 .details-container-member2{
-    background-color: var(--primary-light);
+    background-color: #f4f4f4;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
@@ -1487,4 +1487,187 @@ h3 {
 .group-info-leader p{
     font-size: 16px; /* Rozmiar czcionki */
     color: #333; /* Kolor tekstu */
+}
+
+/* RESPONSYWNOŚĆ */
+/* TELEFON */
+@media screen and (max-width:480px) {
+
+    :root {
+        --radius-large: 64px;
+        --radius-medium: 10px;
+        --radius-small: 5px;
+
+        --font-small: 14px;
+        --font-big: 24px;
+
+        --title-font: "Italiana", sans-serif;
+        --transition: all 0.3s ease-in-out; /* efekt po najechaniu*/
+    }
+
+    p {
+        font-size: var(--font-small);
+    }
+
+    button {
+        width: 120px;
+        height: 35px;
+        padding: 14px 20px;
+        border-radius: var(--radius-medium);
+        font-size: var(--font-small);
+    }
+
+    .header {
+        height: 80px;
+    }
+
+    .logoImage {
+        width: 60px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+
+    .title {
+        width: 100%;
+        margin-left: 5px;
+    }
+
+    .title p {
+        font-size: 12px;
+    }
+
+    .headerButton {
+        margin: 10px 10px 10px 0;
+    }
+
+    .mainHeader {
+        margin-top: 10px;
+    }
+
+    .mainHeader h1 {
+        font-size: 20px;
+    }
+
+    article {
+        margin: 15px;
+        gap: 5px;
+    }
+
+    .formattedP {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .divStyle {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        margin-bottom: 10px;
+    }
+
+    .enrollmentTime {
+        margin-right: 20px;
+        font-size: 15px;
+    }
+
+    .dateLabel {
+        font-size: 15px;
+        padding: 5px 5px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .headerLanding {
+        flex-direction: column;
+        margin: 15px 10px;
+        padding: 0;
+        height: auto;
+    }
+
+    .searchInput, .searchButton {
+        width: 95%;
+        margin: 5px 0;
+    }
+
+    .freeBorder2 {
+        display: flex;
+        justify-content: center;
+        margin: 7px 0;
+        width: 95%;
+    }
+
+    .topicList {
+        margin: 0 20px; /* Marginesy z prawej i lewej strony 20px na mniejszych ekranach */
+
+    }
+
+    .borderItem {
+        display: none;
+    }
+
+    .topicItem {
+        margin-bottom: 10px;
+        grid-template-columns: auto;
+        padding: 10px 10px 10px 20px;
+        font-size: 17px;
+    }
+
+    .backButton {
+        display: none;
+    }
+
+    .detailsHeader {
+        padding: 10px 15px;
+        margin: 10px 0;
+        height: auto;
+        grid-template-columns: 3fr 5fr;
+    }
+
+    .topicSection {
+        margin: 10px;
+        padding: 10px 10px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        width: 100%;
+        height: 100vh;
+    }
+
+    .menu {
+        max-height: 52px;
+        grid-column: 1/13;
+        display: flex;
+        flex-direction: row;
+        gap: 0;
+        padding: 0;
+        align-items: center;
+        border-top: 2px solid #000;
+    }
+
+    .menu p {
+        display: none; /* Ukryj tekst tylko na małych ekranach */
+    }
+
+    .pageButton {
+        height: 50px;
+        justify-content: flex-start;
+        padding: 5px 8px;
+    }
+
+    .menuButton {
+        height: 50px;
+        justify-content: flex-start;
+        padding: 5px 8px;
+    }
+
+    .page {
+        grid-column: 1/13;  /* Rozciągnij stronę na całą szerokość */
+        margin-top: 0;
+        padding: 10px;
+    }
+
 }

@@ -210,10 +210,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const formData = new FormData();
-        formData.append('pdf_file', pdfFile);
-       //  for (let i = 0; i < files.length; i++) {
-       // formData.append('files[]', files[i]);
-        //}
+         for (let i = 0; i < files.length; i++) {
+        formData.append('files[]', files[i]);
+        }
          fetch(`http://127.0.0.1:8000/Student/PDF_file`, {
                 method: 'POST',
                 body: formData,
@@ -221,24 +220,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     "Authorization": `Bearer ${token}`
                  }
             })
-             .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        console.log(data.detail);
-                        throw new Error(data.detail);
-                    });
-                }
-                return response.json(); // Jeśli odpowiedź jest 'ok', zwracamy JSON
-            })
+             .then(response => response.json())  // Oczekuje, że serwer zwróci JSON
             .then(data => {
-                console.log('Success:', data);
-                alert('Pliki zostały pomyślnie wysłane.');
+            console.log('Success:', data);
+            alert('Pliki zostały pomyślnie wysłane.');
             })
             .catch(error => {
-            console.error('Error:', error.message);
-            alert('Wystąpił błąd: ' + error.message);
+            console.error('Error:', error);
+            alert('Wystąpił błąd podczas przesyłania plików.');
             });
-         location.reload();
     }
 
     // Function to delete all PDF files

@@ -1228,45 +1228,45 @@ def post_pdf_file(user = Depends(get_current_user), pdf_file: UploadFile = File(
     status projektu nie moze byc avaliable,
     po poprawnym wgraniu pliku tworzone jest actionhistory
     """
-    try:
-        if not user:
-            raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
-        if user.rolename != "leader":
-            raise HTTPException(status_code=404, detail="Tylko lider może załączyć plik ze zgodą")
 
-        reservation =CRUD.get_project_reservation_by_group(db,user.groupid)
 
-        if reservation is None:
-            raise HTTPException(status_code=404, detail="Grupa nie posiada rezerwacji")
-        if reservation.status != "reserved":
-            raise HTTPException(status_code=404, detail="Status projektu nie pozwala na wysłanie zgody")
-        # Pobierz groupID użytkownika
-        groupID = user.groupid
-        # pdf_file = CRUD.validate_pdf(pdf_file)
-        group = CRUD.get_group(db, groupID)
-        if group.guardianid is None:
-            raise HTTPException(status_code=404, detail="Grupa nie ma wybranego opiekuna. Najpierw usatw opiekuna, a później spróbuj ponownie")
-        # Określ ścieżkę, gdzie chcesz zapisać plik PDF
-        save_path = os.path.join("docs", "pdf", str(groupID))
+    if not user:
+        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
+    if user.rolename != "leader":
+        raise HTTPException(status_code=404, detail="Tylko lider może załączyć plik ze zgodą")
 
-        os.makedirs(save_path, exist_ok=True)
+    reservation =CRUD.get_project_reservation_by_group(db,user.groupid)
 
-        # Połącz ścieżkę i nazwę pliku
-        file_path = os.path.join(save_path, pdf_file.filename)
+    if reservation is None:
+        raise HTTPException(status_code=404, detail="Grupa nie posiada rezerwacji")
+    if reservation.status != "reserved":
+        raise HTTPException(status_code=404, detail="Status projektu nie pozwala na wysłanie zgody")
+    # Pobierz groupID użytkownika
+    groupID = user.groupid
+    # pdf_file = CRUD.validate_pdf(pdf_file)
+    group = CRUD.get_group(db, groupID)
+    if group.guardianid is None:
+        raise HTTPException(status_code=404, detail="Grupa nie ma wybranego opiekuna. Najpierw ustaw opiekuna, a później spróbuj ponownie")
+    # Określ ścieżkę, gdzie chcesz zapisać plik PDF
+    save_path = os.path.join("docs", "pdf", str(groupID))
 
-        # Sprawdź, czy plik już istnieje w katalogu
-        if os.path.exists(file_path):
-            raise HTTPException(status_code=409,
-                                detail="Plik już istnieje. Jeśli chcesz go zastąpić, proszę usuń istniejący i załaduj nowy")
+    os.makedirs(save_path, exist_ok=True)
 
-        # Zapisz przesłany plik na dysku
-        with open(file_path, "wb") as buffer:
-            buffer.write(pdf_file.file.read())
+    # Połącz ścieżkę i nazwę pliku
+    file_path = os.path.join(save_path, pdf_file.filename)
 
-        CRUD.update_project_reservation_files(db, reservation,file_path)
-        return JSONResponse(status_code=200, content={"message": "Pomyślnie załadowano plik", "file_path": file_path})
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"message": "Zaszedł błąd", "error": str(e)})
+    # Sprawdź, czy plik już istnieje w katalogu
+    if os.path.exists(file_path):
+        raise HTTPException(status_code=409,
+                            detail="Plik już istnieje. Jeśli chcesz go zastąpić, proszę usuń istniejący i załaduj nowy")
+
+    # Zapisz przesłany plik na dysku
+    with open(file_path, "wb") as buffer:
+        buffer.write(pdf_file.file.read())
+
+    CRUD.update_project_reservation_files(db, reservation,file_path)
+    return JSONResponse(status_code=200, content={"message": "Pomyślnie załadowano plik", "file_path": file_path})
+
 @app.delete("/Student/PDF_file")
 def delete_pdf_file(user = Depends(get_current_user), db: Session = Depends(get_db)):
     """
@@ -1276,61 +1276,60 @@ def delete_pdf_file(user = Depends(get_current_user), db: Session = Depends(get_
     po poprawnym wgraniu pliku tworzone jest actionhistory
     """
 
-    try:
 
-        if not user:
-            raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
-        if user.rolename != "leader":
-            raise HTTPException(status_code=404, detail="Tylko lider może zarządzać plikami")
 
-        groupID = user.groupid
-        # Określ ścieżkę do katalogu, który ma zostać usunięty
-        directory_path = os.path.join("docs", "pdf", str(groupID))
+    if not user:
+        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
+    if user.rolename != "leader":
+        raise HTTPException(status_code=404, detail="Tylko lider może zarządzać plikami")
 
-        # Sprawdź czy katalog istnieje
-        if not os.path.exists(directory_path):
-            raise HTTPException(status_code=404, detail="Nie odnaleziono folderu (ścieżki)")
+    groupID = user.groupid
+    # Określ ścieżkę do katalogu, który ma zostać usunięty
+    directory_path = os.path.join("docs", "pdf", str(groupID))
 
-        # Usuń wszystkie pliki w katalogu
-        for filename in os.listdir(directory_path):
-            file_path = os.path.join(directory_path, filename)
-            os.remove(file_path)
+    # Sprawdź czy katalog istnieje
+    if not os.path.exists(directory_path):
+        raise HTTPException(status_code=404, detail="Nie odnaleziono folderu (ścieżki)")
 
-        # Usuń pusty katalog
-        os.rmdir(directory_path)
+    # Usuń wszystkie pliki w katalogu
+    for filename in os.listdir(directory_path):
+        file_path = os.path.join(directory_path, filename)
+        os.remove(file_path)
 
-        reservation = CRUD.get_project_reservation_by_group(db, groupID)
+    # Usuń pusty katalog
+    os.rmdir(directory_path)
 
-        CRUD.update_project_reservation_files(db, reservation, None)
-        return {"message": f"Wszystkie pliki z katalogu {user.groupid} zostały usunięte"}
+    reservation = CRUD.get_project_reservation_by_group(db, groupID)
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Zaszedł błąd: {str(e)}")
+    CRUD.update_project_reservation_files(db, reservation, None)
+    return {"message": f"Wszystkie pliki z katalogu {user.groupid} zostały usunięte"}
+
 @app.get("/Student/PDF_file")
 def get_pdf_file(user = Depends(get_current_user), db: Session = Depends(get_db)):
     """
     Pobieranie pliku z katalogu grupy
     Kazdy czlonek grupy moze to zrobic
     """
-    try:
-        if not user:
-            raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
-        groupID = user.groupid
 
-        # Określ ścieżkę do katalogu, z którego chcesz pobrać pliki
-        directory_path = os.path.join("docs", "pdf", str(groupID))
+    if not user:
+        raise HTTPException(status_code=404, detail="Nie odnaleziono użytkownika")
+    groupID = user.groupid
 
-        # Sprawdź czy katalog istnieje
-        if not os.path.exists(directory_path):
-            raise HTTPException(status_code=404, detail="Nie odnaleziono folderu (ścieżki)")
+    # Określ ścieżkę do katalogu, z którego chcesz pobrać pliki
+    directory_path = os.path.join("docs", "pdf", str(groupID))
+    print(directory_path)
 
-        # Pobierz listę plików w katalogu
-        files_list = os.listdir(directory_path)
+    # Sprawdź czy katalog istnieje
+    if not os.path.exists(directory_path):
+        raise HTTPException(status_code=404, detail="Nie odnaleziono folderu (ścieżki)")
 
-        return {"message": f"Lista plików w katalogu {user.groupid}:", "files": files_list}
+    # Pobierz listę plików w katalogu
+    files_list = os.listdir(directory_path)
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Zaszedł błąd: {str(e)}")
+    return {"message": f"Lista plików w katalogu {user.groupid}:", "files": files_list}
+
+    #except Exception as e:
+     #   raise HTTPException(status_code=500, detail=f"Zaszedł błąd: {str(e)}")
 
 # Dependency to check LDAP authentication
 # def check_ldap_auth(credentials: HTTPBasicCredentials = Depends(security)):

@@ -1,6 +1,14 @@
 "use strict"
 
 const token = sessionStorage.getItem("JWT");
+function addButtonListener(notificationDetails, groupId) {
+
+    const groupButton = notificationDetails.querySelector('.buttonContainer');
+    groupButton.addEventListener('click', function() {
+        window.location.href = `groupDetails.html?id=${groupId}`;
+    });
+}
+
 document.addEventListener("DOMContentLoaded", function() {
 
     const errorModal = document.getElementById('errorModal');
@@ -25,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
 
             const notifications = document.getElementById('notificationList');
-            console.log(data);
+
             data.forEach((notification) => {
 
                 const notificationSection = document.createElement('section');
@@ -54,12 +62,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     .then(response => response.json())
                     .then(project => {
 
-                        projectTittle = project.projecttitle;
-                        console.log(projectTittle);
+                        projectTittle = project.projecttitle
+                        let projectText = projectTittle;
+                        if(projectTittle === undefined)
+                        {
+                            projectText = "Temat projektu usunięty"
+                        }
 
                         notificationItem.innerHTML = `
                             <p>${notification.group}</p>
-                            <p>${projectTittle}</p>
+                            <p>${projectText}</p>
                             <p>${formattedDateTime}</p>
                             <button class="searchButton"> <img src="../Images/trash.png" alt="Here should be a photo"> </button>
                         `;
@@ -162,16 +174,18 @@ document.addEventListener("DOMContentLoaded", function() {
             function displayNotificationDetails(notificationDetails, details) {
                 // Tutaj dostosuj sposób wyświetlania danych szczegółowych powiadomienia
                 // np. ustawiając odpowiednie wartości innerHTML w elemencie notificationDetails
-                notificationDetails.innerHTML = `
+                notificationDetails.innerHTML =`
                     <div class="content"><p>${details.content}</p></div>
-                    <div id="groupButton" class="buttonContainer"><button class="searchButton"> Szczegóły </button></div> 
+                    <div id="groupButton" class="buttonContainer"><button class="searchButton"> Szczegóły </button></div>
                 `;
 
-                const groupButton = document.getElementById("groupButton");
+                addButtonListener(notificationDetails, details.groupid);
 
-                groupButton.addEventListener('click', function() {
-                    window.location.href = `groupDetails.html?id=${details.groupid}`;
-                });
+                // let groupButton = document.getElementById("groupButton");
+                //
+                // groupButton.addEventListener('click', function() {
+                //     window.location.href = `groupDetails.html?id=${details.groupid}`;
+                // });
             }
 
         })

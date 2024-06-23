@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             var confirmationButton = document.getElementById("confirmationButton");
 
-            if (data.state === "reserved") {
+            if (data.state === "reserved" || data.state==="waiting") {
                 confirmationButton.style.display = 'block';
             } else {
                 confirmationButton.style.display = 'none';
