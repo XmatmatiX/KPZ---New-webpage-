@@ -1456,7 +1456,7 @@ h3 {
     margin: 40px;
 }
 .details-container-member2{
-    background-color: var(--primary-light);
+    background-color: #f4f4f4;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
