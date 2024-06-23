@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             alert(data.messsage);
-            window.location.href = 'yourGroup.html';
+            window.location.href = 'groupRedirect.html';
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
              alert('Udało się dołączyć do grupy!');
-             window.location.href = 'yourGroup.html';
+             window.location.href = 'groupRedirect.html';
 
         })
         .catch(error => {

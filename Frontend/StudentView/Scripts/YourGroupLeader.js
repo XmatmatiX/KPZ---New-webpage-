@@ -1,5 +1,10 @@
 const token = sessionStorage.getItem("JWT");
 
+function groupInformationBtn()
+{
+    window.location.href = "yourGroup.html"
+}
+
 function fetchGroupDetails() {
     fetch(`http://127.0.0.1:8000/Student/Group`, {
         headers: {
