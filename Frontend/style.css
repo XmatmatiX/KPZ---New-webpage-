@@ -1659,11 +1659,15 @@ h3 {
         --radius-medium: 10px;
         --radius-small: 5px;
 
-        --font-small: 10px;
+        --font-small: 14px;
         --font-big: 24px;
 
         --title-font: "Italiana", sans-serif;
         --transition: all 0.3s ease-in-out; /* efekt po najechaniu*/
+    }
+
+    p {
+        font-size: var(--font-small);
     }
 
     button {
@@ -1767,6 +1771,23 @@ h3 {
         margin-bottom: 10px;
         grid-template-columns: auto;
         padding: 10px 10px 10px 20px;
+        font-size: 17px;
+    }
+
+    .backButton {
+        display: none;
+    }
+
+    .detailsHeader {
+        padding: 10px 15px;
+        margin: 10px 0;
+        height: auto;
+        grid-template-columns: 3fr 5fr;
+    }
+
+    .topicSection {
+        margin: 10px;
+        padding: 10px 10px;
     }
 
 }
