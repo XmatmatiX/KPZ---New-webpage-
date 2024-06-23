@@ -1023,6 +1023,22 @@ textarea {
     margin-bottom: 20px; /* Zwiększenie odstępu między inputami */
 }
 
+.registerSection {
+    background-color: var(--neutral);
+    width: 400px;
+    height: auto;
+    margin: 20px auto;
+    padding: 30px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.registerSection input {
+    margin-bottom: 15px;
+}
+
 .errorMessage {
     margin: 0px auto;
     background-color: var(--red); /* Czerwone tło z przezroczystością */
@@ -1647,6 +1663,30 @@ h3 {
     display: inline-block;
     margin-right: 20px;
     font-size: 20px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Opcjonalne: centrowanie elementów w pionie */
+    gap: 10px; /* Opcjonalne: odstępy między elementami */
+}
+
+.buttons button {
+    width: 200px; /* Przykładowa szerokość przycisków */
+}
+
+.buttons .info-text {
+    margin: 10px 0; /* Opcjonalne: odstępy nad i pod tekstem */
+    text-align: center; /* Opcjonalne: wyrównanie tekstu do środka */
+}
+
+.register {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Opcjonalne: centrowanie elementów w pionie */
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 /* RESPONSYWNOŚĆ */
