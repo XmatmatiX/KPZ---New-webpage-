@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
 
             const notifications = document.getElementById('notificationList');
-
+            console.log(data);
             data.forEach((notification) => {
 
                 const notificationSection = document.createElement('section');
@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     .then(response => response.json())
                     .then(project => {
 
-                        projectTittle = project.projecttitle
-                        console.log(projectTittle)
+                        projectTittle = project.projecttitle;
+                        console.log(projectTittle);
 
                         notificationItem.innerHTML = `
                             <p>${notification.group}</p>

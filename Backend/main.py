@@ -30,6 +30,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class RoleEnum(str, Enum):
     student = "student"
@@ -71,10 +72,18 @@ def get_db():
     finally:
         db.close()
 
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
 # funkcja sprawdzająca, czy istnieje użytkownik o podanym email oraz keycloackid
 def authenticate_user(db: Session, email: str, keycloackid: str):
-    valid_user = CRUD.check_user(db, email, keycloackid)
-    return valid_user
+    user = CRUD.get_user_by_email(db, email)
+    if not verify_password(keycloackid, user.keycloackid):
+        return None
+    return user
 
 
 # funkcja odpowiadajaca za tworzenie tokenow JWT
@@ -149,12 +158,14 @@ def register(newUser : schemas.UserRegisterPassword, db: Session = Depends(get_d
     if user_exist:
       return {"message": "User already exists"}
 
+
+
     new_user = schemas.UserCreate(
         name=newUser.name,
         surname=newUser.surname,
         email=newUser.email,
         rolename=RoleEnum.student,
-        keycloackid=newUser.password
+        keycloackid=hash_password(newUser.password)
     )
     CRUD.create_user(db, new_user)
 
