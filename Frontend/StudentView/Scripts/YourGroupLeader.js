@@ -74,22 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Member details container not found');
         }
     }
-    function translateStatus(state) {
-                switch(state) {
-                    case 'available':
-                        return 'Dostępny';
-                    case 'reserved':
-                        return 'Zarezerwowany';
-                    case 'taken':
-                        return 'Zajęty';
-                    case 'confirmed':
-                        return 'Zatwierdzony';
-                    case 'waiting':
-                        return 'Oczekujący na zatwierdzenie';
-                    default:
-                        return 'Nieznany';
-                }
-            }
 
     function updateProjectDetails(data) {
         const projectDetailsContainer = document.getElementById('project-details-div');
@@ -102,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p><strong>Email:</strong> ${data.guardian_info?.guardian_email || 'Brak'}</p>
                 <h7>Projekt</h7>
                 <p><strong>Firma:</strong> ${data.contact_info?.company || 'Brak'}</p>
-                <p><strong>Status projektu:</strong> ${translateStatus(data.reservation_status) || 'Brak'}</p>
+                <p><strong>Status projektu:</strong> ${data.reservation_status || 'Brak'}</p>
                 <p><strong>Email kontaktowy:</strong> ${data.contact_info?.contact_email || 'Brak'}</p>
                 <p><strong>Telefon kontaktowy:</strong> ${data.contact_info?.contact_phone || 'Brak'}</p>
                 <p><strong>Osoba kontaktowa:</strong> ${data.contact_info?.person || 'Brak'}</p>
@@ -194,14 +178,24 @@ document.getElementById('file').addEventListener('click', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const userId = 70; // Replace with the actual user ID
-
+    const userId = document.getElementById('groupIdInput').value;
+     if (userId) {
+            fetchGroupMembers(userId);
+        } else {
+            alert('Please enter a student ID.');
+        }
 
     // Function to upload PDF
     async function uploadFiles() {
         const fileInput = document.getElementById('fileInput');
-        const pdfFile = fileInput.files[0];
-     //   alert(userId);
+        const pdfFile = fileInput.files;
+
+         // Walidacja, czy dane opiekuna zostały wypełnione
+        if (!guardianNameInput.value || !guardianSurnameInput.value || !guardianEmailInput.value) {
+            alert('Wszystkie dane opiekuna muszą być uzupełnione.');
+            return;
+        }
+
 
         if (!pdfFile) {
             alert('Proszę wybrać plik PDF');
@@ -209,29 +203,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const formData = new FormData();
-        formData.append('pdf_file', pdfFile);
+         for (let i = 0; i < files.length; i++) {
+        formData.append('files[]', files[i]);
+        }
          fetch(`http://127.0.0.1:8000/Student/${userId}/PDF_file`, {
                 method: 'POST',
                 body: formData
             })
-             .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        console.log(data.detail);
-                        throw new Error(data.detail);
-                    });
-                }
-                return response.json(); // Jeśli odpowiedź jest 'ok', zwracamy JSON
-            })
+             .then(response => response.json())  // Oczekuje, że serwer zwróci JSON
             .then(data => {
-                console.log('Success:', data);
-                alert('Pliki zostały pomyślnie wysłane.');
-                location.reload();
-                return;
+            console.log('Success:', data);
+            alert('Pliki zostały pomyślnie wysłane.');
             })
             .catch(error => {
-            console.error('Error:', error.message);
-            alert('Wystąpił błąd: ' + error.message);
+            console.error('Error:', error);
+            alert('Wystąpił błąd podczas przesyłania plików.');
             });
     }
 
@@ -248,8 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const data = await response.json();
             if (response.ok) {
-              //  alert(data.message);
-                location.reload();
+                alert(data.message);
             } else {
                 alert('Błąd: ' + data.detail);
             }
@@ -262,7 +247,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to get the list of PDF files
     async function getPDFList() {
         try {
-       //     alert(userId);
             const response = await fetch(`http://127.0.0.1:8000/Student/${userId}/PDF_file`, {
                 method: 'GET'
             });
@@ -270,11 +254,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             if (response.ok) {
                 const fileListDiv = document.getElementById('fileList');
-                fileListDiv.innerHTML = '<p>Przesłany plik:</p><ul>' + data.files.map(file => `<li>${file}</li>`).join('') + '</ul>';
+                fileListDiv.innerHTML = '<p>' + data.message + '</p><ul>' + data.files.map(file => `<li>${file}</li>`).join('') + '</ul>';
             } else {
-                    const fileListDiv = document.getElementById('fileList');
-                    fileListDiv.innerHTML = '<p>' + data.detail + '</p>';
-
+                alert('Błąd: ' + data.detail);
             }
         } catch (error) {
             console.error('Wystąpił błąd:', error);
@@ -319,3 +301,28 @@ function leaveGroup() {
 document.getElementById('send').addEventListener('click', function() {
     alert('Plik został wysłany do zatwierdzenia.');
 });
+    function fetchGroupMembers(studentId) {
+        fetch(`http://127.0.0.1:8000/Student/Group/${studentId}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                leaderForm.innerHTML = '';  // Wyczyść formularz przed dodaniem nowych elementów
+                data.members.forEach(member => {
+                    console.log(member.role);
+                    const role = member.role;
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <label id="${member.role}" class="member" data-role="${member.role}">
+                            <input type="radio" name="leader" value="${member.id}">
+                            <img src="../Images/Vector.jpg" alt="Avatar studenta">
+                            <p>${member.name} ${member.surname} - ${member.role}</p>
+                        </label>
+                    `;
+                    leaderForm.appendChild(div);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching group members:', error);
+                alert('Failed to load group members');
+            });
+    }
