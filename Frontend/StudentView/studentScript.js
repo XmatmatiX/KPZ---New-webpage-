@@ -152,7 +152,6 @@ function submitForm() {
                 body: JSON.stringify({})
             })
                 .then(response => {
-                    console.log('here');
                     if (!response.ok) {
                         return response.json().then(data => {
                             throw new Error(data.detail);
@@ -162,14 +161,14 @@ function submitForm() {
                 })
                 .then(data => {
                     alert(data.message);
-                    alert("Ok");
+                    location.reload();
                     // window.location.href = 'StudentHome.html';
                 })
                 .catch(error => {
                     alert('Wystąpił błąd: ' + error.message);
                 });
         }
-        else console.log("nope");
+        //location.reload();
 }
 document.getElementById('file').addEventListener('click', function() {
     document.getElementById('fileModal').style.display = 'block';
@@ -210,19 +209,16 @@ const logo = document.querySelector('.logoImage');
 logo.addEventListener('click', () => {
     window.location.href = 'studentHome.html'; // Przenieś użytkownika na stronę główną
 });
-
+/*
 function uploadFiles() {
     var fileInput = document.getElementById('fileInput');
     var files = fileInput.files;
     var formData = new FormData();
-
-    // Dodaje pliki do obiektu FormData
-    for (let i = 0; i < files.length; i++) {
-        formData.append('files[]', files[i]);
-    }
+    var user_id = document.getElementById('groupIdInput').value;
+    formData.append(files[0]);
 
     // Opcje fetch do wysłania plików
-    fetch('/upload', {  // Zakładam, że "/upload" to endpoint na Twoim serwerze
+    fetch(`http://127.0.0.1:8000/Student/${user_id}/PDF_file`, {  // Zakładam, że "/upload" to endpoint na Twoim serwerze
         method: 'POST',
         body: formData
     })
@@ -230,12 +226,15 @@ function uploadFiles() {
         .then(data => {
             console.log('Success:', data);
             alert('Pliki zostały pomyślnie wysłane.');
+            location.reload();
         })
         .catch(error => {
             console.error('Error:', error);
             alert('Wystąpił błąd podczas przesyłania plików.');
         });
 }
+
+ */
 
 
 function showModal() {
