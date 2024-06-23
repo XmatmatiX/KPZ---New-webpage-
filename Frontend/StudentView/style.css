@@ -228,11 +228,22 @@ input[type="radio"] {
 }
 
 .logo {
+
+    height: auto;
+    max-height: 80px;
+    width: auto;
     max-width: 100%;
-    max-height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+.logo-main {
+    height: auto;
+    max-height: 30px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    margin: 0 auto;
 }
 
 .formattedP {
@@ -929,6 +940,15 @@ h2 {
 
 .pp {
     padding-right: 200px;
+    font-size: 20px;
+}
+
+li {
+    margin-left: 40px;
+    font-size: 20px;
+}
+
+strong {
     font-size: 20px;
 }
 
@@ -1633,6 +1653,7 @@ h3 {
     .grid {
         display: grid;
         grid-template-columns: repeat(12, 1fr);
+        grid-template-rows: 52px auto;
         width: 100%;
         height: 100vh;
     }
@@ -1668,6 +1689,79 @@ h3 {
         grid-column: 1/13;  /* Rozciągnij stronę na całą szerokość */
         margin-top: 0;
         padding: 10px;
+    }
+
+    .headerAdmin {
+        margin: 10px;
+        padding: 0;
+    }
+
+    .headerAdmin input {
+        margin-right: 20px;
+    }
+
+    .searchButton {
+        width: 100px;
+    }
+
+    .topicList {
+        margin: 10px;
+    }
+
+    .page-c, .container-leader{
+        display: flex;
+        flex-direction: column; /* Ustaw kontenery jeden pod drugim */
+        justify-content: flex-start; /* Opcjonalne: wyrównaj kontenery do góry */
+        align-items: center; /* Opcjonalne: wyśrodkuj kontenery */
+        margin: 0 10px;
+    }
+
+    .details-container-member, .details-container {
+        background-color: #f4f4f4;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        width: 100%;
+        margin: 15px 0;
+    }
+
+    .project-button {
+        margin-top: 20px;
+        flex-direction: column; /* Ustaw kontenery jeden pod drugim */
+        justify-content: flex-start; /* Opcjonalne: wyrównaj kontenery do góry */
+        align-items: center; /* Opcjonalne: wyśrodkuj kontenery */
+    }
+
+    .leave-group, .change {
+        width: 180px;
+        margin: 0;
+    }
+
+    .main-content {
+        padding-top: 0;
+        display: flex;
+        flex-direction: column; /* Ustaw kontenery jeden pod drugim */
+        justify-content: flex-start; /* Opcjonalne: wyrównaj kontenery do góry */
+        align-items: center; /* Opcjonalne: wyśrodkuj kontenery */
+    }
+
+    .nominate-button, .delete-group2 {
+        width: 160px;
+        margin: 0;
+        align-items: center;
+        display: flex; /* Ustawienie elastycznego układu na poziomie przycisku */
+        justify-content: center; /* Wyśrodkowanie poziome */
+    }
+
+    .containerChangeLeader {
+        align-items: center;
+        display: flex; /* Ustawienie elastycznego układu na poziomie przycisku */
+        justify-content: center; /* Wyśrodkowanie poziome */
+    }
+
+    .group-info-leader, .rest-info {
+        width: 100%; /* Adjust based on your layout needs */
+        margin: 20px 0;
     }
 
 }
