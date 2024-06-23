@@ -1227,12 +1227,14 @@ def post_pdf_file(user = Depends(get_current_user), pdf_file: UploadFile = File(
 
         if reservation is None:
             raise HTTPException(status_code=404, detail="Grupa nie posiada rezerwacji")
-        if reservation != "available":
+        if reservation.status != "reserved":
             raise HTTPException(status_code=404, detail="Status projektu nie pozwala na wysłanie zgody")
         # Pobierz groupID użytkownika
         groupID = user.groupid
         # pdf_file = CRUD.validate_pdf(pdf_file)
-
+        group = CRUD.get_group(db, groupID)
+        if group.guardianid is None:
+            raise HTTPException(status_code=404, detail="Grupa nie ma wybranego opiekuna. Najpierw usatw opiekuna, a później spróbuj ponownie")
         # Określ ścieżkę, gdzie chcesz zapisać plik PDF
         save_path = os.path.join("docs", "pdf", str(groupID))
 
