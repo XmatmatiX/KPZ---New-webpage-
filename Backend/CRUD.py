@@ -675,11 +675,28 @@ def delete_user(db: Session, user: schemas.UserReturn):
     db.commit()
 
 
-def delete_all_users(db: Session):
-    db.query(models.Users).filter(models.Users.groupid is not None, models.Users.rolename != "admin").delete()
-    db.commit()
-
-
+# def delete_all_users(db: Session):
+#     db.query(models.Users).filter(models.Users.groupid is not None, models.Users.rolename != "admin").delete()
+#     db.commit()
+# def delete_all_projects(db: Session):
+#     db.query(models.Project).delete()
+#     db.commit()
+#
+# def delete_all_actionshistory(db: Session):
+#     db.query(models.ActionHistory).delete()
+#     db.commit()
+#
+# def delete_all_projectreservations(db: Session):
+#     db.query(models.ProjectReservation).delete()
+#     db.commit()
+#
+# def delete_all_guardians(db: Session):
+#     db.query(models.Guardian).delete()
+#     db.commit()
+#
+# def delete_all_projectgroups(db: Session):
+#     db.query(models.ProjectGroup).delete()
+#     db.commit()
 def delete_project(db: Session, project: schemas.Project):
     """
     Deletes a project and every reservation of this project
@@ -782,13 +799,26 @@ def delete_all(db: Session):
     """
     Deleted everything
     """
-    delete_all_users(db)
+    db.query(models.Users).update({models.Users.groupid: None})
+    db.commit()
+
+    db.query(models.Users).filter(models.Users.groupid is not None, models.Users.rolename != "admin").delete()
+    db.query(models.Project).delete()
     db.query(models.ActionHistory).delete()
     db.query(models.ProjectReservation).delete()
-    db.query(models.ProjectGroup).delete()
     db.query(models.Guardian).delete()
-    db.query(models.Project).delete()
+    db.query(models.ProjectGroup).delete()
+
+    # delete_all_projects(db)
+    # delete_all_users(db)
+    # delete_all_actionshistory(db)
+    # delete_all_projectreservations(db)
+    # delete_all_projectgroups(db)
+    # delete_all_guardians(db)
     db.commit()
+
+
+
 
 
 """
