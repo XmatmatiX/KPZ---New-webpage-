@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             alert(data.message);
-            window.location.href = 'yourGroup.html';
+            window.location.href = 'groupRedirect.html';
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -110,7 +110,7 @@ function deleteProjectReservation() {
     })
     .then(data => {
         alert(data.message); // Wyświetlamy komunikat o sukcesie
-        window.location.href = 'yourGroup.html';
+        window.location.href = 'groupRedirect.html';
     })
     .catch(error => {
         console.error('Wystąpił problem z operacją usunięcia rezerwacji:', error);
