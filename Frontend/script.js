@@ -37,7 +37,7 @@ function translateStatus(status) {
 document.addEventListener("DOMContentLoaded", function () {
     const enrollmentTime = document.getElementById("enrollmentTime");
 
-    fetch(`https://projekty.kpz.pwr.edu.pl/api/TimeReservation`)
+    fetch(`http://127.0.0.1:8000/TimeReservation`)
         .then(response => response.json())
         .then(data => {
 
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         })
         .catch(error => {
-            console.log(error);
+           // console.log(error);
         });
 
 })
@@ -68,8 +68,8 @@ const login=() => {
     let valueLogin = inputLogin.value;
     let valuePassword = inputPassword.value;
 
-    console.log("Login: ", valueLogin);
-    console.log("Password: ", valuePassword);
+  //  console.log("Login: ", valueLogin);
+   // console.log("Password: ", valuePassword);
 
     if(valueLogin === "" || valuePassword ==="")
     {
@@ -83,7 +83,7 @@ const login=() => {
             password: valuePassword
         }
 
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/login`,{
+        fetch(`http://127.0.0.1:8000/login`,{
             method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -101,7 +101,7 @@ const login=() => {
         })
             .then(data => {
                 sessionStorage.setItem("JWT", data.access_token);
-                alert('Udało się zalogować!');
+                //alert('Udało się zalogować!');
                 redirectToHomePage();
         })
         .catch(error => alert('Błąd pobierania danych:', error));
@@ -141,8 +141,8 @@ const register=()=>{
             surname: surname
         }
 
-        console.log(newUser)
-        fetch(`https://projekty.kpz.pwr.edu.pl/api/Register`,{
+       // console.log(newUser)
+        fetch(`http://127.0.0.1:8000/Register`,{
             method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -152,7 +152,7 @@ const register=()=>{
         .then(response => {
             if (!response.ok) {
                 return response.json().then(error => {
-                    console.log(error.detail);
+                 //   console.log(error.detail);
                     alert(error.detail)
                     throw new Error(error.detail);
                 });
@@ -175,7 +175,7 @@ const register=()=>{
 function redirectToHomePage()
 {
     const token = sessionStorage.getItem("JWT");
-    fetch("https://projekty.kpz.pwr.edu.pl/api/User/Role", {
+    fetch("http://127.0.0.1:8000/User/Role", {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -206,7 +206,7 @@ logo.addEventListener('click', () => {
 
 function allProjects(topicList) {
 
-    fetch('https://projekty.kpz.pwr.edu.pl/api/ProjectList')
+    fetch('http://127.0.0.1:8000/ProjectList')
         .then(response => response.json())
         .then(data => {
 
@@ -235,7 +235,7 @@ function allProjects(topicList) {
                 if (logos[i] === null) {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
                 }
 
                 // Utworzenie HTML dla pojedynczego projektu
@@ -263,7 +263,7 @@ function allProjects(topicList) {
 
 function freeProjects(topics) {
 
-    fetch(`https://projekty.kpz.pwr.edu.pl/api/ProjectListFree`)
+    fetch(`http://127.0.0.1:8000/ProjectListFree`)
         .then(response => response.json())
         .then(details => {
 
@@ -304,7 +304,7 @@ function freeProjects(topics) {
                 if (logos[i] === null) {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
                 }
 
                 // Utworzenie HTML dla pojedynczego projektu
@@ -369,7 +369,7 @@ function displaySearchedTopics(topics, data) {
         if (logos[i] === null) {
             logoHTML = 'BRAK';
         } else {
-            logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
+            logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
         }
 
         // Utworzenie HTML dla pojedynczego projektu
@@ -447,7 +447,7 @@ document.addEventListener("DOMContentLoaded", function() {
             allProjects(topicList)
         }
         else {
-            fetch(`https://projekty.kpz.pwr.edu.pl/api/ProjectListSearch/${topic}`, {
+            fetch(`http://127.0.0.1:8000/ProjectListSearch/${topic}`, {
             })
                 .then(response => {
                     if (!response.ok) {
