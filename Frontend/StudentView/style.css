@@ -1764,4 +1764,8 @@ h3 {
         margin: 20px 0;
     }
 
+    .topicItem {
+        height: auto;
+    }
+
 }
