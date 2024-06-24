@@ -9,7 +9,19 @@ document.addEventListener("DOMContentLoaded", function() {
             "Authorization": `Bearer ${token}`
         }
     })
-        .then(response => response.json())
+        .then(response => )
+            {
+                if (!response.ok) {
+                        if (response.status === 401)
+                        {
+                            window.location.href = "../LoginPage.html";
+                            throw new Error('Not authorized');
+                        }
+                        else
+                            throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+            })
         .then(data => {
             const topicList = document.getElementById('topicList');
 
@@ -146,12 +158,19 @@ document.addEventListener("DOMContentLoaded", function() {
                     "Authorization": `Bearer ${token}`
                 }
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                .then(response => )
+            {
+                if (!response.ok) {
+                        if (response.status === 401)
+                        {
+                            window.location.href = "../LoginPage.html";
+                            throw new Error('Not authorized');
+                        }
+                        else
+                            throw new Error('Network response was not ok');
                     }
                     return response.json();
-                })
+            })
                 .then(data => {
                     displaySearchedTopis(topicList, data);
                 })

@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         })
         .catch(error => {
-            console.log(error);
+           // console.log(error);
         });
 
 })
@@ -68,8 +68,8 @@ const login=() => {
     let valueLogin = inputLogin.value;
     let valuePassword = inputPassword.value;
 
-    console.log("Login: ", valueLogin);
-    console.log("Password: ", valuePassword);
+  //  console.log("Login: ", valueLogin);
+   // console.log("Password: ", valuePassword);
 
     if(valueLogin === "" || valuePassword ==="")
     {
@@ -101,7 +101,7 @@ const login=() => {
         })
             .then(data => {
                 sessionStorage.setItem("JWT", data.access_token);
-                alert('Udało się zalogować!');
+                //alert('Udało się zalogować!');
                 redirectToHomePage();
         })
         .catch(error => alert('Błąd pobierania danych:', error));
@@ -141,7 +141,7 @@ const register=()=>{
             surname: surname
         }
 
-        console.log(newUser)
+       // console.log(newUser)
         fetch(`http://127.0.0.1:8000/Register`,{
             method: 'POST',
                 headers: {
@@ -152,7 +152,7 @@ const register=()=>{
         .then(response => {
             if (!response.ok) {
                 return response.json().then(error => {
-                    console.log(error.detail);
+                 //   console.log(error.detail);
                     alert(error.detail)
                     throw new Error(error.detail);
                 });
