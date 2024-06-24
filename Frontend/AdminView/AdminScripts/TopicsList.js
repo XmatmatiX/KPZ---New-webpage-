@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
             "Authorization": `Bearer ${token}`
         }
     })
-        .then(response => )
+        .then(response =>
             {
                 if (!response.ok) {
                         if (response.status === 401)
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     "Authorization": `Bearer ${token}`
                 }
             })
-                .then(response => )
+                .then(response =>
             {
                 if (!response.ok) {
                         if (response.status === 401)
