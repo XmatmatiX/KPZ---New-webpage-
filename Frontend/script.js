@@ -37,7 +37,7 @@ function translateStatus(status) {
 document.addEventListener("DOMContentLoaded", function () {
     const enrollmentTime = document.getElementById("enrollmentTime");
 
-    fetch(`http://127.0.0.1:8000/TimeReservation`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/TimeReservation`)
         .then(response => response.json())
         .then(data => {
 
@@ -83,7 +83,7 @@ const login=() => {
             password: valuePassword
         }
 
-        fetch(`http://127.0.0.1:8000/login`,{
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/login`,{
             method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -142,7 +142,7 @@ const register=()=>{
         }
 
        // console.log(newUser)
-        fetch(`http://127.0.0.1:8000/Register`,{
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Register`,{
             method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -175,7 +175,7 @@ const register=()=>{
 function redirectToHomePage()
 {
     const token = sessionStorage.getItem("JWT");
-    fetch("http://127.0.0.1:8000/User/Role", {
+    fetch("https://projekty.kpz.pwr.edu.pl/api/User/Role", {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -206,7 +206,7 @@ logo.addEventListener('click', () => {
 
 function allProjects(topicList) {
 
-    fetch('http://127.0.0.1:8000/ProjectList')
+    fetch('https://projekty.kpz.pwr.edu.pl/api/ProjectList')
         .then(response => response.json())
         .then(data => {
 
@@ -263,7 +263,7 @@ function allProjects(topicList) {
 
 function freeProjects(topics) {
 
-    fetch(`http://127.0.0.1:8000/ProjectListFree`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/ProjectListFree`)
         .then(response => response.json())
         .then(details => {
 
@@ -447,7 +447,7 @@ document.addEventListener("DOMContentLoaded", function() {
             allProjects(topicList)
         }
         else {
-            fetch(`http://127.0.0.1:8000/ProjectListSearch/${topic}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/ProjectListSearch/${topic}`, {
             })
                 .then(response => {
                     if (!response.ok) {
