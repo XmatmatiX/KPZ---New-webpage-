@@ -20,13 +20,13 @@ function redirectToGroup()
     .   then(data => {
     switch(data.memberType) {
         case "withoutGroup":
-            window.location.href = "StudentWithoutGroup.html";  // Ścieżka do strony bez grupy
+            window.location.href = "studentWithoutGroup.html";  // Ścieżka do strony bez grupy
             break;
         case "student":
-            window.location.href = "YourGroup.html";  // Ścieżka do strony studenta
+            window.location.href = "yourGroup.html";  // Ścieżka do strony studenta
             break;
         case "leader":
-            window.location.href = "YourGroupLeader.html";  // Ścieżka do strony lidera
+            window.location.href = "yourGroupLeader.html";  // Ścieżka do strony lidera
             break;
         default:
             console.error("Unexpected member type:", data.memberType);
