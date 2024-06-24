@@ -422,6 +422,7 @@ input[type="checkbox"] {
     margin-right: 100px;
     margin-bottom: 0;
     font-weight: normal;
+    font-family: "Roboto Flex";
 }
 
 .topics3 {
@@ -1000,7 +1001,7 @@ textarea {
     border-radius: var(--radius-medium);
     border: none;
     resize: none;
-    font-family: var(--title-font) !important;
+    font-family: "Roboto Flex";
 }
 
 .studentInput {
