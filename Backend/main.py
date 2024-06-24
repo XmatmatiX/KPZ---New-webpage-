@@ -643,6 +643,11 @@ def post_add_project(project: schemas.ProjectCreate, groupID: Optional[int] = No
     z dodatkową opcją przypisania do grupy
     """
     try:
+
+        # Create the project
+        created_project = CRUD.create_project(db, project)
+        print(f"Created project: {created_project}")
+
         if groupID:
             # Check if the group exists
             group = CRUD.get_group(db, groupID)
@@ -654,12 +659,6 @@ def post_add_project(project: schemas.ProjectCreate, groupID: Optional[int] = No
             if CRUD.has_group_reservation(db, groupID):
                 raise HTTPException(status_code=400, detail="Grupa zarezerwowała już projekt")
             print(f"Group {groupID} does not have a reservation")
-
-        # Create the project
-        created_project = CRUD.create_project(db, project)
-        print(f"Created project: {created_project}")
-
-        if groupID:
             try:
                 # Create a new project reservation
                 new_reservation = CRUD.create_project_reservation(db, created_project, group)
