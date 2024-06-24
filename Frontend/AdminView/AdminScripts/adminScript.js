@@ -3,7 +3,7 @@
 function checkRole()
 {
     const token = sessionStorage.getItem("JWT");
-            fetch("http://127.0.0.1:8000/User/Role", {
+            fetch("https://projekty.kpz.pwr.edu.pl/api/User/Role", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
