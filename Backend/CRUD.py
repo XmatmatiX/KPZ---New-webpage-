@@ -600,7 +600,7 @@ Dodanie pliku tworzy rowniez actionhistory o tym
 """
 
 
-def update_project_reservation_files(db: Session, reservation: schemas.ProjectReservationBase, path):
+def update_project_reservation_files(db: Session, reservation: schemas.ProjectReservationBase, path: str):
     """
     Add files with confirmation for the reservation, creates an actionHistory saying that files had been added
     :return : returns the changed reservation
