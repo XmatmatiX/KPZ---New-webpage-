@@ -84,7 +84,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 response = await fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/AddProject?groupID=${groupID}`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        "Authorization": `Bearer ${token}`
+
                     },
                     body: JSON.stringify(data)
                 });
