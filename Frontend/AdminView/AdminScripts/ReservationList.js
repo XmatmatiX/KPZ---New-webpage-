@@ -48,7 +48,7 @@ function allProjects(projects) {
                 if (logos[i] === null || logos[i] === '') {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
                 }
 
                 topicItem.innerHTML = `
@@ -113,7 +113,7 @@ function chosenProjects(projects, state) {
                 if (logos[i] === null || logos[i] === '') {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
                 }
 
                 topicItem.innerHTML = `
@@ -171,7 +171,7 @@ function displaySearchedReservations(reservations, data) {
         if (logos[i] === null || logos[i] === '') {
             logoHTML = 'BRAK';
         } else {
-            logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+            logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
         }
 
         topicItem.innerHTML = `

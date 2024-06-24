@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
             projects.forEach(topic => {
                 const topicItem = document.createElement('div');
                 topicItem.classList.add('topicItem');
-                const logoPath = topic.logopath ? `../../../Backend/${topic.logopath}` : '';
+                const logoPath = topic.logopath ? `${topic.logopath}` : '';
 
                 // Ustalenie tekstu dla groupSize
                 let groupMin = topic.mingroupsize;
@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (topic.logopath === null || topic.logopath === '') {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo-main" src="../../../Backend/${topic.logopath}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${topic.logopath}" alt="There should be a photo">`;
                 }
 
                 topicItem.innerHTML = `
@@ -89,7 +89,7 @@ function displaySearchedTopis(topics, data) {
     projects.forEach(topic => {
         const topicItem = document.createElement('div');
         topicItem.classList.add('topicItem');
-        const logoPath = topic.logopath ? `../../../Backend/${topic.logopath}` : '';
+        const logoPath = topic.logopath ? `${topic.logopath}` : '';
 
         // Ustalenie tekstu dla groupSize
         let groupMin = topic.mingroupsize;
@@ -103,7 +103,7 @@ function displaySearchedTopis(topics, data) {
         if (topic.logopath === null || topic.logopath === '') {
             logoHTML = 'BRAK';
         } else {
-            logoHTML = `<img class="logo-main" src="../../../Backend/${topic.logopath}" alt="There should be a photo">`;
+            logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${topic.logopath}" alt="There should be a photo">`;
         }
 
         topicItem.innerHTML = `
