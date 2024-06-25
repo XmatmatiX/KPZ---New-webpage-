@@ -2,28 +2,27 @@
 
 const token = sessionStorage.getItem("JWT");
 
-document.addEventListener("DOMContentLoaded", function() {
+function allProjects(topicList) {
+
     //Pobranie danych z endpointa GET /ProjectList
-    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/ProjectList', {
+    fetch('http://127.0.0.1:8000/Admin/ProjectList', {
         headers: {
             "Authorization": `Bearer ${token}`
         }
     })
-        .then(response =>
-            {
-                if (!response.ok) {
-                        if (response.status === 401)
-                        {
-                            window.location.href = "../LoginPage.html";
-                            throw new Error('Not authorized');
-                        }
-                        else
-                            throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-            })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401)
+                {
+                    window.location.href = "../LoginPage.html";
+                    throw new Error('Not authorized');
+                }
+                else
+                    throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
-            const topicList = document.getElementById('topicList');
 
             const projects = data['projects:']; // Pobranie tablicy projektów
 
@@ -31,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
             projects.forEach(topic => {
                 const topicItem = document.createElement('div');
                 topicItem.classList.add('topicItem');
-                const logoPath = topic.logopath ? `${topic.logopath}` : '';
+                const logoPath = topic.logopath ? `../../../Backend/${topic.logopath}` : '';
 
                 // Ustalenie tekstu dla groupSize
                 let groupMin = topic.mingroupsize;
@@ -45,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (topic.logopath === null || topic.logopath === '') {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${topic.logopath}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="../../../Backend/${topic.logopath}" alt="There should be a photo">`;
                 }
 
                 topicItem.innerHTML = `
@@ -57,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 `;
 
                 // Dodanie nasłuchiwania zdarzenia kliknięcia na każdy element topicItemAdmin
-                topicItem.addEventListener('click', function () {
+                topicItem.addEventListener('click', function() {
                     // Przekierowanie użytkownika do widoku topicDetails, przekazując ID projektu jako parametr w adresie URL
                     window.location.href = `topicDetails.html?id=${topic.projectid}`;
                 });
@@ -66,7 +65,8 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         })
         .catch(error => console.error('Błąd pobierania danych:', error));
-});
+
+}
 
 function displaySearchedTopis(topics, data) {
 
@@ -89,7 +89,7 @@ function displaySearchedTopis(topics, data) {
     projects.forEach(topic => {
         const topicItem = document.createElement('div');
         topicItem.classList.add('topicItem');
-        const logoPath = topic.logopath ? `${topic.logopath}` : '';
+        const logoPath = topic.logopath ? `../../../Backend/${topic.logopath}` : '';
 
         // Ustalenie tekstu dla groupSize
         let groupMin = topic.mingroupsize;
@@ -103,7 +103,7 @@ function displaySearchedTopis(topics, data) {
         if (topic.logopath === null || topic.logopath === '') {
             logoHTML = 'BRAK';
         } else {
-            logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${topic.logopath}" alt="There should be a photo">`;
+            logoHTML = `<img class="logo-main" src="../../../Backend/${topic.logopath}" alt="There should be a photo">`;
         }
 
         topicItem.innerHTML = `
@@ -153,14 +153,13 @@ document.addEventListener("DOMContentLoaded", function() {
             allProjects(topicList);
         }
         else {
-            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/ProjectListSearch/${topic}`, {
+            fetch(`http://127.0.0.1:8000/Admin/ProjectListSearch/${topic}`, {
                 headers: {
                     "Authorization": `Bearer ${token}`
                 }
             })
-                .then(response =>
-            {
-                if (!response.ok) {
+                .then(response => {
+                    if (!response.ok) {
                         if (response.status === 401)
                         {
                             window.location.href = "../LoginPage.html";
@@ -170,7 +169,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             throw new Error('Network response was not ok');
                     }
                     return response.json();
-            })
+                })
                 .then(data => {
                     displaySearchedTopis(topicList, data);
                 })
