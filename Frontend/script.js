@@ -36,7 +36,7 @@ function translateStatus(status) {
 document.addEventListener("DOMContentLoaded", function () {
     const enrollmentTime = document.getElementById("enrollmentTime");
 
-    fetch(`http://127.0.0.1:8000/TimeReservation`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/TimeReservation`)
         .then(response => response.json())
         .then(data => {
 
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function redirectToHomePage()
 {
     const token = sessionStorage.getItem("JWT");
-    fetch("http://127.0.0.1:8000/User/Role", {
+    fetch("https://projekty.kpz.pwr.edu.pl/api/User/Role", {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -93,7 +93,7 @@ logo.addEventListener('click', () => {
 
 function allProjects(topicList) {
 
-    fetch('http://127.0.0.1:8000/ProjectList')
+    fetch('https://projekty.kpz.pwr.edu.pl/api/ProjectList')
         .then(response => response.json())
         .then(data => {
 
@@ -122,7 +122,7 @@ function allProjects(topicList) {
                 if (logos[i] === null) {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
                 }
 
                 // Utworzenie HTML dla pojedynczego projektu
@@ -150,7 +150,7 @@ function allProjects(topicList) {
 
 function freeProjects(topics) {
 
-    fetch(`http://127.0.0.1:8000/ProjectListFree`)
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/ProjectListFree`)
         .then(response => response.json())
         .then(details => {
 
@@ -191,7 +191,7 @@ function freeProjects(topics) {
                 if (logos[i] === null) {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
                 }
 
                 // Utworzenie HTML dla pojedynczego projektu
@@ -256,7 +256,7 @@ function displaySearchedTopics(topics, data) {
         if (logos[i] === null) {
             logoHTML = 'BRAK';
         } else {
-            logoHTML = `<img class="logo-main" src="../../../Backend/${logos[i]}" alt="There should be a photo">`;
+            logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${logos[i]}" alt="There should be a photo">`;
         }
 
         // Utworzenie HTML dla pojedynczego projektu
@@ -334,7 +334,7 @@ document.addEventListener("DOMContentLoaded", function() {
             allProjects(topicList)
         }
         else {
-            fetch(`http://127.0.0.1:8000/ProjectListSearch/${topic}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/ProjectListSearch/${topic}`, {
             })
                 .then(response => {
                     if (!response.ok) {

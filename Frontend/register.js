@@ -33,7 +33,7 @@ function register() {
         }
 
         // console.log(newUser)
-        fetch(`http://127.0.0.1:8000/Register`,{
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Register`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

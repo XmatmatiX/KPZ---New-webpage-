@@ -5,7 +5,7 @@ const token = sessionStorage.getItem("JWT");
 function allProjects(topicList) {
 
     //Pobranie danych z endpointa GET /ProjectList
-    fetch('http://127.0.0.1:8000/Admin/ProjectList', {
+    fetch('https://projekty.kpz.pwr.edu.pl/api/Admin/ProjectList', {
         headers: {
             "Authorization": `Bearer ${token}`
         }
@@ -30,7 +30,7 @@ function allProjects(topicList) {
             projects.forEach(topic => {
                 const topicItem = document.createElement('div');
                 topicItem.classList.add('topicItem');
-                const logoPath = topic.logopath ? `../../../Backend/${topic.logopath}` : '';
+                const logoPath = topic.logopath ? `https://projekty.kpz.pwr.edu.pl/${topic.logopath}` : '';
 
                 // Ustalenie tekstu dla groupSize
                 let groupMin = topic.mingroupsize;
@@ -44,7 +44,7 @@ function allProjects(topicList) {
                 if (topic.logopath === null || topic.logopath === '') {
                     logoHTML = 'BRAK';
                 } else {
-                    logoHTML = `<img class="logo-main" src="../../../Backend/${topic.logopath}" alt="There should be a photo">`;
+                    logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${topic.logopath}" alt="There should be a photo">`;
                 }
 
                 topicItem.innerHTML = `
@@ -89,7 +89,7 @@ function displaySearchedTopis(topics, data) {
     projects.forEach(topic => {
         const topicItem = document.createElement('div');
         topicItem.classList.add('topicItem');
-        const logoPath = topic.logopath ? `../../../Backend/${topic.logopath}` : '';
+        const logoPath = topic.logopath ? `https://projekty.kpz.pwr.edu.pl/${topic.logopath}` : '';
 
         // Ustalenie tekstu dla groupSize
         let groupMin = topic.mingroupsize;
@@ -103,7 +103,7 @@ function displaySearchedTopis(topics, data) {
         if (topic.logopath === null || topic.logopath === '') {
             logoHTML = 'BRAK';
         } else {
-            logoHTML = `<img class="logo-main" src="../../../Backend/${topic.logopath}" alt="There should be a photo">`;
+            logoHTML = `<img class="logo-main" src="https://projekty.kpz.pwr.edu.pl/${topic.logopath}" alt="There should be a photo">`;
         }
 
         topicItem.innerHTML = `
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function() {
             allProjects(topicList);
         }
         else {
-            fetch(`http://127.0.0.1:8000/Admin/ProjectListSearch/${topic}`, {
+            fetch(`https://projekty.kpz.pwr.edu.pl/api/Admin/ProjectListSearch/${topic}`, {
                 headers: {
                     "Authorization": `Bearer ${token}`
                 }
