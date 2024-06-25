@@ -31,7 +31,7 @@ function translateStatus(state) {
 }
 
 function fetchGroupDetails() {
-    fetch(`http://127.0.0.1:8000/Student/Group`, {
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group`, {
         headers: {
             "Authorization": `Bearer ${token}`
         }
@@ -186,7 +186,7 @@ document.getElementById('opiekunForm').addEventListener('submit', function(event
     const surname = document.getElementById('nazwisko').value;
     const email = document.getElementById('email').value;
 
-    fetch(`http://127.0.0.1:8000/Student/Group/GuardianChange/${name}/${surname}/${email}`, {
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group/GuardianChange/${name}/${surname}/${email}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -211,7 +211,7 @@ document.getElementById('opiekunForm').addEventListener('submit', function(event
 
 function getPDFList() {
 
-    fetch(`http://127.0.0.1:8000/Student/Group`, {
+    fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/Group`, {
         headers: {
             "Authorization": `Bearer ${token}`
         }
@@ -222,7 +222,7 @@ function getPDFList() {
                 console.log(data.detail);
             } else {
 
-                fetch(`http://127.0.0.1:8000/Student/PDF_file`, {
+                fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/PDF_file`, {
                     headers: {
                         "Authorization": `Bearer ${token}`
                     }
@@ -245,7 +245,7 @@ function getPDFList() {
                                 fileList.innerHTML = '<p>BRAK</p>';
                             } else {
                                 fileList.innerHTML = '<ul>' + data2.files.map(file => `<li><a href="${file}" target="_blank">${file.split('/').pop()}</a></li>`).join('') + '</ul>';
-                                fileList.innerHTML = '</p><ul>' + data2.files.map(file => `<li><a style="font-size: 18px;" href="../../Backend/docs/pdf/${data.group}/${file}" target="_blank">${file.split('/').pop()}</a></li>`).join('') + '</ul>';
+                                fileList.innerHTML = '</p><ul>' + data2.files.map(file => `<li><a style="font-size: 18px;" href="https://projekty.kpz.pwr.edu.pl/docs/pdf/${data.group}/${file}" target="_blank">${file.split('/').pop()}</a></li>`).join('') + '</ul>';
                             }
 
                             // data.files.forEach(file => {
@@ -341,7 +341,7 @@ function openModal() {
         const formData = new FormData();
         formData.append('pdf_file', file);
 
-        fetch(`http://127.0.0.1:8000/Student/PDF_file`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/PDF_file`, {
             method: 'POST',
             body: formData,
             headers: {
@@ -376,7 +376,7 @@ function openModal() {
             return;
         }
 
-        fetch(`http://127.0.0.1:8000/Student/PDF_file`, {
+        fetch(`https://projekty.kpz.pwr.edu.pl/api/Student/PDF_file`, {
             method: 'DELETE',
             headers: {
                 "Authorization": `Bearer ${token}`
