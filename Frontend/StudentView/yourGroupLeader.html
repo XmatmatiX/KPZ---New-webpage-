@@ -11,7 +11,7 @@
 
     <title>KPZ</title>
 </head>
-<body onload="checkRole(); fetchGroupDetails()">
+<body onload="checkRole()">
 <section class="header">
     <img id="mainLogo" src="../Images/cropped-kpz2022.png" class="logoImage" alt="There should be a logo here" onclick="imageClick()">
     <div class="title">
@@ -32,7 +32,6 @@
     <div class="page">
         <div class="container-leader">
             <div class="group-info-leader">
-                <h3>Skład grupy</h3>
                   <div id="member-details" >
                     <!-- Dynamic content will be loaded here class="details-container-member2"-->
                   </div>
@@ -44,24 +43,32 @@
                 </div>
 <!--                <p>Jeśli jeszcze tego nie zrobiłeś, załącz zgodę opiekuna i wszystkich Waszych prowadzących przedmiot na realizację tematu (dozwolony format to.pdf)</p>-->
             </div>
-            <section class="rest-info">
+<!--            <section class="rest-info">-->
+<!--                <div id="project-details-div">-->
+<!--               </div>-->
+<!--                &lt;!&ndash;-->
+<!--                <h3>Stan rezerwacji</h3>-->
+<!--                <p><strong>Temat:</strong> </p>-->
+<!--                <p><strong>Status:</strong> </p>-->
+<!--                <p><strong>Opiekun:</strong> </p>-->
+
+<!--                <h3>Kontakt z firmą</h3>-->
+<!--                <p><strong>Osoba kontaktowa:</strong> </p>-->
+<!--                <p><strong>Kontakt:</strong> </p>-->
+<!--                &ndash;&gt;-->
+
+<!--                <div class="button-container">-->
+<!--                    <button id="change">Zarządzaj stanowiskiem</button>-->
+<!--                    <button onclick="groupInformationBtn()">Informacje o grupie</button>-->
+<!--                    &lt;!&ndash;<button id="leaveButton" class="leave-group" onclick="leaveGroup()">Opuść grupę</button>&ndash;&gt;-->
+<!--                </div>-->
+<!--            </section>-->
+            <section id="project-details" class="details-container">
                 <div id="project-details-div">
-               </div>
-                <!--
-                <h3>Stan rezerwacji</h3>
-                <p><strong>Temat:</strong> </p>
-                <p><strong>Status:</strong> </p>
-                <p><strong>Opiekun:</strong> </p>
-
-                <h3>Kontakt z firmą</h3>
-                <p><strong>Osoba kontaktowa:</strong> </p>
-                <p><strong>Kontakt:</strong> </p>
-                -->
-
-                <div class="button-container">
-                    <button id="change">Zarządzaj stanowiskiem</button>
-                    <button onclick="groupInformationBtn()">Informacje o grupie</button>
-                    <!--<button id="leaveButton" class="leave-group" onclick="leaveGroup()">Opuść grupę</button>-->
+                </div>
+                <div class="project-button">
+                    <button id="leaveButton" class="leave-group">Opuść grupę</button>
+                    <button id="change" class="change">Zarządzaj stanowiskiem</button>
                 </div>
             </section>
 
@@ -84,18 +91,46 @@
                 </form>
             </div>
         </div>
-        <div id="fileModal" class="modalFile">
-            <div class="modal-content-file">
-            <span class="close" onclick="closeFileModal()">&times;</span>
-            <form id="uploadForm">
-                <input type="file" id="fileInput" accept="application/pdf">
-                <button class="button-upl-file" onclick="uploadFiles()">Upload</button>
-                <button class="deleteButtonFile" onclick="deleteFile()">🗑️ Usuń plik</button>
-            </form>
-            <div id="fileList"></div>
-            <button class="button-get" onclick="getPDFList()">Pokaż listę plików</button>
+
+        <div id="fileModal" class="deleteModal">
+            <div class="modal-file">
+                <span id="closeButton3" class="close">&times;</span>
+                <section class="fileView">
+                    <div class="uploadFiles2">
+                        <div class="fileSection">
+                            <p class="file-name" style="font-size: 18px; font-weight: bold;">Lista załadowanych plików:</p>
+                            <div id="fileList" style="align-items: center;"></div>
+                        </div>
+                        <div class="file-input-container">
+                            <label id="fileLabel" class="file-label">WYBIERZ</label>
+                            <input type="file" id="file-upload" style="display: none;">
+                            <span class="file-name" id="file-name">Nie wybrano pliku</span>
+                            <button class="file-remove" id="remove-file" style="display: none;">
+                                <img src="../Images/blackTrash.png">
+                            </button>
+                        </div>
+                        <button id="upload">Załaduj</button>
+                        <button class="deleteButton2" id="deleteFile"><img src="../Images/trash.png"> Usuń plik</button>
+                        <p id="noFile" class="warningP">Nie wybrano pliku!</p>
+                        <p id="noGuardian" class="warningP">Wszystkie dane opiekuna muszą być uzupełnione</p>
+                    </div>
+                </section>
             </div>
         </div>
+
+<!--        <div id="fileModal" class="deleteModal">-->
+<!--            <div class="modal-file">-->
+<!--            <span class="close" onclick="closeFileModal()">&times;</span>-->
+<!--            <form id="uploadForm">-->
+<!--                <input type="file" id="fileInput" accept="application/pdf">-->
+<!--                <button class="button-upl-file" onclick="uploadFiles()">Upload</button>-->
+<!--                <button class="deleteButtonFile" onclick="deleteFile()">🗑️ Usuń plik</button>-->
+<!--            </form>-->
+<!--            <div id="fileList"></div>-->
+<!--            <button class="button-get" onclick="getPDFList()">Pokaż listę plików</button>-->
+<!--            </div>-->
+<!--        </div>-->
+
     </div>
 </section>
 
