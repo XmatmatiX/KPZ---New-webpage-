@@ -113,8 +113,8 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
 });
-// Project List
 
+// Project List
 
 document.addEventListener('DOMContentLoaded', () => {
     const signupButton = document.getElementById('signupButton');

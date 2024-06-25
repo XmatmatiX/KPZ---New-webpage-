@@ -1,6 +1,34 @@
 
 const token = sessionStorage.getItem("JWT");
 
+function translateRole(role) {
+    switch(role) {
+        case 'leader':
+            return 'Lider';
+        case 'student':
+            return 'Student';
+        default:
+            return 'Nieznany';
+    }
+}
+
+function translateStatus(state) {
+    switch(state) {
+        case 'available':
+            return 'Dostępny';
+        case 'reserved':
+            return 'Zarezerwowany';
+        case 'taken':
+            return 'Zajęty';
+        case 'confirmed':
+            return 'Zatwierdzony';
+        case 'waiting':
+            return 'Oczekujący na zatwierdzenie';
+        default:
+            return 'Nieznany';
+    }
+}
+
 function fetchGroupDetails() {
     fetch(`http://127.0.0.1:8000/Student/Group`, {
         headers: {
@@ -29,10 +57,13 @@ function updateMemberDetails(members) {
     if (memberDetailsContainer) {
         let membersHtml = '<h7>Członkowie grupy</h7>';
         members.forEach(member => {
+
+            const translatedRole = translateRole(member.role)
+
             membersHtml += `
                         <div id="${member.role}" class="member" data-role="${member.role}">
                             <img src="../Images/Vector.jpg" alt="Avatar studenta">
-                            <p>${member.name} ${member.surname} - ${member.role} <br>${member.email}</br></p>
+                            <p>${member.name} ${member.surname} - ${translatedRole} <br>${member.email}</br></p>
                         </div>
                 `;
         });
@@ -44,6 +75,9 @@ function updateMemberDetails(members) {
 
 function updateProjectDetails(data) {
     const projectDetailsContainer = document.getElementById('project-details-div');
+
+    const translatedStatus = translateStatus(data.reservation_status);
+
     if (projectDetailsContainer) {
         projectDetailsContainer.innerHTML = `
                 <p><strong>Kod zaproszenia:</strong> ${data.invite_code || 'Brak'}</p>
@@ -53,7 +87,7 @@ function updateProjectDetails(data) {
                 <p><strong>Email:</strong> ${data.guardian_info?.guardian_email || 'Brak'}</p>
                 <h7>Projekt</h7>
                 <p><strong>Firma:</strong> ${data.contact_info?.company || 'Brak'}</p>
-                <p><strong>Status projektu:</strong> ${data.reservation_status || 'Brak'}</p>
+                <p><strong>Status projektu:</strong> ${translatedStatus || 'Brak'}</p>
                 <p><strong>Email kontaktowy:</strong> ${data.contact_info?.contact_email || 'Brak'}</p>
                 <p><strong>Telefon kontaktowy:</strong> ${data.contact_info?.contact_phone || 'Brak'}</p>
                 <p><strong>Osoba kontaktowa:</strong> ${data.contact_info?.person || 'Brak'}</p>
@@ -107,33 +141,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// function translateRole(role) {
-//     switch(role) {
-//         case 'leader':
-//             return 'Lider';
-//         case 'student':
-//             return 'Student';
-//         default:
-//             return 'Nieznany';
-//     }
-// }
-//
-// function translateStatus(state) {
-//     switch(state) {
-//         case 'available':
-//             return 'Dostępny';
-//         case 'reserved':
-//             return 'Zarezerwowany';
-//         case 'taken':
-//             return 'Zajęty';
-//         case 'confirmed':
-//             return 'Zatwierdzony';
-//         case 'waiting':
-//             return 'Oczekujący na zatwierdzenie';
-//         default:
-//             return 'Nieznany';
-//     }
-// }
 //
 // document.addEventListener("DOMContentLoaded", function() {
 //

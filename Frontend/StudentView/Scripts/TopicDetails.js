@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const button = document.getElementById("backButton")
 
     button.addEventListener("click", function() {
-        window.location.href = `landingPage.html`;
+        window.location.href = `topicsView.html`;
     })
 
     fetch(`http://127.0.0.1:8000/Project/${projectId}`)
@@ -58,13 +58,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     <p class="topicLabel2">Liczba zajętych grup:</p>
                     <p class="details2">${projectData.numertaken}</p>
                 </div>
-                
+
                 ${englishValue !== null ? `
                 <div class="someDetails">
                     <p class="topicLabel2">Język angielski jako dopuszczalny język:</p>
                     <p class="details2">${language}</p>
                 </div>` : ''}
-                
+
                 ${projectData.technologies ? `
                     <p class="topicLabel">Technologie:</p>
                     <p class="details">${projectData.technologies}</p>` : ''}

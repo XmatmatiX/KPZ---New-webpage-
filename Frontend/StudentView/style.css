@@ -110,6 +110,19 @@ button:hover {
     background-color: var(--hover); /* Tło po najechaniu myszą */
 }
 
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow-x: auto;
+}
+
+.backButton {
+    margin-left: 30px;
+    margin-right: auto;
+    margin-top: 15px;
+}
+
 .cleanButton {
     margin: 20px auto;
     width: 200px;
@@ -1093,12 +1106,13 @@ article {
 }
 
 .member {
-    background: #E6F7FF;
+    background: #fff;
     margin-bottom: 10px;
     padding: 10px;
     border-radius: 4px;
     display: flex;
     align-items: center;
+    border: 1px solid rgba(141, 141, 145, 0.42);
 }
 .member img {
     width: 30px;
@@ -1757,6 +1771,10 @@ h3 {
         align-items: center;
         display: flex; /* Ustawienie elastycznego układu na poziomie przycisku */
         justify-content: center; /* Wyśrodkowanie poziome */
+    }
+
+    .backButton {
+        display: none;
     }
 
     .group-info-leader, .rest-info {
