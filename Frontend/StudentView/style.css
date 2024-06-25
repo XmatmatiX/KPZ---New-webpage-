@@ -231,7 +231,7 @@ input[type="radio"] {
     grid-template-columns: 1fr 8fr;
     gap: 20px;
     align-items: center;
-    height: 80px;
+    height: 100px;
     margin: 20px 0;
 }
 
@@ -423,6 +423,7 @@ em {
     font-size: 17px;
     border-top: 2px solid black;
     border-bottom: 2px solid black;
+    font-family: "Roboto Flex";
 }
 
 .topicLabel {
