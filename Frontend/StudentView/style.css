@@ -720,6 +720,15 @@ em {
     height: 200px;
 }
 
+.modal-file {
+    background-color: #fefefe;
+    margin: 5% auto; /* Centralizuj modal */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 500px;
+    height: auto;
+}
+
 .textModal {
     margin: 40px 0;
     text-align: center;
@@ -746,6 +755,74 @@ em {
     color: #000;
     text-decoration: none;
     cursor: pointer;
+}
+
+.fileView {
+    margin: 30px 0;
+    auto;
+    background-color: var(--primary-dark);
+    padding: 20px 0;
+    display: flex;
+    justify-content: center; /* Wyśrodkowanie elementów w poziomie */
+    align-items: center; /* Wyśrodkowanie elementów w pionie */
+    flex-direction: column;
+}
+
+.uploadFiles2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    margin: 20px 20px;
+}
+
+.file-input-container {
+    display: flex;
+    align-items: center;
+}
+
+.file-label {
+    background-color: #ffffff;
+    color: #000;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: solid 1px;
+    cursor: pointer;
+}
+
+.file-label:hover {
+    background-color: #d3d3d3; /* Szary kolor po najechaniu kursorem */
+}
+
+.file-name {
+    margin-left: 10px;
+    font-weight: normal;
+}
+
+.file-remove {
+    background-color: var(--primary-dark);
+    width: 50px;
+    padding: 0;
+}
+
+.file-remove:hover {
+    background-color: var(--primary-dark);
+}
+
+.warningP {
+    display: none;
+    justify-content: center; /* Wyśrodkowanie poziome */
+    align-items: center; /* Wyśrodkowanie pionowe */
+    background-color: red;
+    padding: 10px 5px;
+    text-align: center;
+}
+
+.fileSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
 }
 
 .groupItem {
@@ -1409,6 +1486,14 @@ h3 {
     overflow: auto;
     background-color: rgba(0,0,0,0.4);
     border-radius: 8px; /* zaokrąglone rogi */
+}
+
+.deleteButton2 img {
+    margin-right: 10px;
+}
+
+.noFiles {
+    font-size: 18px;
 }
 
 .modal-content-file {
