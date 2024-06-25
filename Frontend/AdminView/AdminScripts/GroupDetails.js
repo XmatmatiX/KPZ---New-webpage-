@@ -174,7 +174,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 const confirmation = document.getElementById("confirmation");
                 const conf = data['confirmation-path'] || 'BRAK PLIKÓW';
-                confirmation.textContent = `${conf}`;
+                //.textContent = `${conf}`;
+                confirmation.innerHTML = `<a style="font-size: 18px;" href="https://projekty.kpz.pwr.edu.pl/Backend/${conf}" target="_blank">${conf}</a>`;
             }
 
             var confirmationButton = document.getElementById("confirmationButton");
