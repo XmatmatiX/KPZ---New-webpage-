@@ -244,8 +244,12 @@ function getPDFList() {
                             if (data2.files.length === 0) {
                                 fileList.innerHTML = '<p>BRAK</p>';
                             } else {
-                                fileList.innerHTML = '<ul>' + data2.files.map(file => `<li><a href="${file}" target="_blank">${file.split('/').pop()}</a></li>`).join('') + '</ul>';
-                                fileList.innerHTML = '</p><ul>' + data2.files.map(file => `<li><a style="font-size: 18px;" href="https://projekty.kpz.pwr.edu.pl/docs/pdf/${data.group}/${file}" target="_blank">${file.split('/').pop()}</a></li>`).join('') + '</ul>';
+                                //fileList.innerHTML = '<ul>' + data2.files.map(file => `<li><a href="${file}" target="_blank">${file.split('/').pop()}</a></li>`).join('') + '</ul>';
+                                //fileList.innerHTML = '</p><ul>' + data2.files.map(file => `<li><a style="font-size: 18px;" href="https://projekty.kpz.pwr.edu.pl/docs/pdf/${data.group}/${file}" target="_blank">${file.split('/').pop()}</a></li>`).join('') + '</ul>';
+                                fileList.innerHTML = '</p><ul>' + data2.files.map(file => {
+                                    const fileName = file.split('/').pop();
+                                    return `<li><a style="font-size: 18px;" href="https://projekty.kpz.pwr.edu.pl/docs/pdf/${data.group}/${file}" download="${fileName}">${fileName}</a></li>`;
+                                }).join('') + '</ul>';
                             }
 
                             // data.files.forEach(file => {
