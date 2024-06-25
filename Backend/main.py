@@ -994,6 +994,7 @@ def get_student_group(student = Depends(get_current_user), db: Session = Depends
 
     # Return the group information along with student details
     return {
+        "group": group.groupid,
         "contact_info": contact_info,
         "guardian_info": guardian_info,
         "members": member_details,
