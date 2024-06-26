@@ -1872,4 +1872,20 @@ h3 {
         height: auto;
     }
 
+    .modal-file {
+        width: 90%;
+    }
+
+}
+
+@media screen and (max-width: 445px) {
+
+    .title {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .title p {
+        font-size: 10px;
+    }
 }
